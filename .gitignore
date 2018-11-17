@@ -1,1 +1,4 @@
-build
+build/*
+!build/debug/examples/.bashrc
+!build/release/examples/.bashrc
+!build/release/examples/run_tests.sh
