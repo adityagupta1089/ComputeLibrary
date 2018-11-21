@@ -2,4 +2,4 @@ build/*
 !build/debug/examples/.bashrc
 !build/release/examples/.bashrc
 !build/release/examples/run_tests.sh
-!build/release/examples/results.log
+!build/release/examples/results*.log
