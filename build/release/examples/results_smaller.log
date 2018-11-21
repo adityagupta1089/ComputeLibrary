@@ -1,0 +1,7 @@
+graph_lenet			: 0.00696485	sec	[taskset -c 0-3 ./graph_lenet --threads=4, Test passed3]
+neon_cnn			: 0.00128791	sec	[taskset -c 0-3 ./neon_cnn --threads=4, Test passed3]
+graph_lenet			: 0.00435571	sec	[taskset -c 4-7 ./graph_lenet --threads=4, Test passed3]
+neon_cnn			: 0.000568922	sec	[taskset -c 4-7 ./neon_cnn --threads=4, Test passed3]
+graph_lenet			: 0.00605047	sec	[taskset -c 0-7 ./graph_lenet --threads=8, Test passed3]
+neon_cnn			: 0.0018674	sec	[taskset -c 0-7 ./neon_cnn --threads=8, Test passed3]
+
