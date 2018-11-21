@@ -286,7 +286,7 @@ void CPPScheduler::schedule(ICPPKernel *kernel, const Hints &hints)
     else
     {
         unsigned int num_windows = 0;
-        switch(StrategyHint::STATIC)
+        switch(StrategyHint::DYNAMIC)
         {
             case StrategyHint::STATIC:
                 num_windows = num_threads;
