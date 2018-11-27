@@ -1,0 +1,59 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 1K of event 'cpu-clock'
+# Event count (approx.): 14020201880
+#
+# Overhead  Command          Shared Object            Symbol                                                                                                                                                                                                                                                                                                                                                                           
+# ........  ...............  .......................  .................................................................................................................................................................................................................................................................................................................................................................................
+#
+    54.39%  graph_mobilenet  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_asimd_12x8_jumps
+    15.71%  graph_mobilenet  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_native_16x4
+    12.54%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEBatchNormalizationLayerKernel::batch_normalization_fp32_nhwc<true, arm_compute::detail::brelu<float, 4> >
+     3.46%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEGEMMInterleavedMatrixMultiplyWrapperTemplate<float, float, false>::transform
+     2.45%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 0, 0, 0, 0, 0, 0>
+     2.38%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<3, 3, 3, 3, 2, 2, float, float>::process_tile<true, 0, 0, 0, 0, 0, 0>
+     1.44%  graph_mobilenet  libarm_compute_core.so   [.] (anonymous namespace)::weights_reshape<unsigned int, true>
+     0.94%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEGEMMInterleavedTransformAWrapperTemplate<float, false>::transform
+     0.86%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEIm2ColKernel::run_generic<float, true>
+     0.86%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 0, 1, 0, 0, 0, 0>
+     0.79%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<false, 0, 0, 0, 0, 0, 0>
+     0.72%  graph_mobilenet  libarm_compute_core.so   [.] arm_gemm::a64_sgemv_pretransposed
+     0.58%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 1, 0, 0, 0, 0, 0>
+     0.22%  graph_mobilenet  [kernel.kallsyms]        [k] clear_page
+     0.22%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEPoolingLayerKernel::poolingMxN_f32_nhwc<(arm_compute::PoolingType)1, false>
+     0.14%  graph_mobilenet  [kernel.kallsyms]        [k] get_page_from_freelist
+     0.14%  graph_mobilenet  libarm_compute.so        [.] arm_compute::NESimpleAssemblyFunction::run
+     0.14%  graph_mobilenet  libarm_compute_core.so   [.] arm_gemm::GemvPretransposed<arm_gemm::sgemv_pretransposed, float, float>::pretranspose_B_array
+     0.14%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<3, 3, 3, 3, 2, 2, float, float>::process_tile<false, 0, 0, 0, 0, 0, 0>
+     0.14%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<3, 3, 3, 3, 2, 2, float, float>::process_tile<true, 0, 0, 0, 3, 0, 1>
+     0.14%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 0, 0, 0, 3, 0, 2>
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] handle_mm_fault
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] lru_cache_add_active_or_unevictable
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] page_counter_try_charge
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] sys_getcpu
+     0.07%  graph_mobilenet  [kernel.kallsyms]        [k] try_charge
+     0.07%  graph_mobilenet  graph_mobilenet          [.] std::__detail::_Executor<__gnu_cxx::__normal_iterator<char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::__cxx11::sub_match<__gnu_cxx::__normal_iterator<char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::regex_traits<char>, true>::_M_dfs
+     0.07%  graph_mobilenet  ld-2.24.so               [.] _dl_lookup_symbol_x
+     0.07%  graph_mobilenet  libarm_compute.so        [.] arm_compute::CPPScheduler::get
+     0.07%  graph_mobilenet  libarm_compute.so        [.] arm_compute::NEGEMM::~NEGEMM@plt
+     0.07%  graph_mobilenet  libarm_compute.so        [.] arm_compute::NEPoolingLayer::run
+     0.07%  graph_mobilenet  libarm_compute.so        [.] std::_Sp_counted_ptr_inplace<arm_compute::MemoryRegion, std::allocator<arm_compute::MemoryRegion>, (__gnu_cxx::_Lock_policy)2>::_M_dispose
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEFillBorderKernel::fill_replicate_single_channel<float>
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::NEGEMMNativeWrapperKernel<float, float>::run_internal
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] arm_compute::TensorInfo::offset_element_in_bytes
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] arm_gemm::find_implementation<unsigned char, unsigned int>@plt
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolution<4, 4, 3, 3, 1, 1, float, float>::process_tile_row
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<3, 3, 3, 3, 2, 2, float, float>::process_tile<true, 0, 0, 5, 0, 2, 0>
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 0, 0, 0, 1, 0, 0>
+     0.07%  graph_mobilenet  libarm_compute_core.so   [.] depthwise::DepthwiseConvolutionImpl<4, 4, 3, 3, 1, 1, float, float>::process_tile<true, 0, 0, 3, 0, 2, 0>
+     0.07%  graph_mobilenet  libarm_compute_graph.so  [.] arm_compute::graph::(anonymous namespace)::add_const_node_with_name
+     0.07%  graph_mobilenet  libc-2.24.so             [.] __GI_memset
+
+
+#
+# (Tip: Customize output of perf script with: perf script -F event,ip,sym)
+#

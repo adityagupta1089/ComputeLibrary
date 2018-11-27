@@ -1,0 +1,53 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 2K of event 'cpu-clock'
+# Event count (approx.): 26626262360
+#
+# Overhead  Command          Shared Object            Symbol                                                                                                                                                                                                                                                                                                                                                                           
+# ........  ...............  .......................  .................................................................................................................................................................................................................................................................................................................................................................................
+#
+    52.35%  graph_squeezene  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_asimd_12x8_jumps
+    10.28%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEPoolingLayerKernel::poolingMxN_f32_nhwc<(arm_compute::PoolingType)0, false>
+     7.85%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEGEMMInterleavedTransformAWrapperTemplate<float, false>::transform
+     7.47%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEGEMMInterleavedMatrixMultiplyWrapperTemplate<float, float, false>::transform
+     5.58%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEWidthConcatenateLayerKernel::run
+     4.51%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEIm2ColKernel::run_generic<float, true>
+     3.19%  graph_squeezene  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_native_16x4
+     2.77%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEIm2ColKernel::run_generic<float, false>
+     1.56%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEActivationLayerKernel::activation<(arm_compute::ActivationLayerInfo::ActivationFunction)2, float>
+     1.29%  graph_squeezene  libarm_compute.so        [.] arm_compute::NEGEMM::~NEGEMM@plt
+     0.68%  graph_squeezene  libarm_compute_core.so   [.] (anonymous namespace)::add_F32_F32_F32
+     0.49%  graph_squeezene  libarm_compute.so        [.] arm_compute::ITensorAllocator::info
+     0.46%  graph_squeezene  libarm_compute.so        [.] arm_compute::Tensor::info
+     0.27%  graph_squeezene  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_asimd_12x8_a53
+     0.19%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEPoolingLayerKernel::poolingMxN_f32_nhwc<(arm_compute::PoolingType)1, false>
+     0.19%  graph_squeezene  libc-2.24.so             [.] __GI_memset
+     0.11%  graph_squeezene  libarm_compute_core.so   [.] (anonymous namespace)::weights_reshape<unsigned int, true>
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] __softirqentry_text_start
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] _raw_spin_unlock_irq
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] clear_page
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] do_page_fault
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] el0_da
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] handle_mm_fault
+     0.04%  graph_squeezene  [kernel.kallsyms]        [k] page_remove_rmap
+     0.04%  graph_squeezene  graph_squeezenet         [.] std::__detail::_Executor<__gnu_cxx::__normal_iterator<char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::__cxx11::sub_match<__gnu_cxx::__normal_iterator<char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::regex_traits<char>, true>::_M_dfs
+     0.04%  graph_squeezene  ld-2.24.so               [.] check_match
+     0.04%  graph_squeezene  ld-2.24.so               [.] do_lookup_x
+     0.04%  graph_squeezene  libarm_compute.so        [.] arm_compute::CPPScheduler::get
+     0.04%  graph_squeezene  libarm_compute.so        [.] arm_compute::INESimpleFunction::run
+     0.04%  graph_squeezene  libarm_compute.so        [.] arm_compute::MemoryManagerOnDemand::pool_manager
+     0.04%  graph_squeezene  libarm_compute.so        [.] arm_compute::NEGEMMInterleavedWrapper::prepare
+     0.04%  graph_squeezene  libarm_compute.so        [.] arm_compute::TensorAllocator::data
+     0.04%  graph_squeezene  libarm_compute_core.so   [.] arm_compute::NEGEMMNativeWrapperKernel<float, float>::run_internal
+     0.04%  graph_squeezene  libarm_compute_core.so   [.] arm_gemm::a64_sgemm_asimd_12x8
+     0.04%  graph_squeezene  libarm_compute_graph.so  [.] arm_compute::graph::detail::configure_all_nodes
+     0.04%  graph_squeezene  libc-2.24.so             [.] _int_malloc
+     0.04%  graph_squeezene  libpthread-2.24.so       [.] pthread_mutex_lock
+
+
+#
+# (Tip: For hierarchical output, try: perf report --hierarchy)
+#
