@@ -294,7 +294,7 @@ void CPPScheduler::schedule(ICPPKernel *kernel, const Hints &hints)
             case StrategyHint::DYNAMIC:
             {
                 // Make sure we don't use some windows which are too small as this might create some contention on the ThreadFeeder
-                const unsigned int max_iterations = static_cast<unsigned int>(_num_threads) * 3;
+                const unsigned int max_iterations = static_cast<unsigned int>(_num_threads) * 10;
                 num_windows                       = num_iterations > max_iterations ? max_iterations : num_iterations;
                 break;
             }

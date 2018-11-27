@@ -1,6 +1,5 @@
-all_cpus=("0-3" "4-7" "0-7")
-all_graphs=("graph_lenet" "neon_cnn")
-#("graph_alexnet" "graph_googlenet" "graph_mobilenet" "graph_resnet50"  "graph_squeezenet")
+all_cpus=("0-7")
+all_graphs=("graph_alexnet" "graph_googlenet" "graph_mobilenet" "graph_resnet50"  "graph_squeezenet")
 for cpus in ${all_cpus[@]}; do
 	cpu1=$(echo $cpus | cut -d'-' -f1)
 	cpu2=$(echo $cpus | cut -d'-' -f2)
