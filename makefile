@@ -1,3 +1,4 @@
+default: debug
 all: debug release
 release:
 	scons -j8 -Q build_dir=release arch=arm64-v8a build=native opencl=False neon=True
