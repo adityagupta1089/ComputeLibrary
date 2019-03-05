@@ -69,8 +69,8 @@ void discard_comments_and_spaces(std::ifstream &fs)
 #ifndef BENCHMARK_EXAMPLES
 int run_example(int argc, char **argv, std::unique_ptr<Example> example)
 {
-    std::cout << "\n"
-              << argv[0] << "\n\n";
+    /*std::cout << "\n"
+              << argv[0] << "\n\n";*/
 
     try
     {

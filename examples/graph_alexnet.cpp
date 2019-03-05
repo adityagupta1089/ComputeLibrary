@@ -68,7 +68,7 @@ public:
         ARM_COMPUTE_EXIT_ON_MSG(arm_compute::is_data_type_quantized_asymmetric(common_params.data_type), "QASYMM8 not supported for this graph");
 
         // Print parameter values
-        std::cout << common_params << std::endl;
+        //std::cout << common_params << std::endl;
 
         // Get trainable parameters data path
         std::string data_path = common_params.data_path;
@@ -169,15 +169,7 @@ public:
     void do_run() override
     {
         // Run graph
-        //graph.run();
-        auto tbegin =std::chrono::high_resolution_clock::now();
-	for (int i=0; i <100; i++){
         graph.run();
-	}
-        auto tend = std::chrono::high_resolution_clock::now();
-        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend-tbegin).count();
-	double cost = gross/100;
-        std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
 private:
