@@ -25,7 +25,7 @@ def run_graph(pargs):
             print(multiprocessing.current_process().name, curr_idx)
             #pargs.append("--image=" + images[curr_idx])
         
-            subprocess.run(pargs, env=env)
+            proc = subprocess.run(pargs, env=env)
             #time.sleep(random.randint(1, 2))
         else:
             return
@@ -33,7 +33,8 @@ def run_graph(pargs):
 cpu_args = ["./build/examples/graph_alexnet", "--target=NEON", "--threads=4"]
 gpu_args = ["./build/examples/graph_alexnet", "--target=CL"] 
 args = []
-images = [""] * 100
+N = 1
+images = [""] * N
 
 if __name__ == "__main__":
     global env
@@ -54,4 +55,4 @@ if __name__ == "__main__":
     pool = Pool(initializer=init, initargs=(counter,), processes=len(args))
     pool.map(run_graph, args)
     end = time.time()
-    print('Time taken: ', str((end - start) / 100.0), 'sec')
+    print('Time taken: ', str((end - start) / N), 'sec')

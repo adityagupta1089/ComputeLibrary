@@ -46,10 +46,10 @@ public:
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
-        cmd_parser.parse(argc, argv);
+        //cmd_parser.parse(argc, argv);
 
         // Consume common parameters
-        common_params = consume_common_graph_parameters(common_opts);
+        //common_params = consume_common_graph_parameters(common_opts);
 
         // Return when help menu is requested
         if(common_params.help)
@@ -168,13 +168,13 @@ public:
     }
     void do_run() override
     {
-        auto tbegin =std::chrono::high_resolution_clock::now();
-	for (int i=0; i < 100; i++){
+        auto tbegin = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 100; i++){
         	graph.run();
 	}
         auto tend = std::chrono::high_resolution_clock::now();
-        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend-tbegin).count();
-	double cost = gross/100;
+        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
+	double cost = gross / 100;
         std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
@@ -184,6 +184,29 @@ private:
     CommonGraphParams  common_params;
     Stream             graph;
 };
+
+std::mutex counter;
+int val = 0;
+int maxval = 10;
+
+void run_graph(int argc, std::string ops[]) {
+    while (true) {
+        counter.lock();
+        int idx = val++;
+        counter.unlock();
+        if (val < maxval) {
+            std::cout << idx << ":" << ops[1] << "\n";
+            char* argv[argc];
+            for (int i = 0 ; i < argc; i++) { 
+                argv[i] = new char[ops[i].length() + 1];
+                strcpy(argv[i], ops[i].c_str()); 
+            }
+            arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
+        } else {
+            break;
+        }
+    }
+}
 
 /** Main program for AlexNet
  *
@@ -196,5 +219,35 @@ private:
  */
 int main(int argc, char **argv)
 {
-    return arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
+    CommandLineParser parser;
+    ToggleOption* cpuOption  = parser.add_option<ToggleOption>("cpu");
+    ToggleOption* gpuOption  = parser.add_option<ToggleOption>("gpu");
+    ToggleOption* helpOption = parser.add_option<ToggleOption>("help");
+    cpuOption->set_help("CPU");
+    gpuOption->set_help("GPU");
+    helpOption->set_help("Help");
+    parser.parse(argc, argv);
+    ARM_COMPUTE_EXIT_ON_MSG(!helpOption->is_set() && !cpuOption->is_set() && !gpuOption->is_set(), "No target given, add --cpu or --gpu");
+    bool help = helpOption->is_set() ? helpOption->value() : false;
+    if (help) {
+        parser.print_help(argv[0]);
+    }
+    bool cpu = cpuOption->is_set() ? cpuOption->value() : false;
+    bool gpu = gpuOption->is_set() ? gpuOption->value() : false;
+    std::cout << "CPU:" << cpu << ", GPU:" << gpu << "\n";
+    std::thread cpuThread, gpuThread;
+    if (cpu) {
+        std::string ops[] = {argv[0], "--target=NEON", "--threads=4"};
+        cpuThread = std::thread(run_graph, 3, ops);
+    }
+    if (gpu) {
+        std::string ops[] = {argv[0], "--target=CL"};
+        gpuThread = std::thread(run_graph, 2, ops);
+    }
+    if (cpu) {
+        cpuThread.join();
+    }
+    if (gpu) {
+        gpuThread.join();
+    }
 }
