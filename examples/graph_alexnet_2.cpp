@@ -26,6 +26,7 @@
 #include "utils/CommonGraphOptions.h"
 #include "utils/GraphUtils.h"
 #include "utils/Utils.h"
+#include <atomic>
 
 using namespace arm_compute::utils;
 using namespace arm_compute::graph::frontend;
@@ -50,7 +51,7 @@ public:
 
         // Consume common parameters
         //common_params = consume_common_graph_parameters(common_opts);
-
+        
         // Return when help menu is requested
         if(common_params.help)
         {
@@ -161,20 +162,18 @@ public:
         config.num_threads = common_params.threads;
         config.use_tuner   = common_params.enable_tuner;
         config.tuner_file  = common_params.tuner_file;
-
         graph.finalize(common_params.target, config);
-
         return true;
     }
     void do_run() override
     {
         auto tbegin = std::chrono::high_resolution_clock::now();
-	for (int i = 0; i < 100; i++){
-        	graph.run();
+	for (int i = 0; i < 10; i++){
+            graph.run();
 	}
         auto tend = std::chrono::high_resolution_clock::now();
         double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
-	double cost = gross / 100;
+	double cost = gross / 10;
         std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
@@ -185,17 +184,19 @@ private:
     Stream             graph;
 };
 
-std::mutex counter;
-int val = 0;
-int maxval = 10;
+std::mutex mutex;
+std::atomic<int> val(0);
+const int maxval = 10;
 
 void run_graph(int argc, std::string ops[]) {
     while (true) {
-        counter.lock();
-        int idx = val++;
-        counter.unlock();
+        int idx = maxval;
+        idx = val++;            
         if (val < maxval) {
-            std::cout << idx << ":" << ops[1] << "\n";
+            {
+                std::lock_guard<std::mutex> guard(mutex);
+                std::cout << "Image " << idx << ": Thread " << std::this_thread::get_id() << ": Target " << ops[1] << "\n";
+            }
             char* argv[argc];
             for (int i = 0 ; i < argc; i++) { 
                 argv[i] = new char[ops[i].length() + 1];
@@ -236,6 +237,7 @@ int main(int argc, char **argv)
     bool gpu = gpuOption->is_set() ? gpuOption->value() : false;
     std::cout << "CPU:" << cpu << ", GPU:" << gpu << "\n";
     std::thread cpuThread, gpuThread;
+    auto tbegin = std::chrono::high_resolution_clock::now();
     if (cpu) {
         std::string ops[] = {argv[0], "--target=NEON", "--threads=4"};
         cpuThread = std::thread(run_graph, 3, ops);
@@ -250,4 +252,8 @@ int main(int argc, char **argv)
     if (gpu) {
         gpuThread.join();
     }
+    auto tend = std::chrono::high_resolution_clock::now();
+    double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
+    double cost = gross / maxval;
+    std::cout << "Total Cost:" << "\t" << cost << "\n" << std::endl;
 }

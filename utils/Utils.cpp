@@ -77,12 +77,11 @@ int run_example(int argc, char **argv, std::unique_ptr<Example> example)
         bool status = example->do_setup(argc, argv);
         if(!status)
         {
-            return 1;
+           return 1;
         }
         example->do_run();
         example->do_teardown();
 
-        std::cout << "\nTest passed\n";
         return 0;
     }
 #ifdef ARM_COMPUTE_CL
