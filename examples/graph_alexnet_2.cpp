@@ -184,7 +184,6 @@ private:
     Stream             graph;
 };
 
-std::mutex run_mutex;
 std::atomic<int> val(0);
 const int maxval = 10;
 
@@ -199,7 +198,6 @@ void run_graph(int argc, std::string ops[]) {
                 argv[i] = new char[ops[i].length() + 1];
                 strcpy(argv[i], ops[i].c_str()); 
             }
-            std::lock_guard<std::mutex> guard(run_mutex);
             arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
         } else {
             break;
