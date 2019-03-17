@@ -40,10 +40,15 @@ using namespace arm_compute::graph_utils;
 class GraphAlexnetExample : public Example
 {
 public:
+    
+
     GraphAlexnetExample()
         : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "AlexNet")
     {
     }
+    
+    static std::mutex finalize_mutex;
+    
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
@@ -184,6 +189,8 @@ private:
     Stream             graph;
 };
 
+std::mutex GraphAlexnetExample::finalize_mutex;
+std::mutex io_mutex;
 std::atomic<int> val(0);
 const int maxval = 10;
 
@@ -192,7 +199,10 @@ void run_graph(int argc, std::string ops[]) {
         int idx = maxval;
         idx = val++;            
         if (val < maxval) {
-            std::cout << "Image " << idx << ": Thread " << std::this_thread::get_id() << ": Target " << ops[1] << std::endl;
+            {
+                std::lock_guard<std::mutex> guard(io_mutex);
+                std::cout << "Image " << idx << ": Thread " << std::this_thread::get_id() << ": Target " << ops[1] << std::endl;
+            }
             char* argv[argc];
             for (int i = 0 ; i < argc; i++) { 
                 argv[i] = new char[ops[i].length() + 1];
