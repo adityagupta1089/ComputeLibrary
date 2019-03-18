@@ -27,6 +27,8 @@
 #include "utils/GraphUtils.h"
 #include "utils/Utils.h"
 #include <atomic>
+#include <unistd.h>
+#include <sys/wait.h>
 
 using namespace arm_compute::utils;
 using namespace arm_compute::graph::frontend;
@@ -172,14 +174,9 @@ public:
     }
     void do_run() override
     {
-        auto tbegin = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 10; i++){
             graph.run();
 	}
-        auto tend = std::chrono::high_resolution_clock::now();
-        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
-	double cost = gross / 10;
-        std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
 private:
@@ -194,21 +191,28 @@ std::mutex io_mutex;
 std::atomic<int> val(0);
 const int maxval = 10;
 
-void run_graph(int argc, std::string ops[]) {
+void run_graph(int argc, std::string ops[], std::string thread_name) {
     while (true) {
         int idx = maxval;
         idx = val++;            
         if (val < maxval) {
             {
                 std::lock_guard<std::mutex> guard(io_mutex);
-                std::cout << "Image " << idx << ": Thread " << std::this_thread::get_id() << ": Target " << ops[1] << std::endl;
+                std::cout << "Image " << idx << " : " << thread_name << std::endl;
             }
             char* argv[argc];
             for (int i = 0 ; i < argc; i++) { 
                 argv[i] = new char[ops[i].length() + 1];
                 strcpy(argv[i], ops[i].c_str()); 
             }
-            arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
+            if (fork() == 0) {
+                arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
+                exit(0);
+            } else {
+                int status;
+                while (wait(&status) > 0)
+                    ;
+            }
         } else {
             break;
         }
@@ -246,11 +250,11 @@ int main(int argc, char **argv)
     auto tbegin = std::chrono::high_resolution_clock::now();
     if (cpu) {
         std::string ops[] = {argv[0], "--target=NEON", "--threads=4"};
-        cpuThread = std::thread(run_graph, 3, ops);
+        cpuThread = std::thread(run_graph, 3, ops, "CPU Thread");
     }
     if (gpu) {
         std::string ops[] = {argv[0], "--target=CL"};
-        gpuThread = std::thread(run_graph, 2, ops);
+        gpuThread = std::thread(run_graph, 2, ops, "GPU Thread");
     }
     if (cpu) {
         cpuThread.join();
