@@ -168,14 +168,9 @@ public:
     }
     void do_run() override
     {
-        auto tbegin =std::chrono::high_resolution_clock::now();
-	for (int i=0; i < 100; i++){
+	for (int i=0; i < 10; i++){
         	graph.run();
 	}
-        auto tend = std::chrono::high_resolution_clock::now();
-        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend-tbegin).count();
-	double cost = gross/100;
-        std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
 private:

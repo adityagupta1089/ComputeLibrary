@@ -28,11 +28,15 @@
 #include "utils/Utils.h"
 #include <atomic>
 #include <unistd.h>
+#include <sys/mman.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 
 using namespace arm_compute::utils;
 using namespace arm_compute::graph::frontend;
 using namespace arm_compute::graph_utils;
+
+static unsigned int inferences = 0;
 
 /** Example demonstrating how to implement AlexNet's network using the Compute Library's graph API
  *
@@ -174,7 +178,7 @@ public:
     }
     void do_run() override
     {
-	for (int i = 0; i < 10; i++){
+	for (unsigned int i = 0; i < ::inferences; i++){
             graph.run();
 	}
     }
@@ -186,38 +190,14 @@ private:
     Stream             graph;
 };
 
-std::mutex GraphAlexnetExample::finalize_mutex;
-std::mutex io_mutex;
-std::atomic<int> val(0);
-const int maxval = 10;
+struct _config {
+    bool                        execute;
+    std::string                 name;
+    int                         argc;
+    std::vector<std::string>    argv;
+};
 
-void run_graph(int argc, std::string ops[], std::string thread_name) {
-    while (true) {
-        int idx = maxval;
-        idx = val++;            
-        if (val < maxval) {
-            {
-                std::lock_guard<std::mutex> guard(io_mutex);
-                std::cout << "Image " << idx << " : " << thread_name << std::endl;
-            }
-            char* argv[argc];
-            for (int i = 0 ; i < argc; i++) { 
-                argv[i] = new char[ops[i].length() + 1];
-                strcpy(argv[i], ops[i].c_str()); 
-            }
-            if (fork() == 0) {
-                arm_compute::utils::run_example<GraphAlexnetExample>(argc, argv);
-                exit(0);
-            } else {
-                int status;
-                while (wait(&status) > 0)
-                    ;
-            }
-        } else {
-            break;
-        }
-    }
-}
+static std::atomic_uint* val;
 
 /** Main program for AlexNet
  *
@@ -230,40 +210,87 @@ void run_graph(int argc, std::string ops[], std::string thread_name) {
  */
 int main(int argc, char **argv)
 {
+    // Command Line Parsing
     CommandLineParser parser;
-    ToggleOption* cpuOption  = parser.add_option<ToggleOption>("cpu");
-    ToggleOption* gpuOption  = parser.add_option<ToggleOption>("gpu");
-    ToggleOption* helpOption = parser.add_option<ToggleOption>("help");
+
+    ToggleOption*      cpuOption    = parser.add_option<ToggleOption>("cpu");
+    ToggleOption*      gpuOption    = parser.add_option<ToggleOption>("gpu");
+    ToggleOption*      helpOption   = parser.add_option<ToggleOption>("help");
+    SimpleOption<unsigned int>* imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
+    SimpleOption<unsigned int>* inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1); 
+
     cpuOption->set_help("CPU");
     gpuOption->set_help("GPU");
     helpOption->set_help("Help");
+    imagesOption->set_help("Images");
+    inferencesOption->set_help("Inferences");
+    
     parser.parse(argc, argv);
+    
     ARM_COMPUTE_EXIT_ON_MSG(!helpOption->is_set() && !cpuOption->is_set() && !gpuOption->is_set(), "No target given, add --cpu or --gpu");
+    
     bool help = helpOption->is_set() ? helpOption->value() : false;
     if (help) {
         parser.print_help(argv[0]);
     }
+    
     bool cpu = cpuOption->is_set() ? cpuOption->value() : false;
     bool gpu = gpuOption->is_set() ? gpuOption->value() : false;
-    std::cout << "CPU:" << cpu << ", GPU:" << gpu << "\n";
-    std::thread cpuThread, gpuThread;
+
+    unsigned int images     = imagesOption->value();
+                 inferences = inferencesOption->value();
+
+    std::cout << "CPU:" << cpu << ", GPU:" << gpu << ", Images:" << images <<"\n";
+    
+    // Create configs for child processes
+    _config configs[] = {
+        {cpu, "CPU", 3, {argv[0], "--target=NEON", "--threads=4"}},
+        {gpu, "GPU", 2, {argv[0], "--target=CL"}}
+    };
+    
+    // Start Timer
     auto tbegin = std::chrono::high_resolution_clock::now();
-    if (cpu) {
-        std::string ops[] = {argv[0], "--target=NEON", "--threads=4"};
-        cpuThread = std::thread(run_graph, 3, ops, "CPU Thread");
+    
+    // Shared counter
+    val = static_cast<std::atomic_uint*>(mmap(NULL, sizeof *val, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    *val = 0;
+
+    // Create Child Processes
+    for (auto config: configs) {
+        if (config.execute) {
+            int pid = fork();
+            if (pid == 0) {
+                std::cout << "Started " << config.name << "[" << getpid() << "]" << std::endl;
+                char* argv[config.argc];
+                for(int i = 0; i < config.argc; i++) {
+                    argv[i] = new char[config.argv[i].length() + 1];
+                    strcpy(argv[i], config.argv[i].c_str());
+                }
+                while (true) {
+                    if (*val >= images) break;
+                    //std::cout << config.name << " : " << (*val)++ << std::endl;
+                    (*val)++;
+                    arm_compute::utils::run_example<GraphAlexnetExample>(config.argc, argv); 
+                }
+                exit(1);
+            }
+        }
     }
-    if (gpu) {
-        std::string ops[] = {argv[0], "--target=CL"};
-        gpuThread = std::thread(run_graph, 2, ops, "GPU Thread");
+
+    // Wait for children to complete
+    for (auto config: configs) {
+        if (config.execute) {
+            int status;
+            pid_t pid = wait(&status);
+            std::cout << "Finished [" << pid << "]" << std::endl;
+        }
     }
-    if (cpu) {
-        cpuThread.join();
-    }
-    if (gpu) {
-        gpuThread.join();
-    }
+
+    // Calculate Time taken
     auto tend = std::chrono::high_resolution_clock::now();
     double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
-    double cost = gross / maxval;
-    std::cout << "Total Cost:" << "\t" << cost << "\n" << std::endl;
+    double cost = gross / images;
+    std::cout << cost << " per image" << std::endl;
+    cost /= inferences;
+    std::cout << cost << " per inference" << std::endl; 
 }

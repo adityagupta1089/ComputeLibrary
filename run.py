@@ -30,16 +30,16 @@ def run_graph(pargs):
         else:
             return
 
-cpu_args = ["./build/examples/graph_alexnet", "--target=NEON", "--threads=4"]
-gpu_args = ["./build/examples/graph_alexnet", "--target=CL"] 
+cpu_args = ["./build/release/examples/graph_alexnet", "--target=NEON", "--threads=4"]
+gpu_args = ["./build/release/examples/graph_alexnet", "--target=CL"] 
 args = []
-N = 1
+N = 10
 images = [""] * N
 
 if __name__ == "__main__":
     global env
     env = dict(os.environ)
-    env['LD_LIBRARY_PATH'] = './build/'
+    env['LD_LIBRARY_PATH'] = './build/release'
     ap = argparse.ArgumentParser()
     ap.add_argument("--cpu", help="CPU", dest='cpu', action='store_true')
     ap.add_argument("--gpu", help="GPU", dest='gpu', action='store_true')
