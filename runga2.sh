@@ -1,4 +1,5 @@
 #!/bin/bash
+export LD_LIBRARY_PATH=./build/release/
 ns=(10 10 100)
 is=(10 100 1)
 length=${#ns[@]}

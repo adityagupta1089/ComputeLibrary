@@ -266,12 +266,15 @@ int main(int argc, char **argv)
                     argv[i] = new char[config.argv[i].length() + 1];
                     strcpy(argv[i], config.argv[i].c_str());
                 }
+                int processed = 0;
                 while (true) {
                     if (*val >= images) break;
                     //std::cout << config.name << " : " << (*val)++ << std::endl;
+                    processed++;
                     (*val)++;
                     arm_compute::utils::run_example<GraphAlexnetExample>(config.argc, argv); 
                 }
+                std::cout << "Completed " << config.name << ": " << processed << " inferences" << std::endl;
                 exit(1);
             }
         }
