@@ -133,15 +133,7 @@ private:
     CommandLineParser  cmd_parser;
     CommonGraphOptions common_opts;
     CommonGraphParams  common_params;
-    Stream             graph;
-};
-
-struct _config {
-    bool                        execute;
-    std::string                 name;
-    int                         argc;
-    std::vector<std::string>    argv;
-	
+    Stream             graph;	
 
     void create_graph_float(TensorDescriptor &input_descriptor, int model_id)
     {
@@ -350,6 +342,13 @@ struct _config {
 
         return BranchLayer(std::move(sg));
 }
+};
+
+struct _config {
+    bool                        execute;
+    std::string                 name;
+    int                         argc;
+    std::vector<std::string>    argv;
 };
 
 static std::atomic_uint* val;
