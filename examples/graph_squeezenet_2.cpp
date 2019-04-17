@@ -43,17 +43,15 @@ static unsigned int inferences = 0;
  * @param[in] argc Number of arguments
  * @param[in] argv Arguments
  */
-class GraphAlexnetExample : public Example
+class GraphSqueezenetExample : public Example
 {
 public:
     
 
-    GraphAlexnetExample()
-        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "AlexNet")
+    GraphSqueezenetExample()
+        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "SqueezeNetV1")
     {
     }
-    
-    static std::mutex finalize_mutex;
     
     bool do_setup(int argc, char **argv) override
     {
@@ -70,12 +68,6 @@ public:
             return false;
         }
 
-        // Set default layout if needed
-        if(!common_opts.data_layout->is_set() && common_params.target == Target::NEON)
-        {
-            common_params.data_layout = DataLayout::NCHW;
-        }
-
         // Checks
         ARM_COMPUTE_EXIT_ON_MSG(arm_compute::is_data_type_quantized_asymmetric(common_params.data_type), "QASYMM8 not supported for this graph");
 
@@ -90,7 +82,7 @@ public:
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
-        const TensorShape tensor_shape     = permute_shape(TensorShape(227U, 227U, 3U, 1U), DataLayout::NCHW, common_params.data_layout);
+        const TensorShape tensor_shape     = permute_shape(TensorShape(224U, 224U, 3U, 1U), DataLayout::NCHW, common_params.data_layout);
         TensorDescriptor  input_descriptor = TensorDescriptor(tensor_shape, common_params.data_type).set_layout(common_params.data_layout);
 
         // Set weights trained layout
@@ -99,73 +91,80 @@ public:
         graph << common_params.target
               << common_params.fast_math_hint
               << InputLayer(input_descriptor, get_input_accessor(common_params, std::move(preprocessor)))
-              // Layer 1
               << ConvolutionLayer(
-                  11U, 11U, 96U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv1_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv1_b.npy"),
-                  PadStrideInfo(4, 4, 0, 0))
-              .set_name("conv1")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu1")
-              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f)).set_name("norm1")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool1")
-              // Layer 2
+                  7U, 7U, 96U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv1_b.npy"),
+                  PadStrideInfo(2, 2, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
               << ConvolutionLayer(
-                  5U, 5U, 256U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv2_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv2_b.npy"),
-                  PadStrideInfo(1, 1, 2, 2), 2)
-              .set_name("conv2")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu2")
-              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f)).set_name("norm2")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool2")
-              // Layer 3
+                  1U, 1U, 16U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire2_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire2_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire2", weights_layout, 64U, 64U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 16U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire3", weights_layout, 64U, 64U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 32U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire4", weights_layout, 128U, 128U);
+        graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
               << ConvolutionLayer(
-                  3U, 3U, 384U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv3_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv3_b.npy"),
-                  PadStrideInfo(1, 1, 1, 1))
-              .set_name("conv3")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu3")
-              // Layer 4
+                  1U, 1U, 32U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire5_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire5_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire5", weights_layout, 128U, 128U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 48U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire6", weights_layout, 192U, 192U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 48U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire7", weights_layout, 192U, 192U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 64U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire8", weights_layout, 256U, 256U);
+        graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
               << ConvolutionLayer(
-                  3U, 3U, 384U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv4_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv4_b.npy"),
-                  PadStrideInfo(1, 1, 1, 1), 2)
-              .set_name("conv4")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu4")
-              // Layer 5
-              << ConvolutionLayer(
-                  3U, 3U, 256U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv5_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv5_b.npy"),
-                  PadStrideInfo(1, 1, 1, 1), 2)
-              .set_name("conv5")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu5")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool5")
-              // Layer 6
-              << FullyConnectedLayer(
-                  4096U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc6_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc6_b.npy"))
-              .set_name("fc6")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu6")
-              // Layer 7
-              << FullyConnectedLayer(
-                  4096U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc7_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc7_b.npy"))
-              .set_name("fc7")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu7")
-              // Layer 8
-              << FullyConnectedLayer(
-                  1000U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc8_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc8_b.npy"))
-              .set_name("fc8")
-              // Softmax
-              << SoftmaxLayer().set_name("prob")
+                  1U, 1U, 64U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire9_squeeze1x1_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire9_squeeze1x1_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+        graph << get_expand_fire_node(data_path, "fire9", weights_layout, 256U, 256U);
+        graph << ConvolutionLayer(
+                  1U, 1U, 1000U,
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+              << PoolingLayer(PoolingLayerInfo(PoolingType::AVG))
+              << FlattenLayer()
+              << SoftmaxLayer()
               << OutputLayer(get_output_accessor(common_params, 5));
 
         // Finalize graph
@@ -173,7 +172,9 @@ public:
         config.num_threads = common_params.threads;
         config.use_tuner   = common_params.enable_tuner;
         config.tuner_file  = common_params.tuner_file;
+
         graph.finalize(common_params.target, config);
+
         return true;
     }
     void do_run() override
@@ -195,11 +196,34 @@ struct _config {
     std::string                 name;
     int                         argc;
     std::vector<std::string>    argv;
+	
+    BranchLayer get_expand_fire_node(const std::string &data_path, std::string &&param_path, DataLayout weights_layout,
+                                     unsigned int expand1_filt, unsigned int expand3_filt)
+    {
+        std::string total_path = "/cnn_data/squeezenet_v1.0_model/" + param_path + "_";
+        SubStream   i_a(graph);
+        i_a << ConvolutionLayer(
+                1U, 1U, expand1_filt,
+                get_weights_accessor(data_path, total_path + "expand1x1_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "expand1x1_b.npy"),
+                PadStrideInfo(1, 1, 0, 0))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+
+        SubStream i_b(graph);
+        i_b << ConvolutionLayer(
+                3U, 3U, expand3_filt,
+                get_weights_accessor(data_path, total_path + "expand3x3_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "expand3x3_b.npy"),
+                PadStrideInfo(1, 1, 1, 1))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+
+        return BranchLayer(BranchMergeMethod::DEPTH_CONCATENATE, std::move(i_a), std::move(i_b));
+    }
 };
 
 static std::atomic_uint* val;
 
-/** Main program for AlexNet
+/** Main program for Squeezenet v1.0
  *
  * @note To list all the possible arguments execute the binary appended with the --help option
  *
@@ -272,7 +296,7 @@ int main(int argc, char **argv)
                     //std::cout << config.name << " : " << (*val)++ << std::endl;
                     processed++;
                     (*val)++;
-                    arm_compute::utils::run_example<GraphAlexnetExample>(config.argc, argv); 
+                    arm_compute::utils::run_example<GraphSqueezenetExample>(config.argc, argv); 
                 }
                 std::cout << "Completed " << config.name << ": " << processed << " inferences" << std::endl;
                 exit(1);
