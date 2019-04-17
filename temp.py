@@ -47,19 +47,20 @@ if __name__ == "__main__":
     x3-=x3[0]
     y3-=y3[0]
     func = lambda t,q0,c,v,r:q0+c*v*(1-np.exp(- t/(r*c)))
-    popt, _ = curve_fit(func,x3,y3)
+    popt, _ = curve_fit(func,x3,y3, bounds=(0,10000))
     q0=popt[0]
     c=popt[1]
     v=popt[2]
     r=popt[3] 
-    print("Q0=",q0,",V=",v,",C=",c,",R=",r)
     plt.plot(x, y)
-    plt.plot(x3+x2[0], y2[0]+func(x3, *popt), 'r-')
+    plt.plot(x3+x2[0], y2[0]+func(x3, *popt), 'r-', label='fit: Q0=%5.3f, C=%5.3f, V=%5.3f, R=%5.3f' % tuple(popt))
     plt.axvline(st, linestyle='--', color='y')
     plt.axvline(et, linestyle='--', color='y')
     plt.axhline(65000, linestyle='--', color='r')
     plt.xlabel('Time')
     plt.ylabel('Temperature')
     plt.title('Execution')
+    plt.legend(loc='best')
+    plt.show()
     plt.savefig('temp_plots/graph_alexnet.png')
     
