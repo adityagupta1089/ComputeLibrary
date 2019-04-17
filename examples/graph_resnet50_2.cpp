@@ -130,15 +130,7 @@ private:
     CommonGraphOptions common_opts;
     CommonGraphParams  common_params;
     Stream             graph;
-};
-
-struct _config {
-    bool                        execute;
-    std::string                 name;
-    int                         argc;
-    std::vector<std::string>    argv;
-	
-
+    
     void add_residual_block(const std::string &data_path, DataLayout weights_layout,
                             unsigned int base_depth, unsigned int stage, unsigned int num_units, unsigned int stride_conv_unit1)
     {
@@ -202,7 +194,14 @@ struct _config {
             graph << BranchLayer(BranchMergeMethod::ADD, std::move(left), std::move(right)).set_name(unit_name + "add");
             graph << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name(unit_name + "Relu");
         }
-}
+    }
+};
+
+struct _config {
+    bool                        execute;
+    std::string                 name;
+    int                         argc;
+    std::vector<std::string>    argv;
 };
 
 static std::atomic_uint* val;
