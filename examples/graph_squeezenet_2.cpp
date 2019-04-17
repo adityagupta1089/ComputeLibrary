@@ -188,15 +188,8 @@ private:
     CommandLineParser  cmd_parser;
     CommonGraphOptions common_opts;
     CommonGraphParams  common_params;
-    Stream             graph;
-};
-
-struct _config {
-    bool                        execute;
-    std::string                 name;
-    int                         argc;
-    std::vector<std::string>    argv;
-	
+    Stream             graph;	
+    
     BranchLayer get_expand_fire_node(const std::string &data_path, std::string &&param_path, DataLayout weights_layout,
                                      unsigned int expand1_filt, unsigned int expand3_filt)
     {
@@ -219,6 +212,13 @@ struct _config {
 
         return BranchLayer(BranchMergeMethod::DEPTH_CONCATENATE, std::move(i_a), std::move(i_b));
     }
+};
+
+struct _config {
+    bool                        execute;
+    std::string                 name;
+    int                         argc;
+    std::vector<std::string>    argv;
 };
 
 static std::atomic_uint* val;
