@@ -48,8 +48,8 @@ class GraphMobilenetExample : public Example
 public:
     
 
-    GraphMobileNetExample()
-        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "MobileNet")
+    GraphMobilenetExample()
+        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "MobileNetV1")
     {
         // Add model id option
         model_id_opt = cmd_parser.add_option<SimpleOption<int>>("model-id", 0);
