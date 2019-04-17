@@ -38,7 +38,7 @@ using namespace arm_compute::graph_utils;
 
 static unsigned int inferences = 0;
 
-/** Example demonstrating how to implement AlexNet's network using the Compute Library's graph API
+/** Example demonstrating how to implement Googlenet's network using the Compute Library's graph API
  *
  * @param[in] argc Number of arguments
  * @param[in] argv Arguments
@@ -48,20 +48,18 @@ class GraphGooglenetExample  : public Example
 public:
     
 
-    GraphAlexnetExample()
+    GraphGooglenetExample()
         : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "GoogleNet")
     {
     }
     
-    static std::mutex finalize_mutex;
-    
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
-        //cmd_parser.parse(argc, argv);
+        cmd_parser.parse(argc, argv);
 
         // Consume common parameters
-        //common_params = consume_common_graph_parameters(common_opts);
+        common_params = consume_common_graph_parameters(common_opts);
         
         // Return when help menu is requested
         if(common_params.help)
@@ -220,7 +218,7 @@ struct _config {
 
 static std::atomic_uint* val;
 
-/** Main program for AlexNet
+/** Main program for Googlenet
  *
  * @note To list all the possible arguments execute the binary appended with the --help option
  *

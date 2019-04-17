@@ -53,15 +53,13 @@ public:
     {
     }
     
-    static std::mutex finalize_mutex;
-    
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
-        //cmd_parser.parse(argc, argv);
+        cmd_parser.parse(argc, argv);
 
         // Consume common parameters
-        //common_params = consume_common_graph_parameters(common_opts);
+        common_params = consume_common_graph_parameters(common_opts);
         
         // Return when help menu is requested
         if(common_params.help)
