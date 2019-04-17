@@ -61,6 +61,5 @@ if __name__ == "__main__":
     plt.ylabel('Temperature')
     plt.title('Execution')
     plt.legend(loc='best')
-    plt.show()
     plt.savefig('temp_plots/graph_alexnet.png')
     
