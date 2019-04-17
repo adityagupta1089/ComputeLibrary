@@ -132,6 +132,7 @@ public:
 private:
     CommandLineParser  cmd_parser;
     CommonGraphOptions common_opts;
+    SimpleOption<int> *model_id_opt{ nullptr };
     CommonGraphParams  common_params;
     Stream             graph;	
 
