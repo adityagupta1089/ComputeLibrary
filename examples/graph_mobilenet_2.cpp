@@ -26,17 +26,11 @@
 #include "utils/CommonGraphOptions.h"
 #include "utils/GraphUtils.h"
 #include "utils/Utils.h"
-#include <atomic>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
+using namespace arm_compute;
 using namespace arm_compute::utils;
 using namespace arm_compute::graph::frontend;
 using namespace arm_compute::graph_utils;
-
-static unsigned int inferences = 0;
 
 /** Example demonstrating how to implement MobileNet's network using the Compute Library's graph API
  *
@@ -46,8 +40,6 @@ static unsigned int inferences = 0;
 class GraphMobilenetExample : public Example
 {
 public:
-    
-
     GraphMobilenetExample()
         : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "MobileNetV1")
     {
@@ -60,7 +52,6 @@ public:
     GraphMobilenetExample(GraphMobilenetExample &&)                 = default; // NOLINT
     GraphMobilenetExample &operator=(GraphMobilenetExample &&) = default;      // NOLINT
     ~GraphMobilenetExample() override                          = default;
-
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
@@ -68,7 +59,7 @@ public:
 
         // Consume common parameters
         common_params = consume_common_graph_parameters(common_opts);
-        
+
         // Return when help menu is requested
         if(common_params.help)
         {
@@ -80,7 +71,7 @@ public:
         ARM_COMPUTE_EXIT_ON_MSG(common_params.data_type == DataType::F16 && common_params.target == Target::NEON, "F16 NEON not supported for this graph");
 
         // Print parameter values
-        //std::cout << common_params << std::endl;
+        std::cout << common_params << std::endl;
 
         // Get model parameters
         int model_id = model_id_opt->value();
@@ -124,9 +115,16 @@ public:
     }
     void do_run() override
     {
-	for (unsigned int i = 0; i < ::inferences; i++){
-            graph.run();
+        // Run graph
+        //graph.run();
+        auto tbegin =std::chrono::high_resolution_clock::now();
+	for (int i=0; i <100; i++){
+        graph.run();
 	}
+        auto tend = std::chrono::high_resolution_clock::now();
+        double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend-tbegin).count();
+	double cost = gross/100;
+        std::cout << "Cost:" << "\t" << cost << "\n" << std::endl;
     }
 
 private:
@@ -134,7 +132,7 @@ private:
     CommonGraphOptions common_opts;
     SimpleOption<int> *model_id_opt{ nullptr };
     CommonGraphParams  common_params;
-    Stream             graph;	
+    Stream             graph;
 
     void create_graph_float(TensorDescriptor &input_descriptor, int model_id)
     {
@@ -342,113 +340,17 @@ private:
            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::LU_BOUNDED_RELU, 6.f));
 
         return BranchLayer(std::move(sg));
-}
+    }
 };
 
-struct _config {
-    bool                        execute;
-    std::string                 name;
-    int                         argc;
-    std::vector<std::string>    argv;
-};
-
-static std::atomic_uint* val;
-
-/** Main program for MobileNet
+/** Main program for MobileNetV1
  *
  * @note To list all the possible arguments execute the binary appended with the --help option
  *
  * @param[in] argc Number of arguments
  * @param[in] argv Arguments
- *
- * @return Return code
  */
 int main(int argc, char **argv)
 {
-    // Command Line Parsing
-    CommandLineParser parser;
-
-    ToggleOption*      cpuOption    = parser.add_option<ToggleOption>("cpu");
-    ToggleOption*      gpuOption    = parser.add_option<ToggleOption>("gpu");
-    ToggleOption*      helpOption   = parser.add_option<ToggleOption>("help");
-    SimpleOption<unsigned int>* imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
-    SimpleOption<unsigned int>* inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1); 
-
-    cpuOption->set_help("CPU");
-    gpuOption->set_help("GPU");
-    helpOption->set_help("Help");
-    imagesOption->set_help("Images");
-    inferencesOption->set_help("Inferences");
-    
-    parser.parse(argc, argv);
-    
-    ARM_COMPUTE_EXIT_ON_MSG(!helpOption->is_set() && !cpuOption->is_set() && !gpuOption->is_set(), "No target given, add --cpu or --gpu");
-    
-    bool help = helpOption->is_set() ? helpOption->value() : false;
-    if (help) {
-        parser.print_help(argv[0]);
-    }
-    
-    bool cpu = cpuOption->is_set() ? cpuOption->value() : false;
-    bool gpu = gpuOption->is_set() ? gpuOption->value() : false;
-
-    unsigned int images     = imagesOption->value();
-                 inferences = inferencesOption->value();
-
-    std::cout << "CPU:" << cpu << ", GPU:" << gpu << ", Images:" << images <<"\n";
-    
-    // Create configs for child processes
-    _config configs[] = {
-        {cpu, "CPU", 3, {argv[0], "--target=NEON", "--threads=4"}},
-        {gpu, "GPU", 2, {argv[0], "--target=CL"}}
-    };
-    
-    // Start Timer
-    auto tbegin = std::chrono::high_resolution_clock::now();
-    
-    // Shared counter
-    val = static_cast<std::atomic_uint*>(mmap(NULL, sizeof *val, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    *val = 0;
-
-    // Create Child Processes
-    for (auto config: configs) {
-        if (config.execute) {
-            int pid = fork();
-            if (pid == 0) {
-                std::cout << "Started " << config.name << "[" << getpid() << "]" << std::endl;
-                char* argv[config.argc];
-                for(int i = 0; i < config.argc; i++) {
-                    argv[i] = new char[config.argv[i].length() + 1];
-                    strcpy(argv[i], config.argv[i].c_str());
-                }
-                int processed = 0;
-                while (true) {
-                    if (*val >= images) break;
-                    //std::cout << config.name << " : " << (*val)++ << std::endl;
-                    processed++;
-                    (*val)++;
-                    arm_compute::utils::run_example<GraphMobilenetExample>(config.argc, argv); 
-                }
-                std::cout << "Completed " << config.name << ": " << processed << " inferences" << std::endl;
-                exit(1);
-            }
-        }
-    }
-
-    // Wait for children to complete
-    for (auto config: configs) {
-        if (config.execute) {
-            int status;
-            pid_t pid = wait(&status);
-            std::cout << "Finished [" << pid << "]" << std::endl;
-        }
-    }
-
-    // Calculate Time taken
-    auto tend = std::chrono::high_resolution_clock::now();
-    double gross = std::chrono::duration_cast<std::chrono::duration<double>>(tend - tbegin).count();
-    double cost = gross / images;
-    std::cout << cost << " per image" << std::endl;
-    cost /= inferences;
-    std::cout << cost << " per inference" << std::endl; 
+    return arm_compute::utils::run_example<GraphMobilenetExample>(argc, argv);
 }
