@@ -43,13 +43,13 @@ static unsigned int inferences = 0;
  * @param[in] argc Number of arguments
  * @param[in] argv Arguments
  */
-class GraphAlexnetExample : public Example
+class GraphGooglenetExample  : public Example
 {
 public:
     
 
     GraphAlexnetExample()
-        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "AlexNet")
+        : cmd_parser(), common_opts(cmd_parser), common_params(), graph(0, "GoogleNet")
     {
     }
     
@@ -68,12 +68,6 @@ public:
         {
             cmd_parser.print_help(argv[0]);
             return false;
-        }
-
-        // Set default layout if needed
-        if(!common_opts.data_layout->is_set() && common_params.target == Target::NEON)
-        {
-            common_params.data_layout = DataLayout::NCHW;
         }
 
         // Checks
@@ -99,74 +93,46 @@ public:
         graph << common_params.target
               << common_params.fast_math_hint
               << InputLayer(input_descriptor, get_input_accessor(common_params, std::move(preprocessor)))
-              // Layer 1
               << ConvolutionLayer(
-                  11U, 11U, 96U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv1_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv1_b.npy"),
-                  PadStrideInfo(4, 4, 0, 0))
-              .set_name("conv1")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu1")
-              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f)).set_name("norm1")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool1")
-              // Layer 2
+                  7U, 7U, 64U,
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv1/conv1_7x7_s2_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv1/conv1_7x7_s2_b.npy"),
+                  PadStrideInfo(2, 2, 3, 3))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
+              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f))
               << ConvolutionLayer(
-                  5U, 5U, 256U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv2_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv2_b.npy"),
-                  PadStrideInfo(1, 1, 2, 2), 2)
-              .set_name("conv2")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu2")
-              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f)).set_name("norm2")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool2")
-              // Layer 3
+                  1U, 1U, 64U,
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv2/conv2_3x3_reduce_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv2/conv2_3x3_reduce_b.npy"),
+                  PadStrideInfo(1, 1, 0, 0))
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
               << ConvolutionLayer(
-                  3U, 3U, 384U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv3_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv3_b.npy"),
+                  3U, 3U, 192U,
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv2/conv2_3x3_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/conv2/conv2_3x3_b.npy"),
                   PadStrideInfo(1, 1, 1, 1))
-              .set_name("conv3")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu3")
-              // Layer 4
-              << ConvolutionLayer(
-                  3U, 3U, 384U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv4_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv4_b.npy"),
-                  PadStrideInfo(1, 1, 1, 1), 2)
-              .set_name("conv4")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu4")
-              // Layer 5
-              << ConvolutionLayer(
-                  3U, 3U, 256U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv5_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/conv5_b.npy"),
-                  PadStrideInfo(1, 1, 1, 1), 2)
-              .set_name("conv5")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu5")
-              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0))).set_name("pool5")
-              // Layer 6
-              << FullyConnectedLayer(
-                  4096U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc6_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc6_b.npy"))
-              .set_name("fc6")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu6")
-              // Layer 7
-              << FullyConnectedLayer(
-                  4096U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc7_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc7_b.npy"))
-              .set_name("fc7")
-              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU)).set_name("relu7")
-              // Layer 8
+              << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+              << NormalizationLayer(NormalizationLayerInfo(NormType::CROSS_MAP, 5, 0.0001f, 0.75f))
+              << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)));
+        graph << get_inception_node(data_path, "inception_3a", weights_layout, 64, std::make_tuple(96U, 128U), std::make_tuple(16U, 32U), 32U);
+        graph << get_inception_node(data_path, "inception_3b", weights_layout, 128, std::make_tuple(128U, 192U), std::make_tuple(32U, 96U), 64U);
+        graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)));
+        graph << get_inception_node(data_path, "inception_4a", weights_layout, 192, std::make_tuple(96U, 208U), std::make_tuple(16U, 48U), 64U);
+        graph << get_inception_node(data_path, "inception_4b", weights_layout, 160, std::make_tuple(112U, 224U), std::make_tuple(24U, 64U), 64U);
+        graph << get_inception_node(data_path, "inception_4c", weights_layout, 128, std::make_tuple(128U, 256U), std::make_tuple(24U, 64U), 64U);
+        graph << get_inception_node(data_path, "inception_4d", weights_layout, 112, std::make_tuple(144U, 288U), std::make_tuple(32U, 64U), 64U);
+        graph << get_inception_node(data_path, "inception_4e", weights_layout, 256, std::make_tuple(160U, 320U), std::make_tuple(32U, 128U), 128U);
+        graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)));
+        graph << get_inception_node(data_path, "inception_5a", weights_layout, 256, std::make_tuple(160U, 320U), std::make_tuple(32U, 128U), 128U);
+        graph << get_inception_node(data_path, "inception_5b", weights_layout, 384, std::make_tuple(192U, 384U), std::make_tuple(48U, 128U), 128U);
+        graph << PoolingLayer(PoolingLayerInfo(PoolingType::AVG, 7, PadStrideInfo(1, 1, 0, 0, DimensionRoundingType::CEIL)))
               << FullyConnectedLayer(
                   1000U,
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc8_w.npy", weights_layout),
-                  get_weights_accessor(data_path, "/cnn_data/alexnet_model/fc8_b.npy"))
-              .set_name("fc8")
-              // Softmax
-              << SoftmaxLayer().set_name("prob")
-              << OutputLayer(get_output_accessor(common_params, 5));
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/loss3/loss3_classifier_w.npy", weights_layout),
+                  get_weights_accessor(data_path, "/cnn_data/googlenet_model/loss3/loss3_classifier_b.npy"))
+              << SoftmaxLayer()
+		<< OutputLayer(get_output_accessor(common_params, 5));
 
         // Finalize graph
         GraphConfig config;
@@ -189,7 +155,61 @@ private:
     CommonGraphParams  common_params;
     Stream             graph;
 };
+BranchLayer get_inception_node(const std::string &data_path, std::string &&param_path, DataLayout weights_layout,
+                                   unsigned int a_filt,
+                                   std::tuple<unsigned int, unsigned int> b_filters,
+                                   std::tuple<unsigned int, unsigned int> c_filters,
+                                   unsigned int d_filt)
+    {
+        std::string total_path = "/cnn_data/googlenet_model/" + param_path + "/" + param_path + "_";
+        SubStream   i_a(graph);
+        i_a << ConvolutionLayer(
+                1U, 1U, a_filt,
+                get_weights_accessor(data_path, total_path + "1x1_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "1x1_b.npy"),
+                PadStrideInfo(1, 1, 0, 0))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
+        SubStream i_b(graph);
+        i_b << ConvolutionLayer(
+                1U, 1U, std::get<0>(b_filters),
+                get_weights_accessor(data_path, total_path + "3x3_reduce_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "3x3_reduce_b.npy"),
+                PadStrideInfo(1, 1, 0, 0))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+            << ConvolutionLayer(
+                3U, 3U, std::get<1>(b_filters),
+                get_weights_accessor(data_path, total_path + "3x3_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "3x3_b.npy"),
+                PadStrideInfo(1, 1, 1, 1))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+
+        SubStream i_c(graph);
+        i_c << ConvolutionLayer(
+                1U, 1U, std::get<0>(c_filters),
+                get_weights_accessor(data_path, total_path + "5x5_reduce_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "5x5_reduce_b.npy"),
+                PadStrideInfo(1, 1, 0, 0))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
+            << ConvolutionLayer(
+                5U, 5U, std::get<1>(c_filters),
+                get_weights_accessor(data_path, total_path + "5x5_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "5x5_b.npy"),
+                PadStrideInfo(1, 1, 2, 2))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+
+        SubStream i_d(graph);
+        i_d << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(1, 1, 1, 1, DimensionRoundingType::CEIL)))
+            << ConvolutionLayer(
+                1U, 1U, d_filt,
+                get_weights_accessor(data_path, total_path + "pool_proj_w.npy", weights_layout),
+                get_weights_accessor(data_path, total_path + "pool_proj_b.npy"),
+                PadStrideInfo(1, 1, 0, 0))
+            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
+
+        return BranchLayer(BranchMergeMethod::DEPTH_CONCATENATE, std::move(i_a), std::move(i_b), std::move(i_c), std::move(i_d));
+    }
+};
 struct _config {
     bool                        execute;
     std::string                 name;
@@ -272,7 +292,7 @@ int main(int argc, char **argv)
                     //std::cout << config.name << " : " << (*val)++ << std::endl;
                     processed++;
                     (*val)++;
-                    arm_compute::utils::run_example<GraphAlexnetExample>(config.argc, argv); 
+                    arm_compute::utils::run_example<GraphGooglenetExample>(config.argc, argv); 
                 }
                 std::cout << "Completed " << config.name << ": " << processed << " inferences" << std::endl;
                 exit(1);
