@@ -38,7 +38,7 @@ using namespace arm_compute::graph_utils;
 
 static unsigned int inferences = 0;
 
-/** Example demonstrating how to implement AlexNet's network using the Compute Library's graph API
+/** Example demonstrating how to implement ResNeXt50's network using the Compute Library's graph API
  *
  * @param[in] argc Number of arguments
  * @param[in] argv Arguments
@@ -56,10 +56,10 @@ public:
     bool do_setup(int argc, char **argv) override
     {
         // Parse arguments
-        //cmd_parser.parse(argc, argv);
+        cmd_parser.parse(argc, argv);
 
         // Consume common parameters
-        //common_params = consume_common_graph_parameters(common_opts);
+        common_params = consume_common_graph_parameters(common_opts);
         
         // Return when help menu is requested
         if(common_params.help)
