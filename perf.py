@@ -77,7 +77,7 @@ def plot_fig(k, x, y, z):
     ax.set_ylabel('# Inferences/Images')
     ax.set_zlabel('Time (sec)')
     ax.set_title('Total Time Taken')
-    plt.savefig('perf_plots/'+graph+"_"+target+".png")
+    plt.savefig('perf_plots/'+graph+"_"+target+"_2.png")
 
 if __name__ == "__main__":
     global env
@@ -88,9 +88,12 @@ if __name__ == "__main__":
         for target in targets[:1]:
             _target = target.replace('-', '')
             time[(graph, _target)] = []
-            for n in range(1, 11):
-                for i in range(1, 11):
+            for n in range(10, 81, 10):
+                for i in range(10, 101, 10):
+                    if n == 80 and i == 60:
+                        break
                     ci, gi, tn = run(graph, target, n, i)
+                    print(n, i, tn * (ci + gi))
                     time[(graph, _target)].append((n, i, tn * (ci + gi), ci, gi))
 
     for k in time:
@@ -99,9 +102,9 @@ if __name__ == "__main__":
         plot_fig(k, x, y, z)
         def func(xy, a, b, c, d, e, f):
             [x, y] = xy.T
-            return a*x + b*y + c*x*y + d*x*x + e*y*y + f
+            return a*x + b*y + c*x*x+d*y*y+e*x*y+f
         popt, pcov = curve_fit(func, np.array(list(zip(x, y))), z)
         print("Std. Error:", np.sqrt(np.diag(pcov)))
-        print("ax+by+cxy+dx^2+ey^2+f")
+        print("ax+by+cx^2+dy^2+exy+f")
         print("a=%5.3f, b=%5.3f, c=%5.3f, d=%5.3f, e=%5.3f, f=%5.3f" % tuple(popt))
 
