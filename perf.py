@@ -4,7 +4,7 @@ import subprocess
 import matplotlib
 import json
 import numpy as np
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from time import sleep
 
@@ -62,7 +62,7 @@ def run(graph, target, n, i):
     t_image = float(re.findall('(\d+.\d+) per image', out)[0])
     return cpu_images, gpu_images, t_image
 
-def plot_fig(k, x, y, z, zp):
+def plot_fig(k, x, y, z, zp, popt, se):
     graph, target = k
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -75,11 +75,12 @@ def plot_fig(k, x, y, z, zp):
     surf2 = ax.plot_wireframe(x1, y1, z1p, cmap='flag')
     ax.xaxis.set_major_locator(MultipleLocator(10.0))
     ax.yaxis.set_major_locator(MultipleLocator(10.0))
-    fig.colorbar(surf, shrink=1, aspect=10)
+    fig.colorbar(surf, shrink=0.5, aspect=10)
     ax.set_xlabel('# Images')
     ax.set_ylabel('# Inferences/Images')
     ax.set_zlabel('Time (sec)')
     ax.set_title('Total Time Taken')
+    plt.figtext(0.65, 0.02, graph + ' ' + target + '\nax+bxy+c\na=%5.3f, b=%5.3f, c=%5.3f)\nStd. Error: %5.3f, %5.3f, %5.3f' % tuple(np.concatenate((popt,se))))
     #plt.show()
     plt.savefig('perf_plots/'+graph+"_"+target+"_v1.png")
 
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
     time = {}
-    for graph in graphs[:1]:
+    for graph in graphs[:2]:
         for target in targets:
             _target = target.replace('-', '')
             print(graph, _target)
@@ -106,9 +107,7 @@ if __name__ == "__main__":
             [x, y] = xy.T
             return a*x + b*x*y + c
         popt, pcov = curve_fit(func, np.array(list(zip(x, y))), z)
-        print("Std. Error:", np.sqrt(np.diag(pcov)))
-        print("ax+bxy+c")
-        print("a=%5.3f, b=%5.3f, c=%5.3f" % tuple(popt))
+        se = np.sqrt(np.diag(pcov))
         z1 = func(np.array(list(zip(x, y))), *popt) 
-        plot_fig(k, x, y, z, z1)
+        plot_fig(k, x, y, z, z1, popt, se)
 
