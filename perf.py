@@ -80,19 +80,19 @@ def plot_fig(k, x, y, z, zp):
     ax.set_ylabel('# Inferences/Images')
     ax.set_zlabel('Time (sec)')
     ax.set_title('Total Time Taken')
-    plt.show()
-    plt.savefig('perf_plots/'+graph+"_"+target+".png")
+    #plt.show()
+    plt.savefig('perf_plots/'+graph+"_"+target+"_v1.png")
 
 if __name__ == "__main__":
     global env
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
     time = {}
-    for graph in graphs:
-        for target in targets:
+    for graph in graphs[:1]:
+        for target in targets[:1]:
             _target = target.replace('-', '')
             time[(graph, _target)] = []
-            for n in range(10, 51, 10):
+            for n in range(10, 71, 10):
                 for i in range(10, 51, 10):
                     ci, gi, tn = run(graph, target, n, i)
                     print(n, i, tn * (ci + gi))
