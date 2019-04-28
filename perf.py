@@ -4,7 +4,7 @@ import subprocess
 import matplotlib
 import json
 import numpy as np
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
@@ -72,11 +72,12 @@ def plot_fig(k, x, y, z):
     surf = ax.plot_surface(x1, y1, z1, cmap='jet')
     ax.xaxis.set_major_locator(MultipleLocator(1.0))
     ax.yaxis.set_major_locator(MultipleLocator(1.0))
-    fig.colorbar(surf, shrink=0.5, aspect=5)
+    fig.colorbar(surf)
     ax.set_xlabel('# Images')
     ax.set_ylabel('# Inferences/Images')
     ax.set_zlabel('Time (sec)')
     ax.set_title('Total Time Taken')
+    plt.show()
     plt.savefig('perf_plots/'+graph+"_"+target+"_2.png")
 
 if __name__ == "__main__":
@@ -90,8 +91,8 @@ if __name__ == "__main__":
             time[(graph, _target)] = []
             for n in range(10, 81, 10):
                 for i in range(10, 101, 10):
-                    if n == 80 and i == 60:
-                        break
+                    #if n == 80 and i == 70:
+                     #   break
                     ci, gi, tn = run(graph, target, n, i)
                     print(n, i, tn * (ci + gi))
                     time[(graph, _target)].append((n, i, tn * (ci + gi), ci, gi))
