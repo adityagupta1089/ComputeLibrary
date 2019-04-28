@@ -72,7 +72,7 @@ def plot_fig(k, x, y, z, zp):
     z1 = griddata((x, y), z, (x1, y1), method='cubic')
     z1p = griddata((x, y), zp, (x1, y1), method='cubic')
     surf = ax.plot_surface(x1, y1, z1, cmap='jet')
-    surf2 = ax.plot_wireframe(x1, y1, z1p, cmap='jet')
+    surf2 = ax.plot_wireframe(x1, y1, z1p, cmap='flag')
     ax.xaxis.set_major_locator(MultipleLocator(10.0))
     ax.yaxis.set_major_locator(MultipleLocator(10.0))
     fig.colorbar(surf, shrink=1, aspect=10)
@@ -89,10 +89,11 @@ if __name__ == "__main__":
     env['LD_LIBRARY_PATH'] = './build/release'
     time = {}
     for graph in graphs[:1]:
-        for target in targets[:1]:
+        for target in targets:
             _target = target.replace('-', '')
+            print(graph, _target)
             time[(graph, _target)] = []
-            for n in range(10, 71, 10):
+            for n in range(10, 51, 10):
                 for i in range(10, 51, 10):
                     ci, gi, tn = run(graph, target, n, i)
                     print(n, i, tn * (ci + gi))
