@@ -6,7 +6,7 @@ import json
 import numpy as np
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
+from time import sleep
 
 from scipy.optimize import curve_fit
 from mpl_toolkits.mplot3d import Axes3D
@@ -51,6 +51,7 @@ def persist_to_file(file_name):
 def run(graph, target, n, i):
     global env
     cmd = pp + graph + " " + target + " --n=" + str(n) + " --i=" + str(i)
+    sleep(5)
     out = subprocess.check_output(cmd.split(), env=env).decode('utf-8') 
     cpu_images = 0
     gpu_images = 0
@@ -61,7 +62,7 @@ def run(graph, target, n, i):
     t_image = float(re.findall('(\d+.\d+) per image', out)[0])
     return cpu_images, gpu_images, t_image
 
-def plot_fig(k, x, y, z):
+def plot_fig(k, x, y, z, zp):
     graph, target = k
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -69,30 +70,30 @@ def plot_fig(k, x, y, z):
     y1 = np.linspace(min(y), max(y), len(set(y)))
     x1, y1 = np.meshgrid(x1, y1)
     z1 = griddata((x, y), z, (x1, y1), method='cubic')
+    z1p = griddata((x, y), zp, (x1, y1), method='cubic')
     surf = ax.plot_surface(x1, y1, z1, cmap='jet')
-    ax.xaxis.set_major_locator(MultipleLocator(1.0))
-    ax.yaxis.set_major_locator(MultipleLocator(1.0))
-    fig.colorbar(surf)
+    surf2 = ax.plot_wireframe(x1, y1, z1p, cmap='jet')
+    ax.xaxis.set_major_locator(MultipleLocator(10.0))
+    ax.yaxis.set_major_locator(MultipleLocator(10.0))
+    fig.colorbar(surf, shrink=1, aspect=10)
     ax.set_xlabel('# Images')
     ax.set_ylabel('# Inferences/Images')
     ax.set_zlabel('Time (sec)')
     ax.set_title('Total Time Taken')
     plt.show()
-    plt.savefig('perf_plots/'+graph+"_"+target+"_2.png")
+    plt.savefig('perf_plots/'+graph+"_"+target+".png")
 
 if __name__ == "__main__":
     global env
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
     time = {}
-    for graph in graphs[:1]:
-        for target in targets[:1]:
+    for graph in graphs:
+        for target in targets:
             _target = target.replace('-', '')
             time[(graph, _target)] = []
-            for n in range(10, 81, 10):
-                for i in range(10, 101, 10):
-                    #if n == 80 and i == 70:
-                     #   break
+            for n in range(10, 51, 10):
+                for i in range(10, 51, 10):
                     ci, gi, tn = run(graph, target, n, i)
                     print(n, i, tn * (ci + gi))
                     time[(graph, _target)].append((n, i, tn * (ci + gi), ci, gi))
@@ -100,12 +101,13 @@ if __name__ == "__main__":
     for k in time:
         xyz = list(zip(*time[k]))[:3]
         x, y, z = np.array(xyz[0]), np.array(xyz[1]), np.array(xyz[2])
-        plot_fig(k, x, y, z)
-        def func(xy, a, b, c, d, e, f):
+        def func(xy, a, b, c):
             [x, y] = xy.T
-            return a*x + b*y + c*x*x+d*y*y+e*x*y+f
+            return a*x + b*x*y + c
         popt, pcov = curve_fit(func, np.array(list(zip(x, y))), z)
         print("Std. Error:", np.sqrt(np.diag(pcov)))
-        print("ax+by+cx^2+dy^2+exy+f")
-        print("a=%5.3f, b=%5.3f, c=%5.3f, d=%5.3f, e=%5.3f, f=%5.3f" % tuple(popt))
+        print("ax+bxy+c")
+        print("a=%5.3f, b=%5.3f, c=%5.3f" % tuple(popt))
+        z1 = func(np.array(list(zip(x, y))), *popt) 
+        plot_fig(k, x, y, z, z1)
 
