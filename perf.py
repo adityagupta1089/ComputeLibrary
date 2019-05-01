@@ -19,8 +19,7 @@ graphs = [
     "graph_alexnet_2",
     "graph_mobilenet_2",
     "graph_googlenet_2",
-    "graph_squeezenet_2",
-    "graph_resnet50_2"
+    "graph_squeezenet_2"
 ]
 
 targets = [
@@ -89,7 +88,7 @@ if __name__ == "__main__":
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
     time = {}
-    for graph in graphs[:2]:
+    for graph in graphs:
         for target in targets:
             _target = target.replace('-', '')
             print(graph, _target)
