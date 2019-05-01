@@ -81,7 +81,7 @@ def plot_fig(k, x, y, z, zp, popt, se):
     ax.set_title('Total Time Taken')
     plt.figtext(0.65, 0.02, graph + ' ' + target + '\nax+bxy+c\na=%5.3f, b=%5.3f, c=%5.3f)\nStd. Error: %5.3f, %5.3f, %5.3f' % tuple(np.concatenate((popt,se))))
     #plt.show()
-    plt.savefig('perf_plots/'+graph+"_"+target+"_v1.png")
+    plt.savefig('perf_plots/'+graph+"_"+target.replace(" ", "_")+".png")
 
 if __name__ == "__main__":
     global env
