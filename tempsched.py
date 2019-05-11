@@ -4,8 +4,8 @@ import subprocess
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
 
+from matplotlib.lines import Line2D
 from os import environ
 
 pp = "./build/release/examples/"
@@ -27,6 +27,7 @@ T = 5
 dt = 0.1
 sdt = 0.5
 TL = 65000
+N = 50
 
 temp_func = lambda t, q0, qi, tau: q0 + qi * (1 - np.exp(- t / tau))
 
@@ -36,42 +37,75 @@ def get_temp():
         temp = int(f.readline())
         return temp
 
-def plot_temp(xs, ys):
+def plot_temp(xs, ys, xs2, ys2):
     fig = plt.figure()
-    plt.plot(xs, ys)
+    # Plot Lines
+    for x, y in zip(xs, ys):
+        plt.plot(x, y, color='g')
+    for x2, y2 in zip(xs2, ys2):
+        plt.plot(x2, y2, color='b')
+    # Plot Threshold
     plt.axhline(TL, linestyle='--', color='r')
-    mx = int(np.max(xs))
-    for i in np.arange(0, mx, sdt):
-        plt.axvline(i, linestyle='--', color='y')
+    # Plot Labels
     plt.xlabel('Time')
     plt.ylabel('Temperature')
     plt.title('Execution ' + graph)
+    # Plot Legend
+    custom_lines = [
+        Line2D([0], [0], color='r', linestyle='--'),
+        Line2D([0], [0], color='g'),
+        Line2D([0], [0], color='b')]
+    plt.legend(custom_lines, ['Threshold', 'Executing', 'Sleeping'])
+    # Show Plot
     plt.show()
        
 def run_sched():
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
-    #time.sleep(T)
     cmds = list(targets[target](graph) for target in targets)
-    print(cmds)
-    ps = list(subprocess.Popen(cmd, env=env) for cmd in cmds)
-    completed = False
     xs = []
     ys = []
+    xs2 = []
+    ys2 = []
     t=0
-    while not completed:
-        for _ in range(int(sdt/dt)):
-            if None in (p.poll() for p in ps):
-                xs.append(t)
-                ys.append(get_temp())
-                time.sleep(dt)
-                t+=dt
+    n=0
+    # sleep to cool down
+    time.sleep(T)
+    while n < N:
+        ps = list(subprocess.Popen(cmd, env=env) for cmd in cmds)
+        completed = False
+        while not completed:
+            if get_temp() > 0.97 * TL:
+                x2 = []
+                y2 = []
+                for _ in range(int(sdt/dt)):
+                    x2.append(t)
+                    y2.append(get_temp())
+                    time.sleep(dt)
+                    t+=dt
+                x2.append(t)
+                y2.append(get_temp())
+                xs2.append(x2)
+                ys2.append(y2)
             else:
-                completed = True
-                break
-    xs=np.array(xs)
-    ys=np.array(ys)
-    plot_temp(xs, ys)
+                x = []
+                y = []
+                for _ in range(int(sdt/dt)):
+                    if None in (p.poll() for p in ps):
+                        x.append(t)
+                        y.append(get_temp())
+                        time.sleep(dt)
+                        t+=dt
+                    else:
+                        completed = True
+                        n += 3
+                        print('Completed', n)
+                        break
+                x.append(t)
+                y.append(get_temp())
+                xs.append(x)
+                ys.append(y)
+    plot_temp(xs, ys, xs2, ys2)
             
 if __name__ == "__main__":
     run_sched()
