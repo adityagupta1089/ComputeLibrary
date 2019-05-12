@@ -56,8 +56,8 @@ def plot_temp(xs, ys, xs2, ys2):
         Line2D([0], [0], color='g'),
         Line2D([0], [0], color='b')]
     plt.legend(custom_lines, ['Threshold', 'Executing', 'Sleeping'])
-    # Save Plot
-    plt.savefig('tempsched_plots/sched.png')
+    # Show Plot
+    plt.savefig('tempsched_plots/schedv2.png')
        
 def run_sched():
     env = dict(os.environ)
@@ -70,41 +70,44 @@ def run_sched():
     t=0
     n=0
     # sleep to cool down
+    print('Sleeping 5 sec')
     time.sleep(T)
+    ps = dict()
     while n < N:
-        ps = list(subprocess.Popen(cmd, env=env) for cmd in cmds)
-        completed = False
-        while not completed:
-            if get_temp() > TL:
-                x2 = []
-                y2 = []
-                for _ in range(int(sdt/dt)):
-                    x2.append(t)
-                    y2.append(get_temp())
-                    time.sleep(dt)
-                    t+=dt
+        if get_temp() > TL:
+            x2 = []
+            y2 = []
+            for _ in range(int(sdt/dt)):
                 x2.append(t)
                 y2.append(get_temp())
-                xs2.append(x2)
-                ys2.append(y2)
-            else:
-                x = []
-                y = []
-                for _ in range(int(sdt/dt)):
-                    if None in (p.poll() for p in ps):
-                        x.append(t)
-                        y.append(get_temp())
-                        time.sleep(dt)
-                        t+=dt
-                    else:
-                        completed = True
-                        n += 3
-                        print('Completed', n)
-                        break
+                time.sleep(dt)
+                t+=dt
+            x2.append(t)
+            y2.append(get_temp())
+            xs2.append(x2)
+            ys2.append(y2)
+        else:
+            x = []
+            y = []
+            while get_temp() < TL and n < N:
+                for target, cmd in zip(targets, cmds):
+                    if not target in ps:
+                        ps[target] = None
+                    if ps[target] is None or ps[target].poll() is not None:
+                        if ps[target] is not None:
+                            n+=1
+                            print('Completed', n)
+                            if n > N:
+                                break
+                        ps[target] = subprocess.Popen(cmd, env=env) 
                 x.append(t)
                 y.append(get_temp())
-                xs.append(x)
-                ys.append(y)
+                time.sleep(dt)
+                t+=dt
+            x.append(t)
+            y.append(get_temp())
+            xs.append(x)
+            ys.append(y)
     plot_temp(xs, ys, xs2, ys2)
             
 if __name__ == "__main__":
