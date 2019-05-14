@@ -29,9 +29,6 @@ sdt = 0.5
 TL = 65000
 N = 50
 
-temp_func = lambda t, q0, qi, tau: q0 + qi * (1 - np.exp(- t / tau))
-
-
 def get_temp():
     with open('/sys/class/thermal/thermal_zone0/temp') as f:
         temp = int(f.readline())
