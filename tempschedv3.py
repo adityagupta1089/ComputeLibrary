@@ -29,7 +29,7 @@ targets = {
 T = 5
 dt = 0.1
 sdt = 0.5
-TL = 65000
+TL = 80000
 N = 50
 
 def get_temp():
@@ -78,7 +78,7 @@ def profile_time():
             end = time.time()
             if target not in samples:
                 samples[target] = []            
-            samples[target] = end - start
+            samples[target].append(end - start)
             print(target, end-start)
             with open('tempschedv3_samples2.dat', 'w') as f:
                 json.dump(samples, f)
@@ -87,9 +87,9 @@ def plot_temp(xs, ys, xs2, ys2):
     fig = plt.figure()
     # Plot Lines
     for x, y in zip(xs, ys):
-        plt.plot(x, y, color='g')
+        plt.plot(x, y, color='r')
     for x2, y2 in zip(xs2, ys2):
-        plt.plot(x2, y2, color='b')
+        plt.plot(x2, y2, color='y')
     # Plot Threshold
     plt.axhline(TL, linestyle='--', color='r')
     # Plot Labels
@@ -99,11 +99,11 @@ def plot_temp(xs, ys, xs2, ys2):
     # Plot Legend
     custom_lines = [
         Line2D([0], [0], color='r', linestyle='--'),
-        Line2D([0], [0], color='g'),
-        Line2D([0], [0], color='b')]
+        Line2D([0], [0], color='r'),
+        Line2D([0], [0], color='y')]
     plt.legend(custom_lines, ['Threshold', 'Executing', 'Sleeping'])
     # Show Plot
-    plt.savefig('tempsched_plots/schedv2.png')
+    plt.savefig('tempsched_plots/schedv3.png')
        
 def run_sched():
     env = dict(os.environ)
@@ -115,12 +115,22 @@ def run_sched():
     ys2 = []
     t=0
     n=0
+    ps = dict()
+    with open('tempschedv3_samples.dat') as f:
+        temp_samples = json.load(f)
+    with open('tempschedv3_samples2.dat') as f:
+        time_samples = json.load(f)
+    for target in time_samples:
+        time_samples[target] = sum(time_samples[target]) / len(time_samples[target])    
+    for target_combi in temp_samples:
+        temp_samples[target_combi] = sum(temp_samples[target_combi]) / len(temp_samples[target_combi])    
+    selected_targets = []
+    min_dT = min(temp_samples.values())
     # sleep to cool down
     print('Sleeping 5 sec')
     time.sleep(T)
-    ps = dict()
     while n < N:
-        if get_temp() > TL:
+        if get_temp() + min_dT > TL:
             x2 = []
             y2 = []
             for _ in range(int(sdt/dt)):
@@ -135,8 +145,31 @@ def run_sched():
         else:
             x = []
             y = []
-            while get_temp() < TL and n < N:
+            while get_temp() + min_dT < TL and n < N:
+                dT = TL - get_temp() # temperature difference
+                min_t = 99999999 # time taken
+                min_combi = "none"
+                for target_combi in temp_samples:
+                    # check temperature difference
+                    if temp_samples[target_combi] < dT:
+                        # measure sum of execution times of individual targets
+                        tmes = sum(time_samples[target] if target in target_combi else 0 for target in targets)
+                        valid = True
+                        # check if a target not in combination is running
+                        for target in targets:
+                            if target in target_combi and target in ps and ps[target].poll() is None:
+                                valid = False
+                                break
+                        if not valid:
+                            continue
+                        # take maximum performance
+                        if tmes < min_t:
+                            min_t = tmes
+                            min_combi = target_combi      
+                selected_targets.append(min_combi)
                 for target, cmd in zip(targets, cmds):
+                    if not target in target_combi:
+                        continue
                     if not target in ps:
                         ps[target] = None
                     if ps[target] is None or ps[target].poll() is not None:
@@ -155,6 +188,9 @@ def run_sched():
             xs.append(x)
             ys.append(y)
     plot_temp(xs, ys, xs2, ys2)
+    with open('tempschedv3_selected_targets.txt', 'w') as f:
+        for target in selected_targets:
+            f.write(target + "\n")
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
