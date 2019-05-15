@@ -124,7 +124,6 @@ def run_sched():
         time_samples[target] = sum(time_samples[target]) / len(time_samples[target])    
     for target_combi in temp_samples:
         temp_samples[target_combi] = sum(temp_samples[target_combi]) / len(temp_samples[target_combi])    
-    selected_targets = []
     min_dT = min(temp_samples.values())
     # sleep to cool down
     print('Sleeping 5 sec')
@@ -145,40 +144,47 @@ def run_sched():
         else:
             x = []
             y = []
+            running = dict()
+            for target in targets:
+                running[target] = False
             while get_temp() + min_dT < TL and n < N:
                 dT = TL - get_temp() # temperature difference
                 min_t = 99999999 # time taken
                 min_combi = "none"
                 for target_combi in temp_samples:
+                    valid = True
                     # check temperature difference
                     if temp_samples[target_combi] < dT:
                         # measure sum of execution times of individual targets
-                        tmes = sum(time_samples[target] if target in target_combi else 0 for target in targets)
-                        valid = True
-                        # check if a target not in combination is running
+                        tmes = 0
                         for target in targets:
-                            if target in target_combi and target in ps and ps[target].poll() is None:
-                                valid = False
+                            # check if combination also includes running targets
+                            if running[target] and target not in target_combi:
+                                valid=False
                                 break
+                            # we can add running target's sample vaue but it will be constant across comparison
+                            if target in target_combi:
+                                tmes += time_samples[target]
                         if not valid:
                             continue
                         # take maximum performance
                         if tmes < min_t:
                             min_t = tmes
                             min_combi = target_combi      
-                selected_targets.append(min_combi)
                 for target, cmd in zip(targets, cmds):
-                    if not target in target_combi:
-                        continue
                     if not target in ps:
                         ps[target] = None
+                    # if empty process or not running
                     if ps[target] is None or ps[target].poll() is not None:
-                        if ps[target] is not None:
+                        if running[target] and ps[target] is not None:
+                            running[target] = False
                             n+=1
-                            print('Completed', n)
+                            print('Completed', target, n)
                             if n > N:
                                 break
-                        ps[target] = subprocess.Popen(cmd, env=env) 
+                        elif target in min_combi:
+                            running[target] = True
+                            ps[target] = subprocess.Popen(cmd, env=env) 
                 x.append(t)
                 y.append(get_temp())
                 time.sleep(dt)
@@ -188,9 +194,6 @@ def run_sched():
             xs.append(x)
             ys.append(y)
     plot_temp(xs, ys, xs2, ys2)
-    with open('tempschedv3_selected_targets.txt', 'w') as f:
-        for target in selected_targets:
-            f.write(target + "\n")
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
