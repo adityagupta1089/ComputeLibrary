@@ -63,7 +63,7 @@ def profile_temp():
                 samples[key] = []
             samples[key].append(max_dt)
             print(key, max_dt)
-            with open('tempschedv3_samples.dat', 'w') as f:
+            with open('tempschedv3_samples.json', 'w') as f:
                 json.dump(samples, f)
 
 def profile_time():
@@ -80,7 +80,7 @@ def profile_time():
                 samples[target] = []            
             samples[target].append(end - start)
             print(target, end-start)
-            with open('tempschedv3_samples2.dat', 'w') as f:
+            with open('tempschedv3_samples2.json', 'w') as f:
                 json.dump(samples, f)
 
 def plot_temp(xs, ys, xs2, ys2):
@@ -116,9 +116,9 @@ def run_sched():
     t=0
     n=0
     ps = dict()
-    with open('tempschedv3_samples.dat') as f:
+    with open('tempschedv3_samples.json') as f:
         temp_samples = json.load(f)
-    with open('tempschedv3_samples2.dat') as f:
+    with open('tempschedv3_samples2.json') as f:
         time_samples = json.load(f)
     for target in time_samples:
         time_samples[target] = sum(time_samples[target]) / len(time_samples[target])    
