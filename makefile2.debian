@@ -1,0 +1,9 @@
+BUILD:=native
+NEON:=1
+OPENCL:=1
+ARCH:=armv64-v8a
+all: release
+debug:
+	scons -j8 -Q arch=$(ARCH) build=$(BUILD) neon=$(NEON) opencl=$(OPENCL) build_dir=debug debug=1
+release:
+	scons -j8 -Q arch=$(ARCH) build=$(BUILD) neon=$(NEON) opencl=$(OPENCL) build_dir=release debug=0 

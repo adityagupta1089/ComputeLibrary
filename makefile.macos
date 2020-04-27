@@ -1,0 +1,12 @@
+export CC=/usr/local/arm-mac-linux-gnueabihf/bin/arm-mac-linux-gnueabihf-gcc
+export CXX=/usr/local/arm-mac-linux-gnueabihf/bin/arm-mac-linux-gnueabihf-g++
+BUILD:=native
+NEON:=0
+OPENCL:=0
+ARCH:=armv7a
+CFLAGS:=-std=c++14
+all: release
+debug:
+	/usr/local/bin/scons -j8 -Q arch=$(ARCH) build=$(BUILD) neon=$(NEON) opencl=$(OPENCL) build_dir=debug debug=1 extra_cxx_flags=$(CFLAGS)
+release:
+	/usr/local/bin/scons -j8 -Q arch=$(ARCH) build=$(BUILD) neon=$(NEON) opencl=$(OPENCL) build_dir=release debug=0  extra_cxx_flags=$(CFLAGS)
