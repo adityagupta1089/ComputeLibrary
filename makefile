@@ -1,5 +1,5 @@
 all: hikey
 hikey:
-	make -f makefile.debian sched
+	make -f makefile.arm sched
 macos:
 	make -f makefile.macos

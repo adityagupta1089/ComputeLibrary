@@ -45,8 +45,8 @@ using namespace arm_compute::graph_utils;
 using namespace std;
 using namespace std::chrono;
 
-static unsigned int images     = 0;
-static unsigned int inferences = 0;
+static unsigned int images     = 100;
+static unsigned int inferences = 1;
 
 /** Example demonstrating how to implement ResNet50's network using the Compute Library's graph API
  *
@@ -203,15 +203,17 @@ static atomic_uint *run_cpu_small, *run_cpu_big, *run_gpu, *val;
 #define CPU_BIG 2
 #define GPU 4
 
+static const int ALL = (CPU_BIG | CPU_SMALL | GPU);
+
 // maximum rise in temperatures
 static std::map<int, double> delta_temps{
-    { CPU_BIG, -1 },
-    { CPU_BIG | CPU_SMALL, -1 },
-    { CPU_SMALL, -1 },
-    { GPU, -1 },
-    { GPU | CPU_BIG, -1 },
-    { GPU | CPU_BIG | CPU_SMALL, -1 },
-    { GPU | CPU_SMALL, -1 }
+    { CPU_BIG, 23824.8 },
+    { CPU_BIG | CPU_SMALL, 23391.8 },
+    { CPU_SMALL, 4103.9 },
+    { GPU, 10259.9 },
+    { GPU | CPU_BIG, 23155.1 },
+    { GPU | CPU_BIG | CPU_SMALL, 25315.1 },
+    { GPU | CPU_SMALL, 10454.3 }
 };
 
 struct _config
@@ -239,9 +241,9 @@ static char **cpu_config = convert({ "", "--target=NEON", "--threads=4" });
 static char **gpu_config = convert({ "", "--target=CL" });
 
 _config configs[] = {
-    { CPU_SMALL, "CPU Small", 3, cpu_config, run_cpu_small, -1 },
-    { CPU_BIG, "CPU Big", 3, cpu_config, run_cpu_big, -1 },
-    { GPU, "GPU", 2, gpu_config, run_gpu, -1 }
+    { CPU_SMALL, "CPU Small", 3, cpu_config, run_cpu_small, 2.39182 },
+    { CPU_BIG, "CPU Big", 3, cpu_config, run_cpu_big, 2.51716 },
+    { GPU, "GPU", 2, gpu_config, run_gpu, 3.32532 }
 };
 std::map<int, int> configs_idx{
     { CPU_SMALL, 0 },
@@ -253,26 +255,28 @@ static const int TL = 80000;
 
 void profile_time()
 {
-    cout << "Profiling Time\n";
+    cout << "***\nProfiling Time\n";
     std::map<int, double> samples{
         { CPU_BIG, 0 },
         { CPU_SMALL, 0 },
         { GPU, 0 }
     };
-
+    int j = 1;
     for(const auto &kv : samples)
     {
         int  config_id = kv.first;
         auto config    = configs[configs_idx[config_id]];
+        cout << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
         for(int i = 0; i < 10; i++)
         {
+            usleep(5000000);
             auto start = high_resolution_clock::now();
 
             arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
 
             auto   end      = high_resolution_clock::now();
             double duration = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-            cout << config.name << " " << duration << "\n";
+            cout << config.name << " [" << i + 1 << "/10] " << duration << "\n";
             samples[config_id] += duration;
         }
         cout << config.name << " Average " << samples[config_id] / 10 << "\n";
@@ -282,6 +286,88 @@ void profile_time()
 
 void profile_temp()
 {
+    cout << "***\nProfiling Temperature\n";
+    atomic_uint *done = static_cast<atomic_uint *>(mmap(NULL, sizeof *done,
+                                                        PROT_READ | PROT_WRITE,
+                                                        MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    for(unsigned int i = 1; i <= ALL; i++)
+    {
+        cout << "[" << i << "/" << ALL << "] "
+             << "Processing " << ((i & CPU_BIG) ? "cpu_big_" : "-")
+             << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+             << ((i & GPU) ? "gpu" : "-") << "\n";
+        for(int j = 0; j < 10; j++)
+        {
+            usleep(5000000);
+            *done   = 0;
+            int pid = fork();
+            if(pid > 0)
+            {
+                int temp     = get_temp();
+                int max_temp = temp;
+
+                while(*done < i)
+                {
+                    usleep(1000);
+                    int curr_temp = get_temp();
+                    max_temp      = max(max_temp, curr_temp);
+                }
+                int max_delta_temp = max_temp - temp;
+                cout << "[" << j + 1 << "/10] "
+                     << ((i & CPU_BIG) ? "cpu_big_" : "-")
+                     << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+                     << ((i & GPU) ? "gpu" : "-")
+                     << " "
+                     << max_delta_temp << "\n";
+                delta_temps[i] += max_delta_temp;
+            }
+            else
+            {
+                for(_config config : configs)
+                {
+                    int pid = fork();
+                    if(pid == 0)
+                    {
+                        if(i & config.id)
+                        {
+                            cpu_set_t mask;
+                            CPU_ZERO(&mask);
+                            if(config.id == CPU_SMALL)
+                            {
+                                for(int i = 0; i <= 3; i++)
+                                    CPU_SET(i, &mask);
+                                sched_setaffinity(0, sizeof(mask), &mask);
+                            }
+                            else if(config.id == CPU_BIG)
+                            {
+                                for(int i = 4; i <= 7; i++)
+                                    CPU_SET(i, &mask);
+                                sched_setaffinity(0, sizeof(mask), &mask);
+                            }
+                            arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
+                            (*done) += config.id;
+                        }
+                        exit(0);
+                    }
+                }
+                exit(0);
+            }
+        }
+        delta_temps[i] /= 10;
+        cout << ((i & CPU_BIG) ? "cpu_big_" : "-")
+             << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+             << ((i & GPU) ? "gpu" : "-")
+             << " Average "
+             << delta_temps[i] << "\n";
+    }
+}
+
+void run_sched()
+{
+    cout << "***\nRunning Scheduler\n";
+    cout << "Images = " << images << "\n";
+    cout << "Inferences = " << inferences << "\n";
+
     // Set up flags
     run_cpu_small = static_cast<atomic_uint *>(mmap(NULL, sizeof *run_cpu_small,
                                                     PROT_READ | PROT_WRITE,
@@ -325,7 +411,7 @@ void profile_temp()
                 bool   min_cpu_big    = false;
                 bool   min_gpu        = false;
                 double min_total_time = 99999999;
-                for(int i = 1; i <= (CPU_BIG | CPU_SMALL | GPU); i++)
+                for(int i = 1; i <= ALL; i++)
                 {
                     bool cpu_small = i & CPU_SMALL;
                     bool cpu_big   = i & CPU_BIG;
@@ -404,13 +490,12 @@ void profile_temp()
                         usleep(1000);
                     }
                 }
-                exit(1);
+                exit(0);
             }
         }
     }
 }
 
-void run_sched();
 /** Main program for ResNet50
  *
  * @note To list all the possible arguments execute the binary appended with the --help option
@@ -425,12 +510,22 @@ int main(int argc, char **argv)
     // Command Line Parsing
     CommandLineParser parser;
 
+    ToggleOption *profileTempOption = parser.add_option<ToggleOption>("profile-temp");
+    ToggleOption *profileTimeOption = parser.add_option<ToggleOption>("profile-time");
+    ToggleOption *runSchedOption    = parser.add_option<ToggleOption>("run-sched");
+    ToggleOption *helpOption        = parser.add_option<ToggleOption>("help");
+
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
-    ToggleOption *              helpOption       = parser.add_option<ToggleOption>("help");
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
+
     helpOption->set_help("Help");
+
     imagesOption->set_help("Images");
     inferencesOption->set_help("Inferences");
+
+    profileTempOption->set_help("Profile Temperature");
+    profileTimeOption->set_help("Profile Time");
+    runSchedOption->set_help("Run Scheduler");
 
     parser.parse(argc, argv);
 
@@ -443,10 +538,17 @@ int main(int argc, char **argv)
 
     images     = imagesOption->value();
     inferences = inferencesOption->value();
-    cout << "Images = " << images << "\n";
-    cout << "Inferences = " << inferences << "\n";
 
-    profile_time();
-    // profile_temp();
-    // run_sched();
+    if(profileTimeOption->is_set() && profileTimeOption->value())
+    {
+        profile_time();
+    }
+    if(profileTempOption->is_set() && profileTempOption->value())
+    {
+        profile_temp();
+    }
+    if(runSchedOption->is_set() && runSchedOption->value())
+    {
+        run_sched();
+    }
 }
