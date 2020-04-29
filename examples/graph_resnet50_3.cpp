@@ -47,6 +47,7 @@ using namespace std::chrono;
 
 static unsigned int images     = 100;
 static unsigned int inferences = 1;
+static atomic_uint *run_cpu_small, *run_cpu_big, *run_gpu, *val = 0;
 
 /** Example demonstrating how to implement ResNet50's network using the Compute Library's graph API
  *
@@ -197,8 +198,6 @@ int get_temp()
     return temp;
 }
 
-static atomic_uint *run_cpu_small, *run_cpu_big, *run_gpu, *val;
-
 #define CPU_SMALL 1
 #define CPU_BIG 2
 #define GPU 4
@@ -218,12 +217,11 @@ static std::map<int, double> delta_temps{
 
 struct _config
 {
-    int          id;
-    string       name;
-    int          argc;
-    char **      argv;
-    atomic_uint *run; // run or sleep
-    double       time_taken;
+    int    id;
+    string name;
+    int    argc;
+    char **argv;
+    double time_taken;
 };
 
 char **convert(vector<string> argv_list)
@@ -241,9 +239,9 @@ static char **cpu_config = convert({ "", "--target=NEON", "--threads=4" });
 static char **gpu_config = convert({ "", "--target=CL" });
 
 _config configs[] = {
-    { CPU_SMALL, "CPU Small", 3, cpu_config, run_cpu_small, 2.39182 },
-    { CPU_BIG, "CPU Big", 3, cpu_config, run_cpu_big, 2.51716 },
-    { GPU, "GPU", 2, gpu_config, run_gpu, 3.32532 }
+    { CPU_SMALL, "CPU Small", 3, cpu_config, 2.39182 },
+    { CPU_BIG, "CPU Big", 3, cpu_config, 2.51716 },
+    { GPU, "GPU", 2, gpu_config, 3.32532 }
 };
 std::map<int, int> configs_idx{
     { CPU_SMALL, 0 },
@@ -323,7 +321,7 @@ void profile_temp()
             }
             else
             {
-                for(_config config : configs)
+                for(_config &config : configs)
                 {
                     int pid = fork();
                     if(pid == 0)
@@ -369,18 +367,15 @@ void run_sched()
     cout << "Inferences = " << inferences << "\n";
 
     // Set up flags
-    run_cpu_small = static_cast<atomic_uint *>(mmap(NULL, sizeof *run_cpu_small,
-                                                    PROT_READ | PROT_WRITE,
-                                                    MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_cpu_big = static_cast<atomic_uint *>(mmap(NULL, sizeof *run_cpu_big,
-                                                  PROT_READ | PROT_WRITE,
-                                                  MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_gpu = static_cast<atomic_uint *>(mmap(NULL, sizeof *run_gpu,
-                                              PROT_READ | PROT_WRITE,
-                                              MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    val = static_cast<atomic_uint *>(mmap(NULL, sizeof *val,
-                                          PROT_READ | PROT_WRITE,
-                                          MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    run_cpu_small = static_cast<atomic_uint *>(
+        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    run_cpu_big = static_cast<atomic_uint *>(
+        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    run_gpu = static_cast<atomic_uint *>(
+        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+    val = static_cast<atomic_uint *>(
+        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+
     *run_cpu_small = 0;
     *run_cpu_big   = 0;
     *run_gpu       = 0;
@@ -399,6 +394,7 @@ void run_sched()
         double min_delta_temp = min_element(delta_temps.begin(), delta_temps.end(), [](const auto &l, const auto &r) {
                                     return l.second < r.second;
                                 })->second;
+        unsigned int last_time = 0;
         while(*val < images)
         {
             auto   tnow  = high_resolution_clock::now();
@@ -416,7 +412,9 @@ void run_sched()
                     bool cpu_small = i & CPU_SMALL;
                     bool cpu_big   = i & CPU_BIG;
                     bool gpu       = i & GPU;
-                    if((*run_cpu_small && !cpu_small) || (*run_cpu_big && !cpu_big) || (*run_gpu && !gpu))
+                    if((*run_cpu_small && !cpu_small)
+                       || (*run_cpu_big && !cpu_big)
+                       || (*run_gpu && !gpu))
                     {
                         continue;
                     }
@@ -441,6 +439,23 @@ void run_sched()
                 *run_cpu_big   = min_cpu_big ? 1 : 0;
                 *run_gpu       = min_gpu ? 1 : 0;
             }
+            else
+            {
+                // stop any new inferences
+                *run_cpu_small = 0;
+                *run_cpu_big   = 0;
+                *run_cpu_gpu   = 0;
+            }
+            if(tdiff > last_time + 5)
+            {
+                cout << "tdiff = " << tdiff << ", "
+                     << "run_cpu_small = " << *run_cpu_small << ", "
+                     << "run_cpu_big = " << *run_cpu_big << ", "
+                     << "run_gpu = " << *run_gpu << ", "
+                     << "temp = " << temp << ", "
+                     << "val = " << *val << "\n";
+                last_time += 5;
+            }
             file << tdiff << " " << temp << "\n";
             usleep(1000);
         }
@@ -453,15 +468,16 @@ void run_sched()
     }
     else
     {
-        for(_config config : configs)
+        for(_config const &config : configs)
         {
             int pid = fork();
             if(pid == 0)
             {
-                cout << config.name << ": Started process"
-                     << "\n";
+                cout << config.name << ": Started process\n";
+
                 cpu_set_t mask;
                 CPU_ZERO(&mask);
+
                 if(config.id == CPU_SMALL)
                 {
                     for(int i = 0; i <= 3; i++)
@@ -480,10 +496,12 @@ void run_sched()
                     {
                         break;
                     }
-                    if(*config.run)
+                    if((config.id == CPU_SMALL && *run_cpu_small) || (config.id == CPU_BIG && *run_cpu_big) || (config.id == GPU && *run_gpu))
                     {
+                        //cout << config.name << ": Running\n";
                         arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
                         (*val)++;
+                        //cout << "Done" << *val << "\n";
                     }
                     else
                     {
