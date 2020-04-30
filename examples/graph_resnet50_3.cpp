@@ -249,7 +249,7 @@ std::map<int, int> configs_idx{
     { GPU, 2 }
 };
 
-static const int TL = 80000;
+static int TL = 80000;
 
 void profile_time()
 {
@@ -267,7 +267,7 @@ void profile_time()
         cout << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
         for(int i = 0; i < 10; i++)
         {
-            usleep(5000000);
+            usleep(1000000);
             auto start = high_resolution_clock::now();
 
             arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
@@ -296,7 +296,7 @@ void profile_temp()
              << ((i & GPU) ? "gpu" : "-") << "\n";
         for(int j = 0; j < 10; j++)
         {
-            usleep(5000000);
+            usleep(1000000);
             *done   = 0;
             int pid = fork();
             if(pid > 0)
@@ -389,7 +389,7 @@ void run_sched()
     {
         auto     tbegin = high_resolution_clock::now();
         ofstream file("temp_resnet50_3.log");
-        file << "time temp\n";
+        file << "time, temp\n";
         cout << "Main thread running\n";
         double min_delta_temp = min_element(delta_temps.begin(), delta_temps.end(), [](const auto &l, const auto &r) {
                                     return l.second < r.second;
@@ -444,7 +444,7 @@ void run_sched()
                 // stop any new inferences
                 *run_cpu_small = 0;
                 *run_cpu_big   = 0;
-                *run_cpu_gpu   = 0;
+                *run_gpu       = 0;
             }
             if(tdiff > last_time + 5)
             {
@@ -456,7 +456,7 @@ void run_sched()
                      << "val = " << *val << "\n";
                 last_time += 5;
             }
-            file << tdiff << " " << temp << "\n";
+            file << tdiff << ", " << temp << "\n";
             usleep(1000);
         }
         auto   tend  = high_resolution_clock::now();
@@ -556,6 +556,8 @@ int main(int argc, char **argv)
 
     images     = imagesOption->value();
     inferences = inferencesOption->value();
+
+    cout << "TL = " << TL << "\n";
 
     if(profileTimeOption->is_set() && profileTimeOption->value())
     {

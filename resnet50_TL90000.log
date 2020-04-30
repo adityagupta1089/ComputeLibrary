@@ -1,0 +1,25 @@
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Sleeping for 5 seconds
+Main thread running
+CPU Small: Started process
+GPU: Started process
+CPU Big: Started process
+tdiff = 5.00094, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 81368, val = 4
+tdiff = 10.0001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 70136, val = 11
+tdiff = 15.0001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 66680, val = 17
+tdiff = 20.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 67328, val = 24
+tdiff = 25.0006, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 69704, val = 31
+tdiff = 30.0008, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 70352, val = 39
+tdiff = 35.0011, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 71864, val = 45
+tdiff = 40.0011, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 71648, val = 53
+tdiff = 45.0006, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 72080, val = 59
+tdiff = 50.0002, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 71432, val = 66
+tdiff = 55.0001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 72296, val = 72
+tdiff = 60.0008, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 71648, val = 80
+tdiff = 65.0003, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 73808, val = 88
+tdiff = 70.0003, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 1, temp = 72944, val = 96
+0.740184 per image
+0.740184 per inference
