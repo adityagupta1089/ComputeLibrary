@@ -3,4 +3,5 @@ build/*
 .project
 .idea/*
 .settings/
+.vscode
 venv/
