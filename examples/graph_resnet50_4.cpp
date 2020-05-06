@@ -213,13 +213,13 @@ struct _param
     double c;
 };
 static std::map<int, _param> params{
-    { CPU_BIG, { 0, 0 } },
-    { CPU_BIG | CPU_SMALL, { 0, 0 } },
-    { CPU_SMALL, { 0, 0 } },
-    { GPU, { 0, 0 } },
-    { GPU | CPU_BIG, { 0, 0 } },
-    { GPU | CPU_BIG | CPU_SMALL, { 0, 0 } },
-    { GPU | CPU_SMALL, { 0, 0 } }
+    { CPU_BIG, { 1491286.948, 312.361 } },
+    { CPU_BIG | CPU_SMALL, { 15394.862, 1.425 } },
+    { CPU_SMALL, { 16143.513, 6.668 } },
+    { GPU, { 7523.656, 0.460 } },
+    { GPU | CPU_BIG, { 7871.859, 100.244 } },
+    { GPU | CPU_BIG | CPU_SMALL, { 8628.666, 0.205 } },
+    { GPU | CPU_SMALL, { 7404.387, 0.375 } }
 };
 
 struct _config
@@ -256,12 +256,12 @@ std::map<int, int> configs_idx{
     { GPU, 2 }
 };
 
-static int TL = 80000, dt = 10000, sdt = 5000000;
+static int TL = 100000, dt = 10000, sdt = 5000000;
 
-double fit_time(double temp, _param param)
+double fit_temp(double temp, _param param, double time)
 {
     // T(t) = T(0) + b (1 - exp(-t / c))
-    return temp + param.b * (1 - exp(-temp / param.c));
+    return temp + param.b * (1 - exp(-time / param.c));
 }
 
 void run_sched()
@@ -292,20 +292,27 @@ void run_sched()
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_resnet50_3.log");
+        ofstream file("temp_schedulerv4/resnet50_temp.csv");
         file << "time, temp\n";
         cout << "Main thread running\n";
         unsigned int last_time = 0;
         while(*val < images)
         {
-            auto                  tnow  = high_resolution_clock::now();
-            double                tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
-            int                   temp  = get_temp();
+            auto   tnow  = high_resolution_clock::now();
+            double tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
+            int    temp  = get_temp();
             std::map<int, double> fit_temps;
-            double                min_fit_temp = 9999999999;
+            double min_fit_temp = 9999999999;
             for(const auto &param : params)
             {
-                fit_temps[param.first] = fit_time(temp, param.second);
+                bool cpu_small = param.first & CPU_SMALL;
+                bool cpu_big = param.first & CPU_BIG;
+                bool gpu = param.first & GPU;
+                double mx_time = 0;
+                if (cpu_small) mx_time = max(mx_time, configs[configs_idx[CPU_SMALL]].time_taken);
+                if (cpu_big) mx_time = max(mx_time, configs[configs_idx[CPU_BIG]].time_taken);
+                if (gpu) mx_time = max(mx_time, configs[configs_idx[GPU]].time_taken);
+                fit_temps[param.first] = fit_temp(temp, param.second, mx_time);
                 min_fit_temp           = min(min_fit_temp, fit_temps[param.first]);
             }
             if(min_fit_temp < TL)
@@ -435,10 +442,7 @@ int main(int argc, char **argv)
     // Command Line Parsing
     CommandLineParser parser;
 
-    ToggleOption *profileTempOption = parser.add_option<ToggleOption>("profile-temp");
-    ToggleOption *profileTimeOption = parser.add_option<ToggleOption>("profile-time");
-    ToggleOption *runSchedOption    = parser.add_option<ToggleOption>("run-sched");
-    ToggleOption *helpOption        = parser.add_option<ToggleOption>("help");
+    ToggleOption *helpOption = parser.add_option<ToggleOption>("help");
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
@@ -447,10 +451,6 @@ int main(int argc, char **argv)
 
     imagesOption->set_help("Images");
     inferencesOption->set_help("Inferences");
-
-    profileTempOption->set_help("Profile Temperature");
-    profileTimeOption->set_help("Profile Time");
-    runSchedOption->set_help("Run Scheduler");
 
     parser.parse(argc, argv);
 
@@ -466,16 +466,5 @@ int main(int argc, char **argv)
 
     cout << "TL = " << TL << "\n";
 
-    if(profileTimeOption->is_set() && profileTimeOption->value())
-    {
-        profile_time();
-    }
-    if(profileTempOption->is_set() && profileTempOption->value())
-    {
-        profile_temp();
-    }
-    if(runSchedOption->is_set() && runSchedOption->value())
-    {
-        run_sched();
-    }
+    run_sched();
 }
