@@ -249,11 +249,36 @@ std::map<int, int> configs_idx{
     { GPU, 2 }
 };
 
-static int TL = 80000;
-
-void profile_time()
+//https://stackoverflow.com/a/24413884/1835779
+struct MyStreamingHelper
 {
-    cout << "***\nProfiling Time\n";
+    MyStreamingHelper(std::ostream &out1,
+                      std::ostream &out2)
+        : out1_(out1), out2_(out2)
+    {
+    }
+    std::ostream &out1_;
+    std::ostream &out2_;
+};
+
+template <typename T>
+MyStreamingHelper &operator<<(MyStreamingHelper &h, T const &t)
+{
+    h.out1_ << t;
+    h.out2_ << t;
+    return h;
+}
+
+MyStreamingHelper &operator<<(MyStreamingHelper &h, ostream &(*f)(ostream &))
+{
+    h.out1_ << f;
+    h.out2_ << f;
+    return h;
+}
+
+void profile_time(MyStreamingHelper &h)
+{
+    h << "***\nProfiling Time\n";
     std::map<int, double> samples{
         { CPU_BIG, 0 },
         { CPU_SMALL, 0 },
@@ -264,7 +289,7 @@ void profile_time()
     {
         int  config_id = kv.first;
         auto config    = configs[configs_idx[config_id]];
-        cout << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
+        h << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
         for(int i = 0; i < 10; i++)
         {
             usleep(1000000);
@@ -274,26 +299,26 @@ void profile_time()
 
             auto   end      = high_resolution_clock::now();
             double duration = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-            cout << config.name << " [" << i + 1 << "/10] " << duration << "\n";
+            h << config.name << " [" << i + 1 << "/10] " << duration << "\n";
             samples[config_id] += duration;
         }
-        cout << config.name << " Average " << samples[config_id] / 10 << "\n";
+        h << config.name << " Average " << samples[config_id] / 10 << "\n";
         config.time_taken = samples[config_id] / 10;
     }
 }
 
-void profile_temp()
+void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
 {
-    cout << "***\nProfiling Temperature\n";
+    h << "***\nProfiling Temperature\n";
     atomic_uint *done = static_cast<atomic_uint *>(mmap(NULL, sizeof *done,
                                                         PROT_READ | PROT_WRITE,
                                                         MAP_SHARED | MAP_ANONYMOUS, -1, 0));
     for(unsigned int i = 1; i <= ALL; i++)
     {
-        cout << "[" << i << "/" << ALL << "] "
-             << "Processing " << ((i & CPU_BIG) ? "cpu_big_" : "-")
-             << ((i & CPU_SMALL) ? "cpu_small_" : "-")
-             << ((i & GPU) ? "gpu" : "-") << "\n";
+        h << "[" << i << "/" << ALL << "] "
+          << "Processing " << ((i & CPU_BIG) ? "cpu_big_" : "-")
+          << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+          << ((i & GPU) ? "gpu" : "-") << "\n";
         for(int j = 0; j < 10; j++)
         {
             usleep(1000000);
@@ -306,17 +331,17 @@ void profile_temp()
 
                 while(*done < i)
                 {
-                    usleep(1000);
+                    usleep(dt);
                     int curr_temp = get_temp();
                     max_temp      = max(max_temp, curr_temp);
                 }
                 int max_delta_temp = max_temp - temp;
-                cout << "[" << j + 1 << "/10] "
-                     << ((i & CPU_BIG) ? "cpu_big_" : "-")
-                     << ((i & CPU_SMALL) ? "cpu_small_" : "-")
-                     << ((i & GPU) ? "gpu" : "-")
-                     << " "
-                     << max_delta_temp << "\n";
+                h << "[" << j + 1 << "/10] "
+                  << ((i & CPU_BIG) ? "cpu_big_" : "-")
+                  << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+                  << ((i & GPU) ? "gpu" : "-")
+                  << " "
+                  << max_delta_temp << "\n";
                 delta_temps[i] += max_delta_temp;
             }
             else
@@ -352,19 +377,19 @@ void profile_temp()
             }
         }
         delta_temps[i] /= 10;
-        cout << ((i & CPU_BIG) ? "cpu_big_" : "-")
-             << ((i & CPU_SMALL) ? "cpu_small_" : "-")
-             << ((i & GPU) ? "gpu" : "-")
-             << " Average "
-             << delta_temps[i] << "\n";
+        h << ((i & CPU_BIG) ? "cpu_big_" : "-")
+          << ((i & CPU_SMALL) ? "cpu_small_" : "-")
+          << ((i & GPU) ? "gpu" : "-")
+          << " Average "
+          << delta_temps[i] << "\n";
     }
 }
 
-void run_sched()
+void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
 {
-    cout << "***\nRunning Scheduler\n";
-    cout << "Images = " << images << "\n";
-    cout << "Inferences = " << inferences << "\n";
+    h << "***\nRunning Scheduler\n";
+    h << "Images = " << images << "\n";
+    h << "Inferences = " << inferences << "\n";
 
     // Set up flags
     run_cpu_small = static_cast<atomic_uint *>(
@@ -382,15 +407,15 @@ void run_sched()
     *val           = 0;
 
     // Create Child Processes
-    cout << "Sleeping for 5 seconds\n";
+    h << "Sleeping for 5 seconds\n";
     usleep(5000000);
     int pid = fork();
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_resnet50_3.log");
+        ofstream file("temp_schedulerv3/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
         file << "time, temp\n";
-        cout << "Main thread running\n";
+        h << "Main thread running\n";
         double min_delta_temp = min_element(delta_temps.begin(), delta_temps.end(), [](const auto &l, const auto &r) {
                                     return l.second < r.second;
                                 })->second;
@@ -448,23 +473,23 @@ void run_sched()
             }
             if(tdiff > last_time + 5)
             {
-                cout << "tdiff = " << tdiff << ", "
-                     << "run_cpu_small = " << *run_cpu_small << ", "
-                     << "run_cpu_big = " << *run_cpu_big << ", "
-                     << "run_gpu = " << *run_gpu << ", "
-                     << "temp = " << temp << ", "
-                     << "val = " << *val << "\n";
+                h << "tdiff = " << tdiff << ", "
+                  << "run_cpu_small = " << *run_cpu_small << ", "
+                  << "run_cpu_big = " << *run_cpu_big << ", "
+                  << "run_gpu = " << *run_gpu << ", "
+                  << "temp = " << temp << ", "
+                  << "val = " << *val << "\n";
                 last_time += 5;
             }
             file << tdiff << ", " << temp << "\n";
-            usleep(1000);
+            usleep(dt);
         }
         auto   tend  = high_resolution_clock::now();
         double gross = duration_cast<duration<double>>(tend - tbegin).count();
         double cost  = gross / images;
-        cout << cost << " per image" << endl;
+        h << cost << " per image" << endl;
         cost /= inferences;
-        cout << cost << " per inference" << endl;
+        h << cost << " per inference" << endl;
     }
     else
     {
@@ -473,7 +498,7 @@ void run_sched()
             int pid = fork();
             if(pid == 0)
             {
-                cout << config.name << ": Started process\n";
+                h << config.name << ": Started process\n";
 
                 cpu_set_t mask;
                 CPU_ZERO(&mask);
@@ -498,14 +523,14 @@ void run_sched()
                     }
                     if((config.id == CPU_SMALL && *run_cpu_small) || (config.id == CPU_BIG && *run_cpu_big) || (config.id == GPU && *run_gpu))
                     {
-                        //cout << config.name << ": Running\n";
+                        //h << config.name << ": Running\n";
                         arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
                         (*val)++;
-                        //cout << "Done" << *val << "\n";
+                        //h << "Done" << *val << "\n";
                     }
                     else
                     {
-                        usleep(1000);
+                        usleep(dt);
                     }
                 }
                 exit(0);
@@ -535,6 +560,8 @@ int main(int argc, char **argv)
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
+    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("TL", 80000);
+    SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 10000);
 
     helpOption->set_help("Help");
 
@@ -554,21 +581,28 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    images     = imagesOption->value();
-    inferences = inferencesOption->value();
+    images          = imagesOption->value();
+    inferences      = inferencesOption->value();
+    unsigned int TL = tlOption->value();
+    unsigned int dt = dtOption->value();
 
-    cout << "TL = " << TL << "\n";
+    ofstream fl;
+    fl.open("temp_schedulerv3/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".txt");
+    MyStreamingHelper h(fl, cout);
+
+    h << "TL = " << TL << "\n";
+    h << "dt = " << dt << "\n";
 
     if(profileTimeOption->is_set() && profileTimeOption->value())
     {
-        profile_time();
+        profile_time(h);
     }
     if(profileTempOption->is_set() && profileTempOption->value())
     {
-        profile_temp();
+        profile_temp(h, TL, dt);
     }
     if(runSchedOption->is_set() && runSchedOption->value())
     {
-        run_sched();
+        run_sched(h, TL, dt);
     }
 }

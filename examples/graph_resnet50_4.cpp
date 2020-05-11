@@ -256,7 +256,7 @@ std::map<int, int> configs_idx{
     { GPU, 2 }
 };
 
-static int TL = 100000, dt = 10000, sdt = 5000000;
+static int sdt = 5000000;
 
 double fit_temp(double temp, _param param, double time)
 {
@@ -264,11 +264,37 @@ double fit_temp(double temp, _param param, double time)
     return temp + param.b * (1 - exp(-time / param.c));
 }
 
-void run_sched()
+//https://stackoverflow.com/a/24413884/1835779
+struct MyStreamingHelper
 {
-    cout << "***\nRunning Scheduler\n";
-    cout << "Images = " << images << "\n";
-    cout << "Inferences = " << inferences << "\n";
+    MyStreamingHelper(std::ostream &out1,
+                      std::ostream &out2)
+        : out1_(out1), out2_(out2)
+    {
+    }
+    std::ostream &out1_;
+    std::ostream &out2_;
+};
+
+template <typename T>
+MyStreamingHelper &operator<<(MyStreamingHelper &h, T const &t)
+{
+    h.out1_ << t;
+    h.out2_ << t;
+    return h;
+}
+
+MyStreamingHelper &operator<<(MyStreamingHelper &h, ostream &(*f)(ostream &))
+{
+    h.out1_ << f;
+    h.out2_ << f;
+    return h;
+}
+void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
+{
+    h << "***\nRunning Scheduler\n";
+    h << "Images = " << images << "\n";
+    h << "Inferences = " << inferences << "\n";
 
     // Set up flags
     run_cpu_small = static_cast<atomic_uint *>(
@@ -286,15 +312,15 @@ void run_sched()
     *val           = 0;
 
     // Create Child Processes
-    cout << "Sleeping for 5 seconds\n";
+    h << "Sleeping for 5 seconds\n";
     usleep(sdt);
     int pid = fork();
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv4/resnet50_temp.csv");
+        ofstream file("temp_schedulerv4/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
         file << "time, temp\n";
-        cout << "Main thread running\n";
+        h << "Main thread running\n";
         unsigned int last_time = 0;
         while(*val < images)
         {
@@ -305,13 +331,16 @@ void run_sched()
             double min_fit_temp = 9999999999;
             for(const auto &param : params)
             {
-                bool cpu_small = param.first & CPU_SMALL;
-                bool cpu_big = param.first & CPU_BIG;
-                bool gpu = param.first & GPU;
-                double mx_time = 0;
-                if (cpu_small) mx_time = max(mx_time, configs[configs_idx[CPU_SMALL]].time_taken);
-                if (cpu_big) mx_time = max(mx_time, configs[configs_idx[CPU_BIG]].time_taken);
-                if (gpu) mx_time = max(mx_time, configs[configs_idx[GPU]].time_taken);
+                bool   cpu_small = param.first & CPU_SMALL;
+                bool   cpu_big   = param.first & CPU_BIG;
+                bool   gpu       = param.first & GPU;
+                double mx_time   = 0;
+                if(cpu_small)
+                    mx_time = max(mx_time, configs[configs_idx[CPU_SMALL]].time_taken);
+                if(cpu_big)
+                    mx_time = max(mx_time, configs[configs_idx[CPU_BIG]].time_taken);
+                if(gpu)
+                    mx_time            = max(mx_time, configs[configs_idx[GPU]].time_taken);
                 fit_temps[param.first] = fit_temp(temp, param.second, mx_time);
                 min_fit_temp           = min(min_fit_temp, fit_temps[param.first]);
             }
@@ -362,12 +391,12 @@ void run_sched()
             }
             if(tdiff > last_time + 5)
             {
-                cout << "tdiff = " << tdiff << ", "
-                     << "run_cpu_small = " << *run_cpu_small << ", "
-                     << "run_cpu_big = " << *run_cpu_big << ", "
-                     << "run_gpu = " << *run_gpu << ", "
-                     << "temp = " << temp << ", "
-                     << "val = " << *val << "\n";
+                h << "tdiff = " << tdiff << ", "
+                  << "run_cpu_small = " << *run_cpu_small << ", "
+                  << "run_cpu_big = " << *run_cpu_big << ", "
+                  << "run_gpu = " << *run_gpu << ", "
+                  << "temp = " << temp << ", "
+                  << "val = " << *val << "\n";
                 last_time += 5;
             }
             file << tdiff << ", " << temp << "\n";
@@ -376,9 +405,9 @@ void run_sched()
         auto   tend  = high_resolution_clock::now();
         double gross = duration_cast<duration<double>>(tend - tbegin).count();
         double cost  = gross / images;
-        cout << cost << " per image" << endl;
+        h << cost << " per image" << endl;
         cost /= inferences;
-        cout << cost << " per inference" << endl;
+        h << cost << " per inference" << endl;
     }
     else
     {
@@ -387,7 +416,7 @@ void run_sched()
             int pid = fork();
             if(pid == 0)
             {
-                cout << config.name << ": Started process\n";
+                h << config.name << ": Started process\n";
 
                 cpu_set_t mask;
                 CPU_ZERO(&mask);
@@ -412,10 +441,10 @@ void run_sched()
                     }
                     if((config.id == CPU_SMALL && *run_cpu_small) || (config.id == CPU_BIG && *run_cpu_big) || (config.id == GPU && *run_gpu))
                     {
-                        //cout << config.name << ": Running\n";
+                        //h << config.name << ": Running\n";
                         arm_compute::utils::run_example<GraphResNet50Example>(config.argc, config.argv);
                         (*val)++;
-                        //cout << "Done" << *val << "\n";
+                        //h << "Done" << *val << "\n";
                     }
                     else
                     {
@@ -437,6 +466,7 @@ void run_sched()
  *
  * @return Return code
  */
+
 int main(int argc, char **argv)
 {
     // Command Line Parsing
@@ -446,11 +476,15 @@ int main(int argc, char **argv)
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
+    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("TL", 80000);
+    SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 10000);
 
     helpOption->set_help("Help");
 
     imagesOption->set_help("Images");
     inferencesOption->set_help("Inferences");
+    tlOption->set_help("Temperature Threshold");
+    dtOption->set_help("Scheduler Interval");
 
     parser.parse(argc, argv);
 
@@ -461,10 +495,17 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    images     = imagesOption->value();
-    inferences = inferencesOption->value();
+    images          = imagesOption->value();
+    inferences      = inferencesOption->value();
+    unsigned int TL = tlOption->value();
+    unsigned int dt = dtOption->value();
 
-    cout << "TL = " << TL << "\n";
+    ofstream fl;
+    fl.open("temp_schedulerv4/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
+    MyStreamingHelper h(fl, cout);
 
-    run_sched();
+    h << "TL = " << TL << "\n";
+    h << "dt = " << dt << "\n";
+
+    run_sched(h, TL, dt);
 }
