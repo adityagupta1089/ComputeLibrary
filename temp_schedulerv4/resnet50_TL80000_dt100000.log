@@ -1,0 +1,39 @@
+TL = 80000
+dt = 100000
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Sleeping for 5 seconds
+TL = 80000
+dt = 100000
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Sleeping for 5 seconds
+Main thread running
+tdiff = 5.02465, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82880, val = 2
+tdiff = 10.0565, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77480, val = 5
+tdiff = 15.0907, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 76616, val = 10
+tdiff = 20.0252, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77048, val = 15
+tdiff = 25.0964, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 79208, val = 20
+tdiff = 30.0386, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80288, val = 23
+tdiff = 35.0774, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80504, val = 28
+tdiff = 40.0092, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 78560, val = 33
+tdiff = 45.0509, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77912, val = 38
+tdiff = 50.0909, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80072, val = 43
+tdiff = 55.0275, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77912, val = 46
+tdiff = 60.0601, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81800, val = 51
+tdiff = 65.0942, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 76400, val = 56
+tdiff = 70.0668, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77696, val = 60
+tdiff = 75.0004, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 78560, val = 65
+tdiff = 80.0377, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 78560, val = 70
+tdiff = 85.0788, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 86768, val = 74
+tdiff = 90.0114, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77264, val = 78
+tdiff = 95.0468, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 77480, val = 83
+tdiff = 100.084, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80288, val = 88
+tdiff = 105.018, run_cpu_small = 0, run_cpu_big = 1, run_gpu = 1, temp = 79208, val = 91
+tdiff = 110.054, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85256, val = 96
+1.13684 per image
+1.13684 per inference
