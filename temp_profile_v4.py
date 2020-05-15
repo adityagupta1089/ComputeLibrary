@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import time
+from random import randint
 import subprocess
 from itertools import combinations
 import matplotlib
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         bp = 30000
         cp = 5
         for i in range(10):
-            time.sleep(T)
+            time.sleep(randint(0, T))
             t=0
             running = []
             for target_cmd in cmd_combi:
@@ -88,7 +89,7 @@ if __name__ == "__main__":
             t0 = y[0]
             mx = t0
             y = [yy-t0 for yy in y]
-            popt, _ = curve_fit(temp_func, x, y, bounds=(0, [np.inf, 1000]), p0=(bp, cp))
+            popt, _ = curve_fit(temp_func, x, y, bounds=(0, np.inf), p0=(bp, cp))
             [b, c] = popt
             bp = b
             cp = c
