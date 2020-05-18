@@ -472,8 +472,12 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
     *val           = 0;
 
     // Create Child Processes
-    h << "Sleeping for 5 seconds\n";
-    usleep(5000000);
+    cout << "Sleeping until temp < 65000\n";
+    while(get_temp() > 65000)
+    {
+        cout << "\r" << get_temp() << std::flush;
+        usleep(1000000);
+    }
     int pid = fork();
     if(pid > 0)
     {
@@ -481,16 +485,21 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
         ofstream file("temp_schedulerv3_1/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
         file << "time, temp\n";
         h << "Main thread running\n";
-        double min_delta_temp = min_element(delta_temps.begin(), delta_temps.end(), [](const auto &l, const auto &r) {
-                                    return l.second < r.second;
-                                })->second;
         unsigned int last_time = 0;
         while(*val < images)
         {
             auto   tnow  = high_resolution_clock::now();
             double tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
-            int    temp  = get_temp();
-            if(temp + min_delta_temp < TL)
+            double pred_delta_temps[ALL + 1];
+            int    temp                = get_temp();
+            int    index               = (int)round((double)temp / 5000.0) * 5000;
+            double min_pred_delta_temp = 99999999;
+            for(int i = 1; i <= ALL; i++)
+            {
+                pred_delta_temps[i] = delta_temps2[i][index];
+                min_pred_delta_temp = min(min_pred_delta_temp, pred_delta_temps[i]);
+            }
+            if(temp + min_pred_delta_temp < TL)
             {
                 int    delta_temp     = TL - temp;
                 bool   min_cpu_small  = false;
@@ -508,7 +517,7 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt)
                     {
                         continue;
                     }
-                    if(delta_temps[i] < delta_temp)
+                    if(pred_delta_temps[i] < delta_temp)
                     {
                         double total_time = 0;
                         if(cpu_small)
@@ -625,7 +634,7 @@ int main(int argc, char **argv)
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
-    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("TL", 80000);
+    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("tl", 80000);
     SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 10000);
 
     helpOption->set_help("Help");

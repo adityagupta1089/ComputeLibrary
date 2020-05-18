@@ -560,7 +560,7 @@ int main(int argc, char **argv)
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
     SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
-    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("TL", 80000);
+    SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("tl", 80000);
     SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 10000);
 
     helpOption->set_help("Help");
