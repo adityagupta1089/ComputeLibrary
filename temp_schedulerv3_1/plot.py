@@ -6,9 +6,11 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 import itertools
 
-with open("resnet50_TL80000_dt10000.txt") as f:
+with open("resnet50_TL80000_dt10000_temp_profile.txt") as f:
     content = f.read()
-vals = re.findall(r"(\w+): start_temp = (\d+), index = \d+, max_temp = (\d+)", content)
+vals = re.findall(
+    r"(\w+): start_temp = (\d+), index = \d+, max_temp = (\d+)", content
+)
 vals2 = {
     "CPU_SMALL": {65000: 4968, 70000: 1416, 75000: 3624, 80000: 1728},
     "CPU_BIG": {65000: 18144, 75000: 11088, 80000: 8112, 85000: 4998.86},
@@ -89,10 +91,15 @@ def flip(items, ncol):
 
 
 ncol = 5
-fig.legend(flip(handles, ncol), flip(labels, ncol), ncol=ncol, loc="lower center")
+fig.legend(
+    flip(handles, ncol), flip(labels, ncol), ncol=ncol, loc="lower center"
+)
 
 plt.tight_layout()
 fig.subplots_adjust(top=0.88, bottom=0.15)
 fig.suptitle("Scheduler v3.1 Temperature Profiling (TL=80000, dt=10000)")
-fig.savefig("resnet50_TL80000_dt10000.png")
+# fig.savefig("resnet50_TL80000_dt10000.png")
 # plt.show()
+
+for kv in coeffs.items():
+    print(f"{{ {kv[0]}, {{ {kv[1][0]:.2f}, {kv[1][1]:.2f} }} }}")
