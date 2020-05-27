@@ -14,7 +14,13 @@ matplotlib.use('Agg')
 
 pp = "./build/release/examples/"
 
-graph = "graph_resnet50"
+graphs = [
+    "graph_alexnet",
+    "graph_googlenet",
+    "graph_mobilenet", 
+    "graph_squeezenet",
+    "graph_resnet50"
+]
 
 cp = ["--target=NEON", "--threads=4"]
 gp = ["--target=CL"]
@@ -60,43 +66,48 @@ def plot_temp(cmd_combi, x, y, popt, i, t0):
 if __name__ == "__main__":
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = './build/release'
-    RCs = {}
-    cmd_combis = []
-    cmds = list((target, targets[target](graph)) for target in targets)
-    for i in range(1, len(cmds) + 1):
-        cmd_combis += list(combinations(cmds, i))
-    for cmd_combi in cmd_combis:
-        print('> ', "-".join([target for target, _ in cmd_combi]))
-        bs = 0
-        cs = 0
-        bp = 30000
-        cp = 5
-        for i in range(10):
-            time.sleep(randint(0, T))
-            t=0
-            running = []
-            for target_cmd in cmd_combi:
-                running.append(subprocess.Popen(target_cmd[1], env=env))
-            x=[]
-            y = []
-            while None in (p.poll() for p in running):
-                x.append(t)
+    for graph in graphs:
+        print("graph = "+graph)
+        RCs = {}
+        cmd_combis = []
+        cmds = list((target, targets[target](graph)) for target in targets)
+        for i in range(1, len(cmds) + 1):
+            cmd_combis += list(combinations(cmds, i))
+        for cmd_combi in cmd_combis:
+            print('> ', "-".join([target for target, _ in cmd_combi]))
+            bp = 30000
+            cp = 5
+            bss = []
+            css = []
+            for i in range(10):
+                time.sleep(randint(0, T))
+                t=0
+                running = []
+                for target_cmd in cmd_combi:
+                    running.append(subprocess.Popen(target_cmd[1], env=env))
+                x=[]
+                y = []
+                while None in (p.poll() for p in running):
+                    x.append(t)
+                    y.append(get_temp())
+                    time.sleep(dt)
+                    t+=dt
                 y.append(get_temp())
-                time.sleep(dt)
-                t+=dt
-            y.append(get_temp())
-            x.append(t)
-            t0 = y[0]
-            mx = t0
-            y = [yy-t0 for yy in y]
-            popt, _ = curve_fit(temp_func, x, y, bounds=(0, np.inf), p0=(bp, cp))
-            [b, c] = popt
-            bp = b
-            cp = c
-            bs += b
-            cs += c
-            print('b=%5.3f, c=%5.3f' % (b, c))
-            plot_temp(cmd_combi, x, y, popt, i, t0)
-        bs /= 10
-        cs /= 10
-        print('Average: b=%5.3f, c=%5.3f' % (bs, cs))
+                x.append(t)
+                t0 = y[0]
+                mx = t0
+                y = [yy-t0 for yy in y]
+                try:
+                    popt, _ = curve_fit(temp_func, x, y, bounds=(0, np.inf), p0=(bp, cp))
+                except:
+                    continue
+                [b, c] = popt
+                bp = b
+                cp = c
+                bss.append(b)
+                css.append(c)
+                print('b=%5.3f, c=%5.3f' % (b, c))
+                plot_temp(cmd_combi, x, y, popt, i, t0)
+            bs = sum(bss)/len(bss)
+            cs  = sum(css)/len(css)
+            print('Average: b=%5.3f, c=%5.3f' % (bs, cs))

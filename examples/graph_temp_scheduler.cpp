@@ -227,7 +227,7 @@ class GraphAlexnetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -608,10 +608,10 @@ class GraphMobilenetExample : public Example
         SubStream   sg(graph);
 
         sg << DepthwiseConvolutionLayer(
-            3U, 3U,
-            get_weights_accessor(data_path, total_path + "depthwise_weights.npy"),
-            get_weights_accessor(data_path, total_path + "depthwise_bias.npy"),
-            dwc_pad_stride_info, depth_weights_quant_info)
+                  3U, 3U,
+                  get_weights_accessor(data_path, total_path + "depthwise_weights.npy"),
+                  get_weights_accessor(data_path, total_path + "depthwise_bias.npy"),
+                  dwc_pad_stride_info, depth_weights_quant_info)
            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::LU_BOUNDED_RELU, 6.f))
            << ConvolutionLayer(
                   1U, 1U, conv_filt,
@@ -656,7 +656,7 @@ class GraphSqueezenetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -684,17 +684,17 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire2", weights_layout, 64U, 64U);
         graph << ConvolutionLayer(
-            1U, 1U, 16U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 16U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire3", weights_layout, 64U, 64U);
         graph << ConvolutionLayer(
-            1U, 1U, 32U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 32U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire4", weights_layout, 128U, 128U);
         graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
@@ -706,24 +706,24 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire5", weights_layout, 128U, 128U);
         graph << ConvolutionLayer(
-            1U, 1U, 48U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 48U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire6", weights_layout, 192U, 192U);
         graph << ConvolutionLayer(
-            1U, 1U, 48U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 48U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire7", weights_layout, 192U, 192U);
         graph << ConvolutionLayer(
-            1U, 1U, 64U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 64U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire8", weights_layout, 256U, 256U);
         graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
@@ -735,10 +735,10 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire9", weights_layout, 256U, 256U);
         graph << ConvolutionLayer(
-            1U, 1U, 1000U,
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_w.npy", weights_layout),
-            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                     1U, 1U, 1000U,
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_w.npy", weights_layout),
+                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_b.npy"),
+                     PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
               << PoolingLayer(PoolingLayerInfo(PoolingType::AVG))
               << FlattenLayer()
@@ -772,18 +772,18 @@ class GraphSqueezenetExample : public Example
         std::string total_path = "/cnn_data/squeezenet_v1.0_model/" + param_path + "_";
         SubStream   i_a(graph);
         i_a << ConvolutionLayer(
-            1U, 1U, expand1_filt,
-            get_weights_accessor(data_path, total_path + "expand1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, total_path + "expand1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                   1U, 1U, expand1_filt,
+                   get_weights_accessor(data_path, total_path + "expand1x1_w.npy", weights_layout),
+                   get_weights_accessor(data_path, total_path + "expand1x1_b.npy"),
+                   PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         SubStream i_b(graph);
         i_b << ConvolutionLayer(
-            3U, 3U, expand3_filt,
-            get_weights_accessor(data_path, total_path + "expand3x3_w.npy", weights_layout),
-            get_weights_accessor(data_path, total_path + "expand3x3_b.npy"),
-            PadStrideInfo(1, 1, 1, 1))
+                   3U, 3U, expand3_filt,
+                   get_weights_accessor(data_path, total_path + "expand3x3_w.npy", weights_layout),
+                   get_weights_accessor(data_path, total_path + "expand3x3_b.npy"),
+                   PadStrideInfo(1, 1, 1, 1))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         return BranchLayer(BranchMergeMethod::DEPTH_CONCATENATE, std::move(i_a), std::move(i_b));
@@ -822,7 +822,7 @@ class GraphGooglenetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -898,26 +898,26 @@ class GraphGooglenetExample : public Example
     Stream             graph;
 
     BranchLayer get_inception_node(const std::string &data_path, std::string &&param_path, DataLayout weights_layout,
-                                   unsigned int                           a_filt,
+                                   unsigned int a_filt,
                                    std::tuple<unsigned int, unsigned int> b_filters,
                                    std::tuple<unsigned int, unsigned int> c_filters,
-                                   unsigned int                           d_filt)
+                                   unsigned int d_filt)
     {
         std::string total_path = "/cnn_data/googlenet_model/" + param_path + "/" + param_path + "_";
         SubStream   i_a(graph);
         i_a << ConvolutionLayer(
-            1U, 1U, a_filt,
-            get_weights_accessor(data_path, total_path + "1x1_w.npy", weights_layout),
-            get_weights_accessor(data_path, total_path + "1x1_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                   1U, 1U, a_filt,
+                   get_weights_accessor(data_path, total_path + "1x1_w.npy", weights_layout),
+                   get_weights_accessor(data_path, total_path + "1x1_b.npy"),
+                   PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         SubStream i_b(graph);
         i_b << ConvolutionLayer(
-            1U, 1U, std::get<0>(b_filters),
-            get_weights_accessor(data_path, total_path + "3x3_reduce_w.npy", weights_layout),
-            get_weights_accessor(data_path, total_path + "3x3_reduce_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                   1U, 1U, std::get<0>(b_filters),
+                   get_weights_accessor(data_path, total_path + "3x3_reduce_w.npy", weights_layout),
+                   get_weights_accessor(data_path, total_path + "3x3_reduce_b.npy"),
+                   PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
             << ConvolutionLayer(
                    3U, 3U, std::get<1>(b_filters),
@@ -928,10 +928,10 @@ class GraphGooglenetExample : public Example
 
         SubStream i_c(graph);
         i_c << ConvolutionLayer(
-            1U, 1U, std::get<0>(c_filters),
-            get_weights_accessor(data_path, total_path + "5x5_reduce_w.npy", weights_layout),
-            get_weights_accessor(data_path, total_path + "5x5_reduce_b.npy"),
-            PadStrideInfo(1, 1, 0, 0))
+                   1U, 1U, std::get<0>(c_filters),
+                   get_weights_accessor(data_path, total_path + "5x5_reduce_w.npy", weights_layout),
+                   get_weights_accessor(data_path, total_path + "5x5_reduce_b.npy"),
+                   PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
             << ConvolutionLayer(
                    5U, 5U, std::get<1>(c_filters),
@@ -969,6 +969,14 @@ int get_temp()
 
 static const int ALL = (CPU_BIG | CPU_SMALL | GPU);
 
+struct _config
+{
+    int    id;
+    string name;
+    int    argc;
+    char **argv;
+};
+
 // v3
 static std::map<string, std::map<int, double>> delta_temps{
     { "resnet50",
@@ -978,7 +986,39 @@ static std::map<string, std::map<int, double>> delta_temps{
         { GPU, 10259.9 },
         { GPU | CPU_BIG, 23155.1 },
         { GPU | CPU_BIG | CPU_SMALL, 25315.1 },
-        { GPU | CPU_SMALL, 10454.3 } } }
+        { GPU | CPU_SMALL, 10454.3 } } },
+    { "alexnet",
+      { { CPU_BIG, 3996 },
+        { CPU_BIG | CPU_SMALL, 13662 },
+        { CPU_SMALL, 777.6 },
+        { GPU, 8586 },
+        { GPU | CPU_BIG, 17355.6 },
+        { GPU | CPU_BIG | CPU_SMALL, 19180.8 },
+        { GPU | CPU_SMALL, 10486.8 } } },
+    { "googlenet",
+      { { CPU_BIG, 4849.2 },
+        { CPU_BIG | CPU_SMALL, 8121.6 },
+        { CPU_SMALL, 442.8 },
+        { GPU, 9828 },
+        { GPU | CPU_BIG, 14666.4 },
+        { GPU | CPU_BIG | CPU_SMALL, 15238.8 },
+        { GPU | CPU_SMALL, 11458.8 } } },
+    { "mobilenet",
+      { { CPU_BIG, 3434.4 },
+        { CPU_BIG | CPU_SMALL, 5950.8 },
+        { CPU_SMALL, 334.8 },
+        { GPU, 5335.2 },
+        { GPU | CPU_BIG, 6804 },
+        { GPU | CPU_BIG | CPU_SMALL, 7138.8 },
+        { GPU | CPU_SMALL, 6933.6 } } },
+    { "squeezenet",
+      { { CPU_BIG, 1803.6 },
+        { CPU_BIG | CPU_SMALL, 4806 },
+        { CPU_SMALL, 172.8 },
+        { GPU, 7041.6 },
+        { GPU | CPU_BIG, 7268.4 },
+        { GPU | CPU_BIG | CPU_SMALL, 8456.4 },
+        { GPU | CPU_SMALL, 6588 } } }
 };
 //v3.1
 static std::map<string, std::map<int, std::map<int, double>>> delta_temps2{
@@ -989,7 +1029,40 @@ static std::map<string, std::map<int, std::map<int, double>>> delta_temps2{
         { GPU, { { 65000, 16459.2 }, { 70000, 11324.6 }, { 80000, 3888 } } },
         { GPU | CPU_SMALL, { { 65000, 20088 }, { 70000, 11760 }, { 75000, 11784 }, { 80000, 7776 } } },
         { GPU | CPU_BIG, { { 65000, 24624 }, { 70000, 18360 }, { 75000, 13024.8 }, { 80000, 11880 } } },
-        { GPU | CPU_BIG | CPU_SMALL, { { 65000, 25272 }, { 70000, 17403.4 }, { 75000, 10998 } } } } }
+        { GPU | CPU_BIG | CPU_SMALL, { { 65000, 25272 }, { 70000, 17403.4 }, { 75000, 10998 } } } } },
+    { "alexnet",
+      { { CPU_SMALL, { { 50000, 3240 }, { 55000, 648 } } },
+        { CPU_BIG, { { 55000, 12204 }, { 65000, 4384.8 }, { 70000, 1458 } } },
+        { CPU_BIG | CPU_SMALL, { { 55000, 17280 }, { 60000, 12471.6 } } },
+        { GPU, { { 60000, 8586 } } },
+        { GPU | CPU_SMALL, { { 60000, 10393.4 }, { 65000, 11016 } } },
+        { GPU | CPU_BIG, { { 60000, 17496 }, { 65000, 17145 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 22032 }, { 65000, 19030.7 } } } } },
+    { "mobilenet",
+      { { CPU_SMALL, { { 60000, 334.8 } } },
+        { CPU_BIG, { { 60000, 5832 }, { 65000, 5338.29 }, { 70000, 1786.91 } } },
+        { CPU_BIG | CPU_SMALL, { { 60000, 6264 }, { 65000, 5872.5 } } },
+        { GPU, { { 60000, 5316 }, { 65000, 5508 } } },
+        { GPU | CPU_SMALL, { { 60000, 6933.6 } } },
+        { GPU | CPU_BIG, { { 60000, 6720 }, { 65000, 7560 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 6871.5 }, { 65000, 8208 } } } } },
+    { "squeezenet",
+      { { CPU_SMALL, { { 60000, 172.8 } } },
+        { CPU_BIG, { { 60000, 5400 }, { 65000, 1712.57 }, { 70000, 324 } } },
+        { CPU_BIG | CPU_SMALL, { { 60000, 4536 }, { 65000, 4873.5 } } },
+        { GPU, { { 60000, 8460 }, { 65000, 6433.71 } } },
+        { GPU | CPU_SMALL, { { 60000, 6156 }, { 65000, 6636 } } },
+        { GPU | CPU_BIG, { { 60000, 7560 }, { 65000, 7253.05 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 14688 }, { 65000, 8128.42 } } } } },
+    { "googlenet",
+      { { CPU_SMALL, { { 65000, 442.8 } } },
+        { CPU_BIG, { { 65000, 12096 }, { 70000, 4360.5 }, { 75000, 1512 } } },
+        { CPU_BIG | CPU_SMALL, { { 60000, 21168 }, { 65000, 9806.4 }, { 70000, 6588 } } },
+        { GPU, { { 60000, 7128 }, { 65000, 9970.11 } } },
+        { GPU | CPU_SMALL, { { 60000, 10977.9 }, { 65000, 14184 } } },
+        { GPU | CPU_BIG, { { 60000, 15029.1 }, { 65000, 7776 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 15238.8 } } } } },
+
 };
 struct _param
 {
@@ -999,16 +1072,19 @@ struct _param
 };
 //v4
 static std::map<string, std::map<int, _param>> params{
-    { "resnet50", { { CPU_BIG, { 1491286.948, 312.361 } }, { CPU_BIG | CPU_SMALL, { 15394.862, 1.425 } }, { CPU_SMALL, { 16143.513, 6.668 } }, { GPU, { 7523.656, 0.460 } }, { GPU | CPU_BIG, { 7871.859, 100.244 } }, { GPU | CPU_BIG | CPU_SMALL, { 8628.666, 0.205 } }, { GPU | CPU_SMALL, { 7404.387, 0.375 } } } }
+    { "resnet50", { { CPU_BIG, { 1491286.948, 312.361 } }, { CPU_BIG | CPU_SMALL, { 15394.862, 1.425 } }, { CPU_SMALL, { 16143.513, 6.668 } }, { GPU, { 7523.656, 0.460 } }, { GPU | CPU_BIG, { 7871.859, 100.244 } }, { GPU | CPU_BIG | CPU_SMALL, { 8628.666, 0.205 } }, { GPU | CPU_SMALL, { 7404.387, 0.375 } } } },
+    { "alexnet", { { CPU_BIG, { 10163.468, 0.915 } }, { CPU_BIG | CPU_SMALL, { 4257.586, 0.168 } }, { CPU_SMALL, { 1219.760, 111.250 } }, { GPU, { 5018.921, 0.265 } }, { GPU | CPU_BIG, { 7382.180, 0.193 } }, { GPU | CPU_BIG | CPU_SMALL, { 7985.138, 0.179 } }, { GPU | CPU_SMALL, { 6264.900, 0.244 } } } },
+    { "mobilenet", { { CPU_BIG, { 3200867.422, 470.219 } }, { CPU_BIG | CPU_SMALL, { 2429.987, 26.176 } }, { CPU_SMALL, { 7794853.559, 15217.394 } }, { GPU, { 7738.174, 0.649 } }, { GPU | CPU_BIG, { 6660.583, 0.487 } }, { GPU | CPU_BIG | CPU_SMALL, { 6758.224, 0.393 } }, { GPU | CPU_SMALL, { 6943.555, 0.393 } } } },
+    { "squeezenet", { { CPU_BIG, { 5501734.796, 566.798 } }, { CPU_BIG | CPU_SMALL, { 2228.417, 0.083 } }, { CPU_SMALL, { 7790995.764, 8856.862 } }, { GPU, { 6642.212, 0.951 } }, { GPU | CPU_BIG, { 7346.346, 0.380 } }, { GPU | CPU_BIG | CPU_SMALL, { 6436.448, c = 0.108 } }, { GPU | CPU_SMALL, { 3280.501, 0.318 } } } },
+    { "googlenet", { { CPU_BIG, { 162062144.827, 16459.387 } }, { CPU_BIG | CPU_SMALL, { 5986.627, 0.285 } }, { CPU_SMALL, { 10144784.934, 9184.374 } }, { GPU, { 8600.225, 0.575 } }, { GPU | CPU_BIG, { 9148.494, 0.221 } }, { GPU | CPU_BIG | CPU_SMALL, { 11291.538, 0.197 } }, { GPU | CPU_SMALL, { 8836.057, 0.470 } } } },
 };
 
-struct _config
-{
-    int    id;
-    string name;
-    int    argc;
-    char **argv;
-    double time_taken;
+static std::map<string, std::map<int, double>> time_takens = {
+    { "resnet50", { { CPU_SMALL, 2.39182 }, { CPU_BIG, 2.51716 }, { GPU, 3.32532 } } },
+    { "alexnet", { { CPU_SMALL, 1.53179 }, { CPU_BIG, 1.4873 }, { GPU, 1.45514 } } },
+    { "googlenet", { { CPU_SMALL, 0.862833 }, { CPU_BIG, 0.787568 }, { GPU, 1.48101 } } },
+    { "mobilenet", { { CPU_SMALL, 0.481851 }, { CPU_BIG, 0.473925 }, { GPU, 0.660021 } } },
+    { "squeezenet", { { CPU_SMALL, 0.421066 }, { CPU_BIG, 0.447795 }, { GPU, 0.86846 } } }
 };
 
 char **convert(vector<string> argv_list)
@@ -1026,9 +1102,9 @@ static char **cpu_config = convert({ "", "--target=NEON", "--threads=4" });
 static char **gpu_config = convert({ "", "--target=CL" });
 
 _config configs[] = {
-    { CPU_SMALL, "CPU Small", 3, cpu_config, 2.39182 },
-    { CPU_BIG, "CPU Big", 3, cpu_config, 2.51716 },
-    { GPU, "GPU", 2, gpu_config, 3.32532 }
+    { CPU_SMALL, "CPU Small", 3, cpu_config },
+    { CPU_BIG, "CPU Big", 3, cpu_config },
+    { GPU, "GPU", 2, gpu_config }
 };
 std::map<int, int> configs_idx{
     { CPU_SMALL, 0 },
@@ -1123,7 +1199,7 @@ void profile_time(MyStreamingHelper &h, string graph)
             samples[config_id] += duration;
         }
         h << config.name << " Average " << samples[config_id] / T << "\n";
-        config.time_taken = samples[config_id] / T;
+        time_takens[graph][config_id] = samples[config_id] / T;
     }
 }
 
@@ -1147,7 +1223,7 @@ void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
           << "Processing " << ((i & CPU_BIG) ? "cpu_big_" : "")
           << ((i & CPU_SMALL) ? "cpu_small_" : "")
           << ((i & GPU) ? "gpu" : "") << "\n";
-        const int                  T = 20;
+        const int T = 20;
         std::map<int, vector<int>> temp_rise;
         for(int j = 0; j < T; j++)
         {
@@ -1170,9 +1246,11 @@ void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
                     CPU_ZERO(&mask);
                     for(int i = 4; i <= 7; i++)
                         CPU_SET(i, &mask);
-                    sched_setaffinity(0, sizeof(mask), &mask);
+                    int ret = sched_setaffinity(0, sizeof(mask), &mask);
+                    if(ret == -1)
+                        printf("Affinity failed [%d]\n", ret);
                     auto config = configs[CPU_BIG];
-                    inferences  = 200;
+                    inferences  = 100;
                     run_graph(graph, config.argc, config.argv);
                     *done = 1;
                     exit(0);
@@ -1290,10 +1368,10 @@ void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
         ofstream file("temp_schedulerv3/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
         file << "time, temp\n";
         h << "Main thread running\n";
-        double       min_delta_temp = min_element(delta_temps[graph].begin(), delta_temps[graph].end(), [](const auto &l, const auto &r) {
+        double min_delta_temp = min_element(delta_temps[graph].begin(), delta_temps[graph].end(), [](const auto &l, const auto &r) {
                                     return l.second < r.second;
                                 })->second;
-        unsigned int last_time      = 0;
+        unsigned int last_time = 0;
         while(*val < images)
         {
             auto   tnow  = high_resolution_clock::now();
@@ -1321,11 +1399,11 @@ void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
                     {
                         double total_time = 0;
                         if(cpu_small)
-                            total_time += configs[configs_idx[CPU_SMALL]].time_taken;
+                            total_time += time_takens[graph][CPU_SMALL];
                         if(cpu_big)
-                            total_time += configs[configs_idx[CPU_BIG]].time_taken;
+                            total_time += time_takens[graph][CPU_BIG];
                         if(gpu)
-                            total_time += configs[configs_idx[GPU]].time_taken;
+                            total_time += time_takens[graph][GPU];
                         if(total_time < min_total_time)
                         {
                             min_cpu_small = cpu_small;
@@ -1484,11 +1562,11 @@ void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, stri
                     {
                         double total_time = 0;
                         if(cpu_small)
-                            total_time += configs[configs_idx[CPU_SMALL]].time_taken;
+                            total_time += time_takens[graph][CPU_SMALL];
                         if(cpu_big)
-                            total_time += configs[configs_idx[CPU_BIG]].time_taken;
+                            total_time += time_takens[graph][CPU_BIG];
                         if(gpu)
-                            total_time += configs[configs_idx[GPU]].time_taken;
+                            total_time += time_takens[graph][GPU];
                         if(total_time < min_total_time)
                         {
                             min_cpu_small = cpu_small;
@@ -1610,11 +1688,11 @@ void run_sched_v4(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
         unsigned int last_time = 0;
         while(*val < images)
         {
-            auto                  tnow  = high_resolution_clock::now();
-            double                tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
-            int                   temp  = get_temp();
+            auto   tnow  = high_resolution_clock::now();
+            double tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
+            int    temp  = get_temp();
             std::map<int, double> fit_temps;
-            double                min_fit_temp = 9999999999;
+            double min_fit_temp = 9999999999;
             for(const auto &param : params[graph])
             {
                 bool   cpu_small = param.first & CPU_SMALL;
@@ -1622,11 +1700,12 @@ void run_sched_v4(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
                 bool   gpu       = param.first & GPU;
                 double mx_time   = 0;
                 if(cpu_small)
-                    mx_time = max(mx_time, configs[configs_idx[CPU_SMALL]].time_taken);
+                    mx_time = max(mx_time, time_takens[graph][CPU_SMALL]);
                 if(cpu_big)
-                    mx_time = max(mx_time, configs[configs_idx[CPU_BIG]].time_taken);
+                    mx_time = max(mx_time, time_takens[graph][CPU_BIG]);
                 if(gpu)
-                    mx_time = max(mx_time, configs[configs_idx[GPU]].time_taken);
+                    mx_time = max(mx_time, time_takens[graph][GPU]);
+
                 fit_temps[param.first] = fit_temp(temp, param.second, mx_time);
                 min_fit_temp           = min(min_fit_temp, fit_temps[param.first]);
             }
@@ -1651,11 +1730,11 @@ void run_sched_v4(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
                     {
                         double total_time = 0;
                         if(cpu_small)
-                            total_time += configs[configs_idx[CPU_SMALL]].time_taken;
+                            total_time += time_takens[graph][CPU_SMALL];
                         if(cpu_big)
-                            total_time += configs[configs_idx[CPU_BIG]].time_taken;
+                            total_time += time_takens[graph][CPU_BIG];
                         if(gpu)
-                            total_time += configs[configs_idx[GPU]].time_taken;
+                            total_time += time_takens[graph][GPU];
                         if(total_time < min_total_time)
                         {
                             min_cpu_small = cpu_small;
@@ -1806,22 +1885,34 @@ int main(int argc, char **argv)
     string graph   = graphOption->value();
     string version = versionOption->value();
 
+    bool is_profile_time = profileTimeOption->is_set() && profileTimeOption->value();
+    bool is_profile_temp = profileTempOption->is_set() && profileTempOption->value();
+    bool is_run_sched    = runSchedOption->is_set() && runSchedOption->value();
+
+    string suffix = "";
+    if(is_profile_time)
+        suffix += "_profile_time";
+    if(is_profile_temp)
+        suffix += "_profile_temp";
+    if(is_run_sched)
+        suffix += "_run_sched" + version;
+
     ofstream fl;
-    fl.open("temp_schedulerv4/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
+    fl.open("temp_scheduler_all/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + suffix + ".log");
     MyStreamingHelper h(fl, cout);
 
     h << "TL = " << TL << "\n";
     h << "graph = " << graph << "\n";
 
-    if(profileTimeOption->is_set() && profileTimeOption->value())
+    if(is_profile_time)
     {
         profile_time(h, graph);
     }
-    if(profileTempOption->is_set() && profileTempOption->value())
+    if(is_profile_temp)
     {
         profile_temp(h, TL, dt, graph);
     }
-    if(runSchedOption->is_set() && runSchedOption->value())
+    if(is_run_sched)
     {
         if(version == "3")
         {
