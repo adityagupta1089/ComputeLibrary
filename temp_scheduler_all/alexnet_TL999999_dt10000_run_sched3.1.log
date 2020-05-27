@@ -1,0 +1,25 @@
+TL = 999999
+graph = alexnet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+TL = 999999
+graph = alexnet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Main thread running
+tdiff = 5.00072, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82448, val = 7
+tdiff = 10.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84392, val = 18
+tdiff = 15.0057, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79424, val = 31
+tdiff = 20.0026, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83960, val = 44
+tdiff = 25, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80936, val = 55
+tdiff = 30.0056, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79640, val = 66
+tdiff = 35.0049, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85472, val = 78
+tdiff = 40.0042, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84176, val = 88
+0.447995 per image
+0.447995 per inference

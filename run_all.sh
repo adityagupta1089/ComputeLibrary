@@ -1,3 +1,7 @@
-for graph in alexnet googlenet mobilenet squeezenet resnet50; do
-    ./build/release/examples/graph_temp_scheduler --graph=$graph --profile-temp
+for graph in resnet50; do
+    for version in 3 3.1 4; do
+        for tl in 80000 999999; do
+            ./build/release/examples/graph_temp_scheduler --graph=$graph --run-sched --version=$version --tl=$tl
+        done
+    done
 done

@@ -1,0 +1,32 @@
+TL = 999999
+graph = resnet50
+version = 4
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Sleeping for 5 seconds
+TL = 999999
+graph = resnet50
+version = 4
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Sleeping for 5 seconds
+Main thread running
+tdiff = 5.00264, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82880, val = 4
+tdiff = 10.0017, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80288, val = 11
+tdiff = 15.0093, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 75536, val = 18
+tdiff = 20.0009, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 76616, val = 26
+tdiff = 25.0027, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78776, val = 34
+tdiff = 30.007, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78776, val = 41
+tdiff = 35.0095, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 77480, val = 48
+tdiff = 40.0105, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79856, val = 57
+tdiff = 45.0094, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78128, val = 64
+tdiff = 50.0014, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78128, val = 72
+tdiff = 55.0032, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78344, val = 80
+tdiff = 60.0092, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82664, val = 88
+tdiff = 65.0091, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80288, val = 95
+0.680518 per image
+0.680518 per inference

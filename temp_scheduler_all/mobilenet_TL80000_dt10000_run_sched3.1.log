@@ -1,0 +1,18 @@
+TL = 80000
+graph = mobilenet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+TL = 80000
+graph = mobilenet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Main thread running
+tdiff = 5.00092, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78560, val = 39
+0.0990089 per image
+0.0990089 per inference

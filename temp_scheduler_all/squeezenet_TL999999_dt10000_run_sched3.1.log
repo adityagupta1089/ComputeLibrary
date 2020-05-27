@@ -1,0 +1,18 @@
+TL = 999999
+graph = squeezenet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+TL = 999999
+graph = squeezenet
+version = 3.1
+***
+Running Scheduler
+Images = 100
+Inferences = 1
+Main thread running
+tdiff = 5.00599, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85040, val = 64
+0.0738528 per image
+0.0738528 per inference

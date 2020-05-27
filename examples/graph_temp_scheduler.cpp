@@ -650,7 +650,7 @@ class GraphSqueezenetExample : public Example
         ARM_COMPUTE_EXIT_ON_MSG(common_params.data_type == DataType::F16 && common_params.target == Target::NEON, "F16 NEON not supported for this graph");
 
         // Print parameter values
-        std::cout << common_params << std::endl;
+        // std::cout << common_params << std::endl;
 
         // Get trainable parameters data path
         std::string data_path = common_params.data_path;
@@ -816,7 +816,7 @@ class GraphGooglenetExample : public Example
         ARM_COMPUTE_EXIT_ON_MSG(common_params.data_type == DataType::F16 && common_params.target == Target::NEON, "F16 NEON not supported for this graph");
 
         // Print parameter values
-        std::cout << common_params << std::endl;
+        // std::cout << common_params << std::endl;
 
         // Get trainable parameters data path
         std::string data_path = common_params.data_path;
@@ -1075,7 +1075,7 @@ static std::map<string, std::map<int, _param>> params{
     { "resnet50", { { CPU_BIG, { 1491286.948, 312.361 } }, { CPU_BIG | CPU_SMALL, { 15394.862, 1.425 } }, { CPU_SMALL, { 16143.513, 6.668 } }, { GPU, { 7523.656, 0.460 } }, { GPU | CPU_BIG, { 7871.859, 100.244 } }, { GPU | CPU_BIG | CPU_SMALL, { 8628.666, 0.205 } }, { GPU | CPU_SMALL, { 7404.387, 0.375 } } } },
     { "alexnet", { { CPU_BIG, { 10163.468, 0.915 } }, { CPU_BIG | CPU_SMALL, { 4257.586, 0.168 } }, { CPU_SMALL, { 1219.760, 111.250 } }, { GPU, { 5018.921, 0.265 } }, { GPU | CPU_BIG, { 7382.180, 0.193 } }, { GPU | CPU_BIG | CPU_SMALL, { 7985.138, 0.179 } }, { GPU | CPU_SMALL, { 6264.900, 0.244 } } } },
     { "mobilenet", { { CPU_BIG, { 3200867.422, 470.219 } }, { CPU_BIG | CPU_SMALL, { 2429.987, 26.176 } }, { CPU_SMALL, { 7794853.559, 15217.394 } }, { GPU, { 7738.174, 0.649 } }, { GPU | CPU_BIG, { 6660.583, 0.487 } }, { GPU | CPU_BIG | CPU_SMALL, { 6758.224, 0.393 } }, { GPU | CPU_SMALL, { 6943.555, 0.393 } } } },
-    { "squeezenet", { { CPU_BIG, { 5501734.796, 566.798 } }, { CPU_BIG | CPU_SMALL, { 2228.417, 0.083 } }, { CPU_SMALL, { 7790995.764, 8856.862 } }, { GPU, { 6642.212, 0.951 } }, { GPU | CPU_BIG, { 7346.346, 0.380 } }, { GPU | CPU_BIG | CPU_SMALL, { 6436.448, c = 0.108 } }, { GPU | CPU_SMALL, { 3280.501, 0.318 } } } },
+    { "squeezenet", { { CPU_BIG, { 5501734.796, 566.798 } }, { CPU_BIG | CPU_SMALL, { 2228.417, 0.083 } }, { CPU_SMALL, { 7790995.764, 8856.862 } }, { GPU, { 6642.212, 0.951 } }, { GPU | CPU_BIG, { 7346.346, 0.380 } }, { GPU | CPU_BIG | CPU_SMALL, { 6436.448, 0.108 } }, { GPU | CPU_SMALL, { 3280.501, 0.318 } } } },
     { "googlenet", { { CPU_BIG, { 162062144.827, 16459.387 } }, { CPU_BIG | CPU_SMALL, { 5986.627, 0.285 } }, { CPU_SMALL, { 10144784.934, 9184.374 } }, { GPU, { 8600.225, 0.575 } }, { GPU | CPU_BIG, { 9148.494, 0.221 } }, { GPU | CPU_BIG | CPU_SMALL, { 11291.538, 0.197 } }, { GPU | CPU_SMALL, { 8836.057, 0.470 } } } },
 };
 
@@ -1365,7 +1365,7 @@ void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv3/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
+        ofstream file("temp_schedulerv3/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
         file << "time, temp\n";
         h << "Main thread running\n";
         double min_delta_temp = min_element(delta_temps[graph].begin(), delta_temps[graph].end(), [](const auto &l, const auto &r) {
@@ -1523,7 +1523,7 @@ void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, stri
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv3_1/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
+        ofstream file("temp_schedulerv3_1/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".log");
         file << "time, temp\n";
         h << "Main thread running\n";
         unsigned int last_time = 0;
@@ -1682,7 +1682,7 @@ void run_sched_v4(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv4/resnet50_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
+        ofstream file("temp_schedulerv4/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
         file << "time, temp\n";
         h << "Main thread running\n";
         unsigned int last_time = 0;
@@ -1903,6 +1903,7 @@ int main(int argc, char **argv)
 
     h << "TL = " << TL << "\n";
     h << "graph = " << graph << "\n";
+    h << "version = " << version << "\n";
 
     if(is_profile_time)
     {
