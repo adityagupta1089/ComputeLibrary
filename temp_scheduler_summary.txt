@@ -1,140 +1,32 @@
-Graph = mobilenet
-    Version = 3
-        TL = 80000
-            Average temp = 76511.61
-            Crosses threshold = 17.01
-            Time taken = 0.142344
-        TL = 999999
-            Average temp = 80949.85
-            Crosses threshold = 0.00
-            Time taken = 0.0877504
-    Version = 3.1
-        TL = 80000
-            Average temp = 80164.02
-            Crosses threshold = 51.63
-            Time taken = 0.0990089
-        TL = 999999
-            Average temp = 82963.31
-            Crosses threshold = 0.00
-            Time taken = 0.0818169
-    Version = 4
-        TL = 80000
-            Average temp = 80330.48
-            Crosses threshold = 54.44
-            Time taken = 0.125066
-        TL = 999999
-            Average temp = 82559.39
-            Crosses threshold = 0.00
-            Time taken = 0.0828581
-Graph = googlenet
-    Version = 3
-        TL = 80000
-            Average temp = 75752.54
-            Crosses threshold = 21.99
-            Time taken = 0.410692
-        TL = 999999
-            Average temp = 82175.67
-            Crosses threshold = 0.00
-            Time taken = 0.18781
-    Version = 3.1
-        TL = 80000
-            Average temp = 81623.81
-            Crosses threshold = 68.69
-            Time taken = 0.215444
-        TL = 999999
-            Average temp = 79789.50
-            Crosses threshold = 0.00
-            Time taken = 0.189898
-    Version = 4
-        TL = 80000
-            Average temp = 77235.78
-            Crosses threshold = 14.65
-            Time taken = 0.293035
-        TL = 999999
-            Average temp = 83401.25
-            Crosses threshold = 0.00
-            Time taken = 0.180567
-Graph = alexnet
-    Version = 3
-        TL = 80000
-            Average temp = 68645.51
-            Crosses threshold = 0.15
-            Time taken = 0.546734
-        TL = 999999
-            Average temp = 79563.80
-            Crosses threshold = 0.00
-            Time taken = 0.40922
-    Version = 3.1
-        TL = 80000
-            Average temp = 80341.81
-            Crosses threshold = 53.21
-            Time taken = 0.498409
-        TL = 999999
-            Average temp = 81298.69
-            Crosses threshold = 0.00
-            Time taken = 0.447995
-    Version = 4
-        TL = 80000
-            Average temp = 79373.55
-            Crosses threshold = 41.26
-            Time taken = 0.923064
-        TL = 999999
-            Average temp = 80224.36
-            Crosses threshold = 0.00
-            Time taken = 0.444841
-Graph = resnet50
-    Version = 3
-        TL = 80000
-            Average temp = 71225.11
-            Crosses threshold = 0.00
-            Time taken = 0.99003
-        TL = 999999
-            Average temp = 80062.27
-            Crosses threshold = 0.00
-            Time taken = 0.656528
-    Version = 3.1
-        TL = 80000
-            Average temp = 79847.88
-            Crosses threshold = 40.47
-            Time taken = 0.702596
-        TL = 999999
-            Average temp = 80103.00
-            Crosses threshold = 0.00
-            Time taken = 0.656122
-    Version = 4
-        TL = 80000
-            Average temp = 80005.74
-            Crosses threshold = 41.43
-            Time taken = 1.13075
-        TL = 999999
-            Average temp = 79272.50
-            Crosses threshold = 0.00
-            Time taken = 0.680518
-Graph = squeezenet
-    Version = 3
-        TL = 80000
-            Average temp = 77489.93
-            Crosses threshold = 13.80
-            Time taken = 0.131105
-        TL = 999999
-            Average temp = 83298.10
-            Crosses threshold = 0.00
-            Time taken = 0.0769157
-    Version = 3.1
-        TL = 80000
-            Average temp = 80907.43
-            Crosses threshold = 68.21
-            Time taken = 0.104161
-        TL = 999999
-            Average temp = 84525.11
-            Crosses threshold = 0.00
-            Time taken = 0.0738528
-    Version = 4
-        TL = 80000
-            Average temp = 79619.97
-            Crosses threshold = 43.13
-            Time taken = 0.118507
-        TL = 999999
-            Average temp = 82854.10
-            Crosses threshold = 0.00
-            Time taken = 0.0763166
+                           Average Temp  Crosses Threshold  Time Taken
+Graph      Version TL                                                 
+mobilenet  3       80000   76511.610465          17.005814    0.142344
+                   999999  80949.852732           0.000000    0.087750
+           3.1     80000   80164.020986          51.626443    0.099009
+                   999999  82963.310345           0.000000    0.081817
+           4       80000   80330.482988          54.439834    0.125066
+                   999999  82559.387704           0.000000    0.082858
+googlenet  3       80000   75752.544767          21.992434    0.410692
+                   999999  82175.672928           0.000000    0.187810
+           3.1     80000   81623.808521          68.693155    0.215444
+                   999999  79789.502183           0.000000    0.189898
+           4       80000   77235.776607          14.646997    0.293035
+                   999999  83401.246991           0.000000    0.180567
+alexnet    3       80000   68645.510373           0.150886    0.546734
+                   999999  79563.797235           0.000000    0.409220
+           3.1     80000   80341.807021          53.205802    0.498409
+                   999999  81298.693013           0.000000    0.447995
+           4       80000   79373.548845          41.263321    0.923064
+                   999999  80224.356688           0.000000    0.444841
+resnet50   3       80000   71225.110052           0.000000    0.990030
+                   999999  80062.274052           0.000000    0.656528
+           3.1     80000   79847.876034          40.469385    0.702596
+                   999999  80102.996768           0.000000    0.656122
+           4       80000   80005.737052          41.434263    1.130750
+                   999999  79272.496250           0.000000    0.680518
+squeezenet 3       80000   77489.934972          13.798573    0.131105
+                   999999  83298.101877           0.000000    0.076916
+           3.1     80000   80907.427443          68.213228    0.104161
+                   999999  84525.109244           0.000000    0.073853
+           4       80000   79619.968504          43.132108    0.118507
+                   999999  82854.103542           0.000000    0.076317
