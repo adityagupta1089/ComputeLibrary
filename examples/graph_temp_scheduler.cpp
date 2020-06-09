@@ -1064,13 +1064,14 @@ static std::map<string, std::map<int, std::map<int, double>>> delta_temps2{
         { GPU | CPU_BIG | CPU_SMALL, { { 60000, 15238.8 } } } } },
 
 };
+
+//v4
 struct _param
 {
     // T(t) = T(0) + b (1 - exp(-t / c))
     double b;
     double c;
 };
-//v4
 static std::map<string, std::map<int, _param>> params{
     { "resnet50", { { CPU_BIG, { 1491286.948, 312.361 } }, { CPU_BIG | CPU_SMALL, { 15394.862, 1.425 } }, { CPU_SMALL, { 16143.513, 6.668 } }, { GPU, { 7523.656, 0.460 } }, { GPU | CPU_BIG, { 7871.859, 100.244 } }, { GPU | CPU_BIG | CPU_SMALL, { 8628.666, 0.205 } }, { GPU | CPU_SMALL, { 7404.387, 0.375 } } } },
     { "alexnet", { { CPU_BIG, { 10163.468, 0.915 } }, { CPU_BIG | CPU_SMALL, { 4257.586, 0.168 } }, { CPU_SMALL, { 1219.760, 111.250 } }, { GPU, { 5018.921, 0.265 } }, { GPU | CPU_BIG, { 7382.180, 0.193 } }, { GPU | CPU_BIG | CPU_SMALL, { 7985.138, 0.179 } }, { GPU | CPU_SMALL, { 6264.900, 0.244 } } } },
@@ -1111,8 +1112,6 @@ std::map<int, int> configs_idx{
     { CPU_BIG, 1 },
     { GPU, 2 }
 };
-
-static int sdt = 5000000;
 
 double fit_temp(double temp, _param param, double time)
 {
@@ -1337,7 +1336,7 @@ void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
     }
 }
 
-void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string graph)
+void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string graph, string version)
 {
     h << "***\nRunning Scheduler\n";
     h << "Images = " << images << "\n";
@@ -1358,6 +1357,13 @@ void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
     *run_gpu       = 0;
     *val           = 0;
 
+    //3.1 -> 3_1 & 3.2 -> 3_2
+    unsigned int pos          = version.find(".");
+    string       version_name = version;
+    if(pos != string::npos)
+    {
+        version_name = version.replace(pos, 1, "_");
+    }
     // Create Child Processes
     h << "Sleeping for 5 seconds\n";
     usleep(5000000);
@@ -1365,165 +1371,7 @@ void run_sched_v3(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
     if(pid > 0)
     {
         auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv3/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
-        file << "time, temp\n";
-        h << "Main thread running\n";
-        double       min_delta_temp = min_element(delta_temps[graph].begin(), delta_temps[graph].end(), [](const auto &l, const auto &r) {
-                                    return l.second < r.second;
-                                })->second;
-        unsigned int last_time      = 0;
-        while(*val < images)
-        {
-            auto   tnow  = high_resolution_clock::now();
-            double tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
-            int    temp  = get_temp();
-            if(temp + min_delta_temp < TL)
-            {
-                int    delta_temp     = TL - temp;
-                bool   min_cpu_small  = false;
-                bool   min_cpu_big    = false;
-                bool   min_gpu        = false;
-                double min_total_time = 99999999;
-                for(int i = 1; i <= ALL; i++)
-                {
-                    bool cpu_small = i & CPU_SMALL;
-                    bool cpu_big   = i & CPU_BIG;
-                    bool gpu       = i & GPU;
-                    if((*run_cpu_small && !cpu_small)
-                       || (*run_cpu_big && !cpu_big)
-                       || (*run_gpu && !gpu))
-                    {
-                        continue;
-                    }
-                    if(delta_temps[graph][i] < delta_temp)
-                    {
-                        double total_time = 0;
-                        if(cpu_small)
-                            total_time += time_takens[graph][CPU_SMALL];
-                        if(cpu_big)
-                            total_time += time_takens[graph][CPU_BIG];
-                        if(gpu)
-                            total_time += time_takens[graph][GPU];
-                        if(total_time < min_total_time)
-                        {
-                            min_cpu_small = cpu_small;
-                            min_cpu_big   = cpu_big;
-                            min_gpu       = gpu;
-                        }
-                    }
-                }
-                *run_cpu_small = min_cpu_small ? 1 : 0;
-                *run_cpu_big   = min_cpu_big ? 1 : 0;
-                *run_gpu       = min_gpu ? 1 : 0;
-            }
-            else
-            {
-                // stop any new inferences
-                *run_cpu_small = 0;
-                *run_cpu_big   = 0;
-                *run_gpu       = 0;
-            }
-            if(tdiff > last_time + 5)
-            {
-                h << "tdiff = " << tdiff << ", "
-                  << "run_cpu_small = " << *run_cpu_small << ", "
-                  << "run_cpu_big = " << *run_cpu_big << ", "
-                  << "run_gpu = " << *run_gpu << ", "
-                  << "temp = " << temp << ", "
-                  << "val = " << *val << "\n";
-                last_time += 5;
-            }
-            file << tdiff << ", " << temp << "\n";
-            usleep(dt);
-        }
-        auto   tend  = high_resolution_clock::now();
-        double gross = duration_cast<duration<double>>(tend - tbegin).count();
-        double cost  = gross / images;
-        h << cost << " per image" << endl;
-        cost /= inferences;
-        h << cost << " per inference" << endl;
-    }
-    else
-    {
-        for(_config const &config : configs)
-        {
-            int pid = fork();
-            if(pid == 0)
-            {
-                h << config.name << ": Started process\n";
-
-                cpu_set_t mask;
-                CPU_ZERO(&mask);
-
-                if(config.id == CPU_SMALL)
-                {
-                    for(int i = 0; i <= 3; i++)
-                        CPU_SET(i, &mask);
-                    sched_setaffinity(0, sizeof(mask), &mask);
-                }
-                else if(config.id == CPU_BIG)
-                {
-                    for(int i = 4; i <= 7; i++)
-                        CPU_SET(i, &mask);
-                    sched_setaffinity(0, sizeof(mask), &mask);
-                }
-                while(true)
-                {
-                    if(*val >= images)
-                    {
-                        break;
-                    }
-                    if((config.id == CPU_SMALL && *run_cpu_small) || (config.id == CPU_BIG && *run_cpu_big) || (config.id == GPU && *run_gpu))
-                    {
-                        //h << config.name << ": Running\n";
-                        run_graph(graph, config.argc, config.argv);
-                        (*val)++;
-                        //h << "Done" << *val << "\n";
-                    }
-                    else
-                    {
-                        usleep(dt);
-                    }
-                }
-                exit(0);
-            }
-        }
-    }
-}
-
-void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string graph)
-{
-    h << "***\nRunning Scheduler\n";
-    h << "Images = " << images << "\n";
-    h << "Inferences = " << inferences << "\n";
-
-    // Set up flags
-    run_cpu_small = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_cpu_big = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_gpu = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    val = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-
-    *run_cpu_small = 0;
-    *run_cpu_big   = 0;
-    *run_gpu       = 0;
-    *val           = 0;
-
-    // Create Child Processes
-    cout << "Sleeping until temp < 65000\n";
-    while(get_temp() > 65000)
-    {
-        cout << "\r" << get_temp() << std::flush;
-        usleep(1000000);
-    }
-    int pid = fork();
-    if(pid > 0)
-    {
-        auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv3_1/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
+        ofstream file("temp_scheduler" + version_name + "/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
         file << "time, temp\n";
         h << "Main thread running\n";
         unsigned int last_time = 0;
@@ -1537,7 +1385,29 @@ void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, stri
             double min_pred_delta_temp = 99999999;
             for(int i = 1; i <= ALL; i++)
             {
-                pred_delta_temps[i] = delta_temps2[graph][i][index];
+                if(version == "3")
+                {
+                    pred_delta_temps[i] = delta_temps[graph][i];
+                }
+                else if(version == "3.1")
+                {
+                    pred_delta_temps[i] = delta_temps2[graph][i][index];
+                }
+                else if(version == "4")
+                {
+                    bool   cpu_small = i & CPU_SMALL;
+                    bool   cpu_big   = i & CPU_BIG;
+                    bool   gpu       = i & GPU;
+                    double mx_time   = 0;
+                    if(cpu_small)
+                        mx_time = max(mx_time, time_takens[graph][CPU_SMALL]);
+                    if(cpu_big)
+                        mx_time = max(mx_time, time_takens[graph][CPU_BIG]);
+                    if(gpu)
+                        mx_time = max(mx_time, time_takens[graph][GPU]);
+
+                    pred_delta_temps[i] = fit_temp(temp, params[graph][i], mx_time);
+                }
                 min_pred_delta_temp = min(min_pred_delta_temp, pred_delta_temps[i]);
             }
             if(temp + min_pred_delta_temp < TL)
@@ -1562,16 +1432,18 @@ void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, stri
                     {
                         double total_time = 0;
                         if(cpu_small)
-                            total_time += time_takens[graph][CPU_SMALL];
+                            total_time += 1.0 / time_takens[graph][CPU_SMALL];
                         if(cpu_big)
-                            total_time += time_takens[graph][CPU_BIG];
+                            total_time += 1.0 / time_takens[graph][CPU_BIG];
                         if(gpu)
-                            total_time += time_takens[graph][GPU];
+                            total_time += 1.0 / time_takens[graph][GPU];
+                        total_time = 1 / total_time;
                         if(total_time < min_total_time)
                         {
-                            min_cpu_small = cpu_small;
-                            min_cpu_big   = cpu_big;
-                            min_gpu       = gpu;
+                            min_cpu_small  = cpu_small;
+                            min_cpu_big    = cpu_big;
+                            min_gpu        = gpu;
+                            min_total_time = total_time;
                         }
                     }
                 }
@@ -1646,174 +1518,6 @@ void run_sched_v3_1(MyStreamingHelper &h, unsigned int TL, unsigned int dt, stri
                     else
                     {
                         usleep(dt);
-                    }
-                }
-                exit(0);
-            }
-        }
-    }
-}
-
-void run_sched_v4(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string graph)
-{
-    h << "***\nRunning Scheduler\n";
-    h << "Images = " << images << "\n";
-    h << "Inferences = " << inferences << "\n";
-
-    // Set up flags
-    run_cpu_small = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_cpu_big = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    run_gpu = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-    val = static_cast<atomic_uint *>(
-        mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
-
-    *run_cpu_small = 0;
-    *run_cpu_big   = 0;
-    *run_gpu       = 0;
-    *val           = 0;
-
-    // Create Child Processes
-    h << "Sleeping for 5 seconds\n";
-    usleep(sdt);
-    int pid = fork();
-    if(pid > 0)
-    {
-        auto     tbegin = high_resolution_clock::now();
-        ofstream file("temp_schedulerv4/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv");
-        file << "time, temp\n";
-        h << "Main thread running\n";
-        unsigned int last_time = 0;
-        while(*val < images)
-        {
-            auto                  tnow  = high_resolution_clock::now();
-            double                tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
-            int                   temp  = get_temp();
-            std::map<int, double> fit_temps;
-            double                min_fit_temp = 9999999999;
-            for(const auto &param : params[graph])
-            {
-                bool   cpu_small = param.first & CPU_SMALL;
-                bool   cpu_big   = param.first & CPU_BIG;
-                bool   gpu       = param.first & GPU;
-                double mx_time   = 0;
-                if(cpu_small)
-                    mx_time = max(mx_time, time_takens[graph][CPU_SMALL]);
-                if(cpu_big)
-                    mx_time = max(mx_time, time_takens[graph][CPU_BIG]);
-                if(gpu)
-                    mx_time = max(mx_time, time_takens[graph][GPU]);
-
-                fit_temps[param.first] = fit_temp(temp, param.second, mx_time);
-                min_fit_temp           = min(min_fit_temp, fit_temps[param.first]);
-            }
-            if(min_fit_temp < TL)
-            {
-                bool   min_cpu_small  = false;
-                bool   min_cpu_big    = false;
-                bool   min_gpu        = false;
-                double min_total_time = 99999999;
-                for(int i = 1; i <= ALL; i++)
-                {
-                    bool cpu_small = i & CPU_SMALL;
-                    bool cpu_big   = i & CPU_BIG;
-                    bool gpu       = i & GPU;
-                    if((*run_cpu_small && !cpu_small)
-                       || (*run_cpu_big && !cpu_big)
-                       || (*run_gpu && !gpu))
-                    {
-                        continue;
-                    }
-                    if(fit_temps[i] < TL)
-                    {
-                        double total_time = 0;
-                        if(cpu_small)
-                            total_time += time_takens[graph][CPU_SMALL];
-                        if(cpu_big)
-                            total_time += time_takens[graph][CPU_BIG];
-                        if(gpu)
-                            total_time += time_takens[graph][GPU];
-                        if(total_time < min_total_time)
-                        {
-                            min_cpu_small = cpu_small;
-                            min_cpu_big   = cpu_big;
-                            min_gpu       = gpu;
-                        }
-                    }
-                }
-                *run_cpu_small = min_cpu_small ? 1 : 0;
-                *run_cpu_big   = min_cpu_big ? 1 : 0;
-                *run_gpu       = min_gpu ? 1 : 0;
-            }
-            else
-            {
-                // stop any new inferences
-                *run_cpu_small = 0;
-                *run_cpu_big   = 0;
-                *run_gpu       = 0;
-            }
-            if(tdiff > last_time + 5)
-            {
-                h << "tdiff = " << tdiff << ", "
-                  << "run_cpu_small = " << *run_cpu_small << ", "
-                  << "run_cpu_big = " << *run_cpu_big << ", "
-                  << "run_gpu = " << *run_gpu << ", "
-                  << "temp = " << temp << ", "
-                  << "val = " << *val << "\n";
-                last_time += 5;
-            }
-            file << tdiff << ", " << temp << "\n";
-            usleep(dt);
-        }
-        auto   tend  = high_resolution_clock::now();
-        double gross = duration_cast<duration<double>>(tend - tbegin).count();
-        double cost  = gross / images;
-        h << cost << " per image" << endl;
-        cost /= inferences;
-        h << cost << " per inference" << endl;
-    }
-    else
-    {
-        for(_config const &config : configs)
-        {
-            int pid = fork();
-            if(pid == 0)
-            {
-                h << config.name << ": Started process\n";
-
-                cpu_set_t mask;
-                CPU_ZERO(&mask);
-
-                if(config.id == CPU_SMALL)
-                {
-                    for(int i = 0; i <= 3; i++)
-                        CPU_SET(i, &mask);
-                    sched_setaffinity(0, sizeof(mask), &mask);
-                }
-                else if(config.id == CPU_BIG)
-                {
-                    for(int i = 4; i <= 7; i++)
-                        CPU_SET(i, &mask);
-                    sched_setaffinity(0, sizeof(mask), &mask);
-                }
-                while(true)
-                {
-                    if(*val >= images)
-                    {
-                        break;
-                    }
-                    if((config.id == CPU_SMALL && *run_cpu_small) || (config.id == CPU_BIG && *run_cpu_big) || (config.id == GPU && *run_gpu))
-                    {
-                        //h << config.name << ": Running\n";
-                        run_graph(graph, config.argc, config.argv);
-                        (*val)++;
-                        //h << "Done" << *val << "\n";
-                    }
-                    else
-                    {
-                        usleep(1000);
                     }
                 }
                 exit(0);
@@ -1915,17 +1619,6 @@ int main(int argc, char **argv)
     }
     if(is_run_sched)
     {
-        if(version == "3")
-        {
-            run_sched_v3(h, TL, dt, graph);
-        }
-        else if(version == "3.1")
-        {
-            run_sched_v3_1(h, TL, dt, graph);
-        }
-        else if(version == "4")
-        {
-            run_sched_v4(h, TL, dt, graph);
-        }
+        run_sched(h, TL, dt, graph, version);
     }
 }

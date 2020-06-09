@@ -54,10 +54,10 @@ for graph in sorted(stats):
             if TL not in TLs:
                 continue
             data = stats[graph][version][TL]
-            indexes.append((graph, version, TL,))
+            indexes.append((graph, version, float(TL) / 1000))
             rows.append(
                 [
-                    float(data["average_temp"]),
+                    float(data["average_temp"]) / 1000,
                     float(data["crosses_threshold"]),
                     float(data["time_taken"]),
                 ]
