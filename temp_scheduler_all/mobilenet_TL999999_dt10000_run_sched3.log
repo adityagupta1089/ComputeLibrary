@@ -14,7 +14,8 @@ Running Scheduler
 Images = 100
 Inferences = 1
 Sleeping for 5 seconds
+Logging temp logs to temp_schedulerv3/mobilenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00006, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81368, min_delta_t = 334.8, val = 57
-0.0799758 per image
-0.0799758 per inference
+tdiff = 5.00138, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83960, min_delta_t = 334.8, val = 56
+0.0791337 per image
+0.0791337 per inference

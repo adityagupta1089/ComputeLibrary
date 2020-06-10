@@ -14,11 +14,12 @@ Running Scheduler
 Images = 100
 Inferences = 1
 Sleeping for 5 seconds
+Logging temp logs to temp_schedulerv4/googlenet_TL80000_dt10000.csv
 Main thread running
-tdiff = 5.00379, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 79856, min_delta_t = 953.015, val = 8
-tdiff = 10.003, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 74888, min_delta_t = 953.015, val = 22
-tdiff = 15.0096, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 74888, min_delta_t = 953.015, val = 44
-tdiff = 20.0014, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76616, min_delta_t = 953.015, val = 67
-tdiff = 25.0043, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75320, min_delta_t = 953.015, val = 91
-0.273237 per image
-0.273237 per inference
+tdiff = 5.00723, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78128, min_delta_t = 953.015, val = 12
+tdiff = 10.0059, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75536, min_delta_t = 953.015, val = 29
+tdiff = 15.0086, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82448, min_delta_t = 953.015, val = 50
+tdiff = 20.0096, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82232, min_delta_t = 953.015, val = 72
+tdiff = 25.005, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 74672, min_delta_t = 953.015, val = 96
+0.257256 per image
+0.257256 per inference

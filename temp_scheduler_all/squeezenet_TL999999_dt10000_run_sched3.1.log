@@ -14,7 +14,8 @@ Running Scheduler
 Images = 100
 Inferences = 1
 Sleeping for 5 seconds
+Logging temp logs to temp_schedulerv3_1/squeezenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00025, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83096, min_delta_t = 3.32273e-318, val = 61
-0.0775913 per image
-0.0775913 per inference
+tdiff = 5.00534, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84392, min_delta_t = 3.32273e-318, val = 63
+0.073755 per image
+0.073755 per inference
