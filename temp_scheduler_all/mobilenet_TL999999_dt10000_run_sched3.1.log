@@ -5,6 +5,7 @@ version = 3.1
 Running Scheduler
 Images = 100
 Inferences = 1
+Sleeping for 5 seconds
 TL = 999999
 graph = mobilenet
 version = 3.1
@@ -12,7 +13,8 @@ version = 3.1
 Running Scheduler
 Images = 100
 Inferences = 1
+Sleeping for 5 seconds
 Main thread running
-tdiff = 5.00134, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 86336, val = 54
-0.0818169 per image
-0.0818169 per inference
+tdiff = 5.00184, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79856, min_delta_t = 3.32273e-318, val = 57
+0.078654 per image
+0.078654 per inference

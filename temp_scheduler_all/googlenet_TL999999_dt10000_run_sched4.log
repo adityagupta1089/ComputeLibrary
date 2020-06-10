@@ -15,8 +15,8 @@ Images = 100
 Inferences = 1
 Sleeping for 5 seconds
 Main thread running
-tdiff = 5.0093, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83744, val = 23
-tdiff = 10.0019, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84176, val = 47
-tdiff = 15.005, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82664, val = 79
-0.180567 per image
-0.180567 per inference
+tdiff = 5.00605, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85688, min_delta_t = 953.015, val = 24
+tdiff = 10.0032, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84824, min_delta_t = 953.015, val = 50
+tdiff = 15.0018, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81800, min_delta_t = 953.015, val = 85
+0.16909 per image
+0.16909 per inference

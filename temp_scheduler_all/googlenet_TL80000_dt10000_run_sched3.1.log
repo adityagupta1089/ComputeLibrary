@@ -5,6 +5,7 @@ version = 3.1
 Running Scheduler
 Images = 100
 Inferences = 1
+Sleeping for 5 seconds
 TL = 80000
 graph = googlenet
 version = 3.1
@@ -12,10 +13,10 @@ version = 3.1
 Running Scheduler
 Images = 100
 Inferences = 1
+Sleeping for 5 seconds
 Main thread running
-tdiff = 5.00943, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83096, val = 13
-tdiff = 10.0023, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 87632, val = 26
-tdiff = 15.0062, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85040, val = 59
-tdiff = 20.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81800, val = 90
-0.215444 per image
-0.215444 per inference
+tdiff = 5.00537, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 86336, min_delta_t = 3.32273e-318, val = 17
+tdiff = 10.0045, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85904, min_delta_t = 3.32273e-318, val = 35
+tdiff = 15.0025, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 77264, min_delta_t = 3.32273e-318, val = 70
+0.195287 per image
+0.195287 per inference
