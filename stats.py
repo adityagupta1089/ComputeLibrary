@@ -48,7 +48,9 @@ for temp_csv in temp_csvs:
     average_temp = df["temp"].mean()
     crosses_threshold = len(df[df["temp"] > int(TL)]) / len(df["temp"]) * 100
     stats[graph][version][TL]["crosses_threshold"] = crosses_threshold
-    temp_df[f"{graph}_v{version}_TL{TL}"] = df["temp"] / 1000
+    df["temp"] /= 1000
+    stats[graph][version][TL]["temps"] = df
+    temp_df[f"{graph}_v{version}_TL{TL}"] = df["temp"]
 
 for time_log in time_logs:
     file_name = time_log.split("/")[1]
@@ -67,6 +69,19 @@ for graph in sorted(stats):
     for version in sorted(stats[graph]):
         for TL in sorted(stats[graph][version]):
             xtick_lables.append(graph)
+            fig = plt.figure()
+            sns.lineplot(data=stats[graph][version][TL]["temps"], x="time", y="temp")
+            if int(TL) == 80000:
+                plt.axhline(80, linestyle="--", color="r")
+            plt.xlabel("Time (sec)")
+            plt.ylabel("Temperature $(^\circ C)$")
+            plt.title(
+                f"Execution scheduler {graph}, v{version}, ${{\\rm TL}} = {map_tl(TL)}$"
+            )
+            plt.show()
+            fig.savefig(
+                f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
+            )
             required_columns.append(f"{graph}_v{version}_TL{TL}")
 temp_df = temp_df[required_columns]
 fig = plt.figure(figsize=(12, 8))
