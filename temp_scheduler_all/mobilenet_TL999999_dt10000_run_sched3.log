@@ -5,7 +5,6 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 TL = 999999
 graph = mobilenet
 version = 3
@@ -13,9 +12,8 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 Logging temp logs to temp_schedulerv3/mobilenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00138, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83960, min_delta_t = 334.8, val = 56
-0.0791337 per image
-0.0791337 per inference
+tdiff = 5.00929, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81584, min_delta_t = 334.8, val = 57
+0.0798205 per image
+0.0798205 per inference

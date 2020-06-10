@@ -5,7 +5,6 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 TL = 80000
 graph = squeezenet
 version = 3
@@ -13,10 +12,9 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 Logging temp logs to temp_schedulerv3/squeezenet_TL80000_dt10000.csv
 Main thread running
-tdiff = 5.00394, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 79424, min_delta_t = 172.8, val = 14
-tdiff = 10.0102, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 75968, min_delta_t = 172.8, val = 60
-0.144188 per image
-0.144188 per inference
+tdiff = 5.006, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78344, min_delta_t = 172.8, val = 33
+tdiff = 10.0063, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 74672, min_delta_t = 172.8, val = 86
+0.113049 per image
+0.113049 per inference

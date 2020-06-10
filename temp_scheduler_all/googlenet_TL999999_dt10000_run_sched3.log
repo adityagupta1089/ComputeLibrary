@@ -5,7 +5,6 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 TL = 999999
 graph = googlenet
 version = 3
@@ -13,11 +12,10 @@ version = 3
 Running Scheduler
 Images = 100
 Inferences = 1
-Sleeping for 5 seconds
 Logging temp logs to temp_schedulerv3/googlenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00308, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85904, min_delta_t = 442.8, val = 25
-tdiff = 10.0021, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85040, min_delta_t = 442.8, val = 51
-tdiff = 15.0072, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81368, min_delta_t = 442.8, val = 86
-0.166284 per image
-0.166284 per inference
+tdiff = 5.00055, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 86336, min_delta_t = 442.8, val = 23
+tdiff = 10.0066, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82664, min_delta_t = 442.8, val = 50
+tdiff = 15.0051, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85256, min_delta_t = 442.8, val = 84
+0.171846 per image
+0.171846 per inference
