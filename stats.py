@@ -109,7 +109,7 @@ ax.legend(
 ax.set_ylabel(r"Temperature $(^\circ C)$")
 plt.title("Temperature vs. Graph")
 plt.show()
-plt.savefig("temp_scheduler_temperatures.png")
+fig.savefig("temp_scheduler_temperatures.png")
 
 indexes = []
 rows = []
