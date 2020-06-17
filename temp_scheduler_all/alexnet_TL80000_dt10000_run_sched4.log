@@ -14,22 +14,22 @@ Images = 100
 Inferences = 1
 Logging temp logs to temp_schedulerv4/alexnet_TL80000_dt10000.csv
 Main thread running
-tdiff = 5.00096, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 16.6797, val = 6
-tdiff = 10.0067, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 16.6797, val = 11
-tdiff = 15.0059, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 74240, min_delta_t = 16.6797, val = 17
-tdiff = 20.0092, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75320, min_delta_t = 16.6797, val = 22
-tdiff = 25.0074, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75104, min_delta_t = 16.6797, val = 29
-tdiff = 30.0029, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 79424, min_delta_t = 16.6797, val = 34
-tdiff = 35.008, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76832, min_delta_t = 16.6797, val = 39
-tdiff = 40.0027, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82016, min_delta_t = 16.6797, val = 45
-tdiff = 45.0056, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80072, min_delta_t = 16.6797, val = 51
-tdiff = 50.0017, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75320, min_delta_t = 16.6797, val = 57
-tdiff = 55.0004, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76832, min_delta_t = 16.6797, val = 63
-tdiff = 60.0043, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76400, min_delta_t = 16.6797, val = 68
-tdiff = 65.0019, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80936, min_delta_t = 16.6797, val = 75
-tdiff = 70.0029, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76616, min_delta_t = 16.6797, val = 80
-tdiff = 75.0042, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82016, min_delta_t = 16.6797, val = 86
-tdiff = 80.0071, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 79640, min_delta_t = 16.6797, val = 91
-tdiff = 85.0088, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77696, min_delta_t = 16.6797, val = 97
-0.870826 per image
-0.870826 per inference
+tdiff = 5.00501, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76184, min_delta_t = 16.6797, val = 5
+tdiff = 10.0035, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 16.6797, val = 11
+tdiff = 15.0046, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 86120, min_delta_t = 16.6797, val = 16
+tdiff = 20.0005, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77264, min_delta_t = 16.6797, val = 22
+tdiff = 25.0073, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75968, min_delta_t = 16.6797, val = 27
+tdiff = 30.0001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83528, min_delta_t = 16.6797, val = 34
+tdiff = 35.0017, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77696, min_delta_t = 16.6797, val = 39
+tdiff = 40.0089, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 73160, min_delta_t = 16.6797, val = 45
+tdiff = 45.0052, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76184, min_delta_t = 16.6797, val = 50
+tdiff = 50.0095, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78560, min_delta_t = 16.6797, val = 55
+tdiff = 55.0043, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77264, min_delta_t = 16.6797, val = 62
+tdiff = 60.0086, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 79640, min_delta_t = 16.6797, val = 68
+tdiff = 65.0081, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78128, min_delta_t = 16.6797, val = 73
+tdiff = 70.0052, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78560, min_delta_t = 16.6797, val = 78
+tdiff = 75.0059, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75320, min_delta_t = 16.6797, val = 85
+tdiff = 80.0055, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82664, min_delta_t = 16.6797, val = 90
+tdiff = 85.0014, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76616, min_delta_t = 16.6797, val = 95
+0.881487 per image
+0.881487 per inference

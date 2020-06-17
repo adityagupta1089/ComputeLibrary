@@ -14,6 +14,6 @@ Images = 100
 Inferences = 1
 Logging temp logs to temp_schedulerv4/mobilenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00388, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85688, min_delta_t = 44.3223, val = 57
-0.0798123 per image
-0.0798123 per inference
+tdiff = 5.00017, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80720, min_delta_t = 44.3223, val = 55
+0.0814434 per image
+0.0814434 per inference

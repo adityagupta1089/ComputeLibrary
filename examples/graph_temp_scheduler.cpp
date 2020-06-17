@@ -1525,6 +1525,9 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                         //h << config.name << ": Running\n";
                         run_graph(graph, config.argc, config.argv);
                         (*val)++;
+                        if (config.id == CPU_SMALL) *run_cpu_small = 0;
+                        if (config.id == CPU_BIG)   *run_cpu_big   = 0;
+                        if (config.id == GPU)       *run_gpu       = 0;
                         //h << "Done" << *val << "\n";
                     }
                     else

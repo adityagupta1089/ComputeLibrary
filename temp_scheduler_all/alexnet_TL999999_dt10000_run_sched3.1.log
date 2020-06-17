@@ -14,13 +14,14 @@ Images = 100
 Inferences = 1
 Logging temp logs to temp_schedulerv3_1/alexnet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00251, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 76184, min_delta_t = 3.32273e-318, val = 7
-tdiff = 10.006, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78776, min_delta_t = 3.32273e-318, val = 19
-tdiff = 15.0043, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82016, min_delta_t = 3.32273e-318, val = 31
-tdiff = 20.0027, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78128, min_delta_t = 3.32273e-318, val = 43
-tdiff = 25.007, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 77696, min_delta_t = 3.32273e-318, val = 54
-tdiff = 30.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78560, min_delta_t = 3.32273e-318, val = 65
-tdiff = 35.0102, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82016, min_delta_t = 3.32273e-318, val = 79
-tdiff = 40.0075, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 77912, min_delta_t = 3.32273e-318, val = 90
-0.441865 per image
-0.441865 per inference
+tdiff = 5.0025, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 76184, min_delta_t = 3.32273e-318, val = 6
+tdiff = 10.0071, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82232, min_delta_t = 3.32273e-318, val = 18
+tdiff = 15.0082, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 77912, min_delta_t = 3.32273e-318, val = 28
+tdiff = 20.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78992, min_delta_t = 3.32273e-318, val = 39
+tdiff = 25.0038, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79856, min_delta_t = 3.32273e-318, val = 50
+tdiff = 30.0068, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78992, min_delta_t = 3.32273e-318, val = 61
+tdiff = 35.0084, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79208, min_delta_t = 3.32273e-318, val = 70
+tdiff = 40.0051, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78560, min_delta_t = 3.32273e-318, val = 82
+tdiff = 45.004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82448, min_delta_t = 3.32273e-318, val = 94
+0.482164 per image
+0.482164 per inference

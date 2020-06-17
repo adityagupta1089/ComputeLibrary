@@ -14,7 +14,7 @@ Images = 100
 Inferences = 1
 Logging temp logs to temp_schedulerv3/squeezenet_TL80000_dt10000.csv
 Main thread running
-tdiff = 5.006, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78344, min_delta_t = 172.8, val = 33
-tdiff = 10.0063, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 74672, min_delta_t = 172.8, val = 86
-0.113049 per image
-0.113049 per inference
+tdiff = 5.00978, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 74456, min_delta_t = 172.8, val = 22
+tdiff = 10.0025, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77264, min_delta_t = 172.8, val = 75
+0.125083 per image
+0.125083 per inference

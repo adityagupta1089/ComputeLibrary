@@ -14,8 +14,8 @@ Images = 100
 Inferences = 1
 Logging temp logs to temp_schedulerv3/googlenet_TL999999_dt10000.csv
 Main thread running
-tdiff = 5.00055, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 86336, min_delta_t = 442.8, val = 23
-tdiff = 10.0066, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82664, min_delta_t = 442.8, val = 50
-tdiff = 15.0051, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85256, min_delta_t = 442.8, val = 84
-0.171846 per image
-0.171846 per inference
+tdiff = 5.00155, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84176, min_delta_t = 442.8, val = 23
+tdiff = 10.0073, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83528, min_delta_t = 442.8, val = 47
+tdiff = 15.0071, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85688, min_delta_t = 442.8, val = 79
+0.1806 per image
+0.1806 per inference
