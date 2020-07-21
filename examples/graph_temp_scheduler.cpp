@@ -48,7 +48,7 @@ using namespace std;
 using namespace std::chrono;
 
 static unsigned int images     = 100;
-static unsigned int inferences = 1;
+static unsigned int inferences = 10;
 static atomic_uint *run_cpu_small, *run_cpu_big, *run_gpu, *val = 0;
 
 /** Example demonstrating how to implement ResNet50's network using the Compute Library's graph API
@@ -227,7 +227,7 @@ class GraphAlexnetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -608,10 +608,10 @@ class GraphMobilenetExample : public Example
         SubStream   sg(graph);
 
         sg << DepthwiseConvolutionLayer(
-                  3U, 3U,
-                  get_weights_accessor(data_path, total_path + "depthwise_weights.npy"),
-                  get_weights_accessor(data_path, total_path + "depthwise_bias.npy"),
-                  dwc_pad_stride_info, depth_weights_quant_info)
+            3U, 3U,
+            get_weights_accessor(data_path, total_path + "depthwise_weights.npy"),
+            get_weights_accessor(data_path, total_path + "depthwise_bias.npy"),
+            dwc_pad_stride_info, depth_weights_quant_info)
            << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::LU_BOUNDED_RELU, 6.f))
            << ConvolutionLayer(
                   1U, 1U, conv_filt,
@@ -656,7 +656,7 @@ class GraphSqueezenetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -684,17 +684,17 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire2", weights_layout, 64U, 64U);
         graph << ConvolutionLayer(
-                     1U, 1U, 16U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 16U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire3_squeeze1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire3", weights_layout, 64U, 64U);
         graph << ConvolutionLayer(
-                     1U, 1U, 32U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 32U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire4_squeeze1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire4", weights_layout, 128U, 128U);
         graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
@@ -706,24 +706,24 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire5", weights_layout, 128U, 128U);
         graph << ConvolutionLayer(
-                     1U, 1U, 48U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 48U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire6_squeeze1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire6", weights_layout, 192U, 192U);
         graph << ConvolutionLayer(
-                     1U, 1U, 48U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 48U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire7_squeeze1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire7", weights_layout, 192U, 192U);
         graph << ConvolutionLayer(
-                     1U, 1U, 64U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 64U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/fire8_squeeze1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire8", weights_layout, 256U, 256U);
         graph << PoolingLayer(PoolingLayerInfo(PoolingType::MAX, 3, PadStrideInfo(2, 2, 0, 0, DimensionRoundingType::CEIL)))
@@ -735,10 +735,10 @@ class GraphSqueezenetExample : public Example
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
         graph << get_expand_fire_node(data_path, "fire9", weights_layout, 256U, 256U);
         graph << ConvolutionLayer(
-                     1U, 1U, 1000U,
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_w.npy", weights_layout),
-                     get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_b.npy"),
-                     PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, 1000U,
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_w.npy", weights_layout),
+            get_weights_accessor(data_path, "/cnn_data/squeezenet_v1.0_model/conv10_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
               << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
               << PoolingLayer(PoolingLayerInfo(PoolingType::AVG))
               << FlattenLayer()
@@ -772,18 +772,18 @@ class GraphSqueezenetExample : public Example
         std::string total_path = "/cnn_data/squeezenet_v1.0_model/" + param_path + "_";
         SubStream   i_a(graph);
         i_a << ConvolutionLayer(
-                   1U, 1U, expand1_filt,
-                   get_weights_accessor(data_path, total_path + "expand1x1_w.npy", weights_layout),
-                   get_weights_accessor(data_path, total_path + "expand1x1_b.npy"),
-                   PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, expand1_filt,
+            get_weights_accessor(data_path, total_path + "expand1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, total_path + "expand1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         SubStream i_b(graph);
         i_b << ConvolutionLayer(
-                   3U, 3U, expand3_filt,
-                   get_weights_accessor(data_path, total_path + "expand3x3_w.npy", weights_layout),
-                   get_weights_accessor(data_path, total_path + "expand3x3_b.npy"),
-                   PadStrideInfo(1, 1, 1, 1))
+            3U, 3U, expand3_filt,
+            get_weights_accessor(data_path, total_path + "expand3x3_w.npy", weights_layout),
+            get_weights_accessor(data_path, total_path + "expand3x3_b.npy"),
+            PadStrideInfo(1, 1, 1, 1))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         return BranchLayer(BranchMergeMethod::DEPTH_CONCATENATE, std::move(i_a), std::move(i_b));
@@ -822,7 +822,7 @@ class GraphGooglenetExample : public Example
         std::string data_path = common_params.data_path;
 
         // Create a preprocessor object
-        const std::array<float, 3> mean_rgb{ { 122.68f, 116.67f, 104.01f } };
+        const std::array<float, 3>     mean_rgb{ { 122.68f, 116.67f, 104.01f } };
         std::unique_ptr<IPreprocessor> preprocessor = arm_compute::support::cpp14::make_unique<CaffePreproccessor>(mean_rgb);
 
         // Create input descriptor
@@ -898,26 +898,26 @@ class GraphGooglenetExample : public Example
     Stream             graph;
 
     BranchLayer get_inception_node(const std::string &data_path, std::string &&param_path, DataLayout weights_layout,
-                                   unsigned int a_filt,
+                                   unsigned int                           a_filt,
                                    std::tuple<unsigned int, unsigned int> b_filters,
                                    std::tuple<unsigned int, unsigned int> c_filters,
-                                   unsigned int d_filt)
+                                   unsigned int                           d_filt)
     {
         std::string total_path = "/cnn_data/googlenet_model/" + param_path + "/" + param_path + "_";
         SubStream   i_a(graph);
         i_a << ConvolutionLayer(
-                   1U, 1U, a_filt,
-                   get_weights_accessor(data_path, total_path + "1x1_w.npy", weights_layout),
-                   get_weights_accessor(data_path, total_path + "1x1_b.npy"),
-                   PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, a_filt,
+            get_weights_accessor(data_path, total_path + "1x1_w.npy", weights_layout),
+            get_weights_accessor(data_path, total_path + "1x1_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU));
 
         SubStream i_b(graph);
         i_b << ConvolutionLayer(
-                   1U, 1U, std::get<0>(b_filters),
-                   get_weights_accessor(data_path, total_path + "3x3_reduce_w.npy", weights_layout),
-                   get_weights_accessor(data_path, total_path + "3x3_reduce_b.npy"),
-                   PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, std::get<0>(b_filters),
+            get_weights_accessor(data_path, total_path + "3x3_reduce_w.npy", weights_layout),
+            get_weights_accessor(data_path, total_path + "3x3_reduce_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
             << ConvolutionLayer(
                    3U, 3U, std::get<1>(b_filters),
@@ -928,10 +928,10 @@ class GraphGooglenetExample : public Example
 
         SubStream i_c(graph);
         i_c << ConvolutionLayer(
-                   1U, 1U, std::get<0>(c_filters),
-                   get_weights_accessor(data_path, total_path + "5x5_reduce_w.npy", weights_layout),
-                   get_weights_accessor(data_path, total_path + "5x5_reduce_b.npy"),
-                   PadStrideInfo(1, 1, 0, 0))
+            1U, 1U, std::get<0>(c_filters),
+            get_weights_accessor(data_path, total_path + "5x5_reduce_w.npy", weights_layout),
+            get_weights_accessor(data_path, total_path + "5x5_reduce_b.npy"),
+            PadStrideInfo(1, 1, 0, 0))
             << ActivationLayer(ActivationLayerInfo(ActivationLayerInfo::ActivationFunction::RELU))
             << ConvolutionLayer(
                    5U, 5U, std::get<1>(c_filters),
@@ -1179,7 +1179,7 @@ void profile_time(MyStreamingHelper &h, string graph)
         { GPU, 0 }
     };
     int       j = 1;
-    const int T = 10;
+    const int T = 100;
     for(const auto &kv : samples)
     {
         int  config_id = kv.first;
@@ -1222,7 +1222,7 @@ void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
           << "Processing " << ((i & CPU_BIG) ? "cpu_big_" : "")
           << ((i & CPU_SMALL) ? "cpu_small_" : "")
           << ((i & GPU) ? "gpu" : "") << "\n";
-        const int T = 20;
+        const int                  T = 20;
         std::map<int, vector<int>> temp_rise;
         for(int j = 0; j < T; j++)
         {
@@ -1406,18 +1406,7 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                 }
                 else if(version == "4")
                 {
-                    bool   cpu_small = i & CPU_SMALL;
-                    bool   cpu_big   = i & CPU_BIG;
-                    bool   gpu       = i & GPU;
-                    double mx_time   = 0;
-                    if(cpu_small)
-                        mx_time = max(mx_time, time_takens[graph][CPU_SMALL]);
-                    if(cpu_big)
-                        mx_time = max(mx_time, time_takens[graph][CPU_BIG]);
-                    if(gpu)
-                        mx_time = max(mx_time, time_takens[graph][GPU]);
-
-                    pred_delta_temps[i] = fit_temp(temp, params[graph][i], mx_time) - temp;
+                    pred_delta_temps[i] = fit_temp(temp, params[graph][i], dt) - temp;
                 }
                 min_pred_delta_temp = min(min_pred_delta_temp, pred_delta_temps[i]);
             }
@@ -1433,12 +1422,6 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                     bool cpu_small = i & CPU_SMALL;
                     bool cpu_big   = i & CPU_BIG;
                     bool gpu       = i & GPU;
-                    if((*run_cpu_small && !cpu_small)
-                       || (*run_cpu_big && !cpu_big)
-                       || (*run_gpu && !gpu))
-                    {
-                        continue;
-                    }
                     if(pred_delta_temps[i] < delta_temp)
                     {
                         double total_time = 0;
@@ -1525,9 +1508,6 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                         //h << config.name << ": Running\n";
                         run_graph(graph, config.argc, config.argv);
                         (*val)++;
-                        if (config.id == CPU_SMALL) *run_cpu_small = 0;
-                        if (config.id == CPU_BIG)   *run_cpu_big   = 0;
-                        if (config.id == GPU)       *run_gpu       = 0;
                         //h << "Done" << *val << "\n";
                     }
                     else
