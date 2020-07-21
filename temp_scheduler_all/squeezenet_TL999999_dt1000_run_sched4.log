@@ -1,0 +1,25 @@
+TL = 999999
+graph = squeezenet
+version = 4
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+TL = 999999
+graph = squeezenet
+version = 4
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+Logging temp logs to temp_schedulerv4/squeezenet_TL999999_dt1000.csv
+Main thread running
+tdiff = 5.00014, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84608, min_delta_t = 2228.42, val = 7
+tdiff = 10.0009, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82880, min_delta_t = 2228.42, val = 18
+tdiff = 15.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82232, min_delta_t = 2228.42, val = 33
+tdiff = 20, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83744, min_delta_t = 2228.42, val = 47
+tdiff = 25.0001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84176, min_delta_t = 2228.42, val = 61
+tdiff = 30.0002, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84176, min_delta_t = 2228.42, val = 75
+tdiff = 35.0002, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84608, min_delta_t = 2228.42, val = 87
+0.395366 per image
+0.0395366 per inference

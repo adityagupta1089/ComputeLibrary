@@ -321,7 +321,10 @@ class GraphAlexnetExample : public Example
     }
     void do_run() override
     {
-        graph.run();
+        for(unsigned int i = 0; i < ::inferences; i++)
+        {
+            graph.run();
+        }
     }
 
     private:
@@ -408,7 +411,10 @@ class GraphMobilenetExample : public Example
     }
     void do_run() override
     {
-        graph.run();
+        for(unsigned int i = 0; i < ::inferences; i++)
+        {
+            graph.run();
+        }
     }
 
     private:
@@ -757,7 +763,10 @@ class GraphSqueezenetExample : public Example
     }
     void do_run() override
     {
-        graph.run();
+        for(unsigned int i = 0; i < ::inferences; i++)
+        {
+            graph.run();
+        }
     }
 
     private:
@@ -888,7 +897,10 @@ class GraphGooglenetExample : public Example
     }
     void do_run() override
     {
-        graph.run();
+        for(unsigned int i = 0; i < ::inferences; i++)
+        {
+            graph.run();
+        }
     }
 
     private:
@@ -1081,11 +1093,11 @@ static std::map<string, std::map<int, _param>> params{
 };
 
 static std::map<string, std::map<int, double>> time_takens = {
-    { "resnet50", { { CPU_SMALL, 2.39182 }, { CPU_BIG, 2.51716 }, { GPU, 3.32532 } } },
-    { "alexnet", { { CPU_SMALL, 1.53179 }, { CPU_BIG, 1.4873 }, { GPU, 1.45514 } } },
-    { "googlenet", { { CPU_SMALL, 0.862833 }, { CPU_BIG, 0.787568 }, { GPU, 1.48101 } } },
-    { "mobilenet", { { CPU_SMALL, 0.481851 }, { CPU_BIG, 0.473925 }, { GPU, 0.660021 } } },
-    { "squeezenet", { { CPU_SMALL, 0.421066 }, { CPU_BIG, 0.447795 }, { GPU, 0.86846 } } }
+    { "alexnet", { { CPU_SMALL, 2.2352 }, { CPU_BIG, 2.31566 }, { GPU, 1.69999 } } },
+    { "googlenet", { { CPU_SMALL, 2.19961 }, { CPU_BIG, 2.1979 }, { GPU, 2.09484 } } },
+    { "mobilenet", { { CPU_SMALL, 1.45083 }, { CPU_BIG, 1.44368 }, { GPU, 1.27125 } } },
+    { "resnet50", { { CPU_SMALL, 5.24087 }, { CPU_BIG, 5.3943 }, { GPU, 3.92675 } } },
+    { "squeezenet", { { CPU_SMALL, 1.58729 }, { CPU_BIG, 1.51819 }, { GPU, 1.65504 } } }
 };
 
 char **convert(vector<string> argv_list)
@@ -1339,8 +1351,6 @@ void profile_temp(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string
 void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string graph, string version)
 {
     h << "***\nRunning Scheduler\n";
-    h << "Images = " << images << "\n";
-    h << "Inferences = " << inferences << "\n";
 
     // Set up flags
     run_cpu_small = static_cast<atomic_uint *>(
@@ -1543,9 +1553,9 @@ int main(int argc, char **argv)
     ToggleOption *runSchedOption    = parser.add_option<ToggleOption>("run-sched");
 
     SimpleOption<unsigned int> *imagesOption     = parser.add_option<SimpleOption<unsigned int>>("n", 100);
-    SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 1);
+    SimpleOption<unsigned int> *inferencesOption = parser.add_option<SimpleOption<unsigned int>>("i", 10);
     SimpleOption<unsigned int> *tlOption         = parser.add_option<SimpleOption<unsigned int>>("tl", 80000);
-    SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 10000);
+    SimpleOption<unsigned int> *dtOption         = parser.add_option<SimpleOption<unsigned int>>("dt", 1000);
 
     set<string> graphs   = { "resnet50", "googlenet", "mobilenet", "squeezenet", "alexnet" };
     set<string> versions = { "3", "3.1", "4" };
@@ -1603,6 +1613,8 @@ int main(int argc, char **argv)
     h << "TL = " << TL << "\n";
     h << "graph = " << graph << "\n";
     h << "version = " << version << "\n";
+    h << "Images = " << images << "\n";
+    h << "Inferences = " << inferences << "\n";
 
     if(is_profile_time)
     {

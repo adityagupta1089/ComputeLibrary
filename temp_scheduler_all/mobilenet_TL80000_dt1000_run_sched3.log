@@ -1,0 +1,29 @@
+TL = 80000
+graph = mobilenet
+version = 3
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+TL = 80000
+graph = mobilenet
+version = 3
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+Logging temp logs to temp_schedulerv3/mobilenet_TL80000_dt1000.csv
+Main thread running
+tdiff = 5.00005, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 79208, min_delta_t = 334.8, val = 8
+tdiff = 10.0007, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 86552, min_delta_t = 334.8, val = 17
+tdiff = 15.0009, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83528, min_delta_t = 334.8, val = 25
+tdiff = 20.0005, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 334.8, val = 34
+tdiff = 25.0013, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 334.8, val = 44
+tdiff = 30.0006, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 84176, min_delta_t = 334.8, val = 52
+tdiff = 35.0005, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85040, min_delta_t = 334.8, val = 60
+tdiff = 40.0007, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76616, min_delta_t = 334.8, val = 70
+tdiff = 45.0002, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 334.8, val = 78
+tdiff = 50.0008, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82016, min_delta_t = 334.8, val = 86
+tdiff = 55.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82232, min_delta_t = 334.8, val = 94
+0.578254 per image
+0.0578254 per inference

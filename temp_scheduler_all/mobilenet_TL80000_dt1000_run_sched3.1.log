@@ -1,0 +1,25 @@
+TL = 80000
+graph = mobilenet
+version = 3.1
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+TL = 80000
+graph = mobilenet
+version = 3.1
+Images = 100
+Inferences = 10
+***
+Running Scheduler
+Logging temp logs to temp_schedulerv3_1/mobilenet_TL80000_dt1000.csv
+Main thread running
+tdiff = 5.0005, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78776, min_delta_t = 3.32273e-318, val = 10
+tdiff = 10.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78992, min_delta_t = 3.32273e-318, val = 25
+tdiff = 15.0011, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82016, min_delta_t = 3.32273e-318, val = 42
+tdiff = 20.0002, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80720, min_delta_t = 3.32273e-318, val = 55
+tdiff = 25.0002, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80504, min_delta_t = 3.32273e-318, val = 70
+tdiff = 30.0002, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80936, min_delta_t = 3.32273e-318, val = 83
+tdiff = 35.0002, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81584, min_delta_t = 3.32273e-318, val = 96
+0.361587 per image
+0.0361587 per inference
