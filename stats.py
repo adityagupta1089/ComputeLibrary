@@ -78,7 +78,7 @@ for graph in sorted(stats):
             plt.title(
                 f"Execution scheduler {graph}, v{version}, ${{\\rm TL}} = {map_tl(TL)}$"
             )
-            plt.show()
+            # plt.show()
             fig.savefig(
                 f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
             )
@@ -108,7 +108,8 @@ ax.legend(
 )
 ax.set_ylabel(r"Temperature $(^\circ C)$")
 plt.title("Temperature vs. Graph")
-plt.show()
+fig.subplots_adjust(right=0.82)
+# plt.show()
 fig.savefig("temp_scheduler_temperatures.png")
 
 indexes = []
@@ -128,7 +129,7 @@ df = pd.DataFrame(
     columns=["Crosses Threshold", "Time Taken"],
     index=pd.MultiIndex.from_tuples(indexes, names=["Graph", "Version", "TL"]),
 )
-print(df)
+print(df.to_latex())
 
 for column in df.columns:
     fig = plt.figure(figsize=(12, 8))
@@ -156,5 +157,5 @@ for column in df.columns:
     ax.set_xlabel("Graph")
     plt.title(f"{column} vs. Graph")
     fig.subplots_adjust(right=0.82)
-    plt.show()
+    # plt.show()
     fig.savefig(f"temp_scheduler_{column.lower().replace(' ', '_')}.png")
