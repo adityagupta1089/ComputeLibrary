@@ -1,0 +1,204 @@
+TL = 80000
+graph = squeezenet
+version = 
+Images = 100
+Inferences = 10
+***
+Profiling Temperature
+[1/7] Processing cpu_small_
+[1/20] cpu_small_: start_temp = 63656, index = 65000, max_temp = 3672
+[2/20] cpu_small_: start_temp = 67112, index = 65000, max_temp = 216
+[3/20] cpu_small_: start_temp = 67112, index = 65000, max_temp = 0
+[4/20] cpu_small_: start_temp = 65384, index = 65000, max_temp = 216
+[5/20] cpu_small_: start_temp = 65168, index = 65000, max_temp = 1296
+[6/20] cpu_small_: start_temp = 66248, index = 65000, max_temp = 0
+[7/20] cpu_small_: start_temp = 65384, index = 65000, max_temp = 1080
+[8/20] cpu_small_: start_temp = 66248, index = 65000, max_temp = 0
+[9/20] cpu_small_: start_temp = 66032, index = 65000, max_temp = 0
+[10/20] cpu_small_: start_temp = 65384, index = 65000, max_temp = 216
+[11/20] cpu_small_: start_temp = 63656, index = 65000, max_temp = 1512
+[12/20] cpu_small_: start_temp = 65168, index = 65000, max_temp = 216
+[13/20] cpu_small_: start_temp = 64736, index = 65000, max_temp = 648
+[14/20] cpu_small_: start_temp = 65384, index = 65000, max_temp = 216
+[15/20] cpu_small_: start_temp = 65600, index = 65000, max_temp = 0
+[16/20] cpu_small_: start_temp = 65168, index = 65000, max_temp = 432
+[17/20] cpu_small_: start_temp = 65600, index = 65000, max_temp = 216
+[18/20] cpu_small_: start_temp = 65600, index = 65000, max_temp = 0
+[19/20] cpu_small_: start_temp = 65168, index = 65000, max_temp = 432
+[20/20] cpu_small_: start_temp = 65384, index = 65000, max_temp = 0
+cpu_small_ Average 527.04
+65000={3672,216,0,216,1296,0,1080,0,0,216,1512,216,648,216,0,432,216,0,432,0,}
+Average @ 65000 518.4
+
+[2/7] Processing cpu_big_
+[1/20] cpu_big_: start_temp = 60632, index = 60000, max_temp = 17280
+[2/20] cpu_big_: start_temp = 76616, index = 75000, max_temp = 3456
+[3/20] cpu_big_: start_temp = 76832, index = 75000, max_temp = 4752
+[4/20] cpu_big_: start_temp = 78992, index = 80000, max_temp = 3024
+[5/20] cpu_big_: start_temp = 80504, index = 80000, max_temp = 1944
+[6/20] cpu_big_: start_temp = 81584, index = 80000, max_temp = 1512
+[7/20] cpu_big_: start_temp = 82664, index = 85000, max_temp = 1080
+[8/20] cpu_big_: start_temp = 82664, index = 85000, max_temp = 1296
+[9/20] cpu_big_: start_temp = 80936, index = 80000, max_temp = 3024
+[10/20] cpu_big_: start_temp = 82880, index = 85000, max_temp = 1944
+[11/20] cpu_big_: start_temp = 62576, index = 65000, max_temp = 15336
+[12/20] cpu_big_: start_temp = 75536, index = 75000, max_temp = 2808
+[13/20] cpu_big_: start_temp = 76616, index = 75000, max_temp = 11880
+[14/20] cpu_big_: start_temp = 86552, index = 85000, max_temp = 2808
+[15/20] cpu_big_: start_temp = 85256, index = 85000, max_temp = 0
+[16/20] cpu_big_: start_temp = 83528, index = 85000, max_temp = 648
+[17/20] cpu_big_: start_temp = 81800, index = 80000, max_temp = 2376
+[18/20] cpu_big_: start_temp = 82880, index = 85000, max_temp = 864
+[19/20] cpu_big_: start_temp = 82232, index = 80000, max_temp = 2592
+[20/20] cpu_big_: start_temp = 82232, index = 80000, max_temp = 2592
+cpu_big_ Average 4150.98
+60000={17280,}
+Average @ 60000 17280
+65000={15336,}
+Average @ 65000 15336
+75000={3456,4752,2808,11880,}
+Average @ 75000 5724
+80000={3024,1944,1512,3024,2376,2592,2592,}
+Average @ 80000 2437.71
+85000={1080,1296,1944,2808,0,648,864,}
+Average @ 85000 1234.29
+
+[3/7] Processing cpu_big_cpu_small_
+[1/20] cpu_big_cpu_small_: start_temp = 64088, index = 65000, max_temp = 20520
+[2/20] cpu_big_cpu_small_: start_temp = 69488, index = 70000, max_temp = 16848
+[3/20] cpu_big_cpu_small_: start_temp = 72080, index = 70000, max_temp = 15552
+[4/20] cpu_big_cpu_small_: start_temp = 72728, index = 75000, max_temp = 16416
+[5/20] cpu_big_cpu_small_: start_temp = 71216, index = 70000, max_temp = 15768
+[6/20] cpu_big_cpu_small_: start_temp = 72728, index = 75000, max_temp = 14040
+[7/20] cpu_big_cpu_small_: start_temp = 73376, index = 75000, max_temp = 13824
+[8/20] cpu_big_cpu_small_: start_temp = 73160, index = 75000, max_temp = 15120
+[9/20] cpu_big_cpu_small_: start_temp = 72512, index = 75000, max_temp = 14904
+[10/20] cpu_big_cpu_small_: start_temp = 72728, index = 75000, max_temp = 14040
+[11/20] cpu_big_cpu_small_: start_temp = 66680, index = 65000, max_temp = 19008
+[12/20] cpu_big_cpu_small_: start_temp = 70784, index = 70000, max_temp = 15984
+[13/20] cpu_big_cpu_small_: start_temp = 73160, index = 75000, max_temp = 13392
+[14/20] cpu_big_cpu_small_: start_temp = 72296, index = 70000, max_temp = 13824
+[15/20] cpu_big_cpu_small_: start_temp = 72080, index = 70000, max_temp = 14256
+[16/20] cpu_big_cpu_small_: start_temp = 72296, index = 70000, max_temp = 14040
+[17/20] cpu_big_cpu_small_: start_temp = 72728, index = 75000, max_temp = 13176
+[18/20] cpu_big_cpu_small_: start_temp = 73376, index = 75000, max_temp = 12528
+[19/20] cpu_big_cpu_small_: start_temp = 72944, index = 75000, max_temp = 14040
+[20/20] cpu_big_cpu_small_: start_temp = 72512, index = 75000, max_temp = 14040
+cpu_big_cpu_small_ Average 15306.3
+65000={20520,19008,}
+Average @ 65000 19764
+70000={16848,15552,15768,15984,13824,14256,14040,}
+Average @ 70000 15181.7
+75000={16416,14040,13824,15120,14904,14040,13392,13176,12528,14040,14040,}
+Average @ 75000 14138.2
+
+[4/7] Processing gpu
+[1/20] gpu: start_temp = 62792, index = 65000, max_temp = 6696
+[2/20] gpu: start_temp = 61712, index = 60000, max_temp = 8424
+[3/20] gpu: start_temp = 64304, index = 65000, max_temp = 4104
+[4/20] gpu: start_temp = 61280, index = 60000, max_temp = 7776
+[5/20] gpu: start_temp = 60632, index = 60000, max_temp = 14904
+[6/20] gpu: start_temp = 59984, index = 60000, max_temp = 12960
+[7/20] gpu: start_temp = 62792, index = 65000, max_temp = 5184
+[8/20] gpu: start_temp = 59336, index = 60000, max_temp = 15768
+[9/20] gpu: start_temp = 59768, index = 60000, max_temp = 7776
+[10/20] gpu: start_temp = 59984, index = 60000, max_temp = 6480
+[11/20] gpu: start_temp = 63656, index = 65000, max_temp = 10584
+[12/20] gpu: start_temp = 62144, index = 60000, max_temp = 12312
+[13/20] gpu: start_temp = 61280, index = 60000, max_temp = 6048
+[14/20] gpu: start_temp = 61064, index = 60000, max_temp = 6264
+[15/20] gpu: start_temp = 61064, index = 60000, max_temp = 5832
+[16/20] gpu: start_temp = 60416, index = 60000, max_temp = 12744
+[17/20] gpu: start_temp = 61064, index = 60000, max_temp = 12312
+[18/20] gpu: start_temp = 60848, index = 60000, max_temp = 9288
+[19/20] gpu: start_temp = 59768, index = 60000, max_temp = 13392
+[20/20] gpu: start_temp = 59336, index = 60000, max_temp = 13392
+gpu Average 9964.08
+60000={8424,7776,14904,12960,15768,7776,6480,12312,6048,6264,5832,12744,12312,9288,13392,13392,}
+Average @ 60000 10354.5
+65000={6696,4104,5184,10584,}
+Average @ 65000 6642
+
+[5/7] Processing cpu_small_gpu
+[1/20] cpu_small_gpu: start_temp = 60848, index = 60000, max_temp = 8640
+[2/20] cpu_small_gpu: start_temp = 58904, index = 60000, max_temp = 11016
+[3/20] cpu_small_gpu: start_temp = 58688, index = 60000, max_temp = 10368
+[4/20] cpu_small_gpu: start_temp = 61280, index = 60000, max_temp = 16848
+[5/20] cpu_small_gpu: start_temp = 58040, index = 60000, max_temp = 11880
+[6/20] cpu_small_gpu: start_temp = 58472, index = 60000, max_temp = 12096
+[7/20] cpu_small_gpu: start_temp = 60848, index = 60000, max_temp = 16200
+[8/20] cpu_small_gpu: start_temp = 60416, index = 60000, max_temp = 16848
+[9/20] cpu_small_gpu: start_temp = 60632, index = 60000, max_temp = 17064
+[10/20] cpu_small_gpu: start_temp = 58688, index = 60000, max_temp = 18360
+[11/20] cpu_small_gpu: start_temp = 54584, index = 55000, max_temp = 19440
+[12/20] cpu_small_gpu: start_temp = 59336, index = 60000, max_temp = 17280
+[13/20] cpu_small_gpu: start_temp = 56960, index = 55000, max_temp = 18360
+[14/20] cpu_small_gpu: start_temp = 56528, index = 55000, max_temp = 10368
+[15/20] cpu_small_gpu: start_temp = 59984, index = 60000, max_temp = 15552
+[16/20] cpu_small_gpu: start_temp = 56744, index = 55000, max_temp = 11664
+[17/20] cpu_small_gpu: start_temp = 59768, index = 60000, max_temp = 8208
+[18/20] cpu_small_gpu: start_temp = 58472, index = 60000, max_temp = 10800
+[19/20] cpu_small_gpu: start_temp = 59984, index = 60000, max_temp = 9504
+[20/20] cpu_small_gpu: start_temp = 57176, index = 55000, max_temp = 11664
+cpu_small_gpu Average 13937.4
+55000={19440,18360,10368,11664,11664,}
+Average @ 55000 14299.2
+60000={8640,11016,10368,16848,11880,12096,16200,16848,17064,18360,17280,15552,8208,10800,9504,}
+Average @ 60000 13377.6
+
+[6/7] Processing cpu_big_gpu
+[1/20] cpu_big_gpu: start_temp = 59768, index = 60000, max_temp = 19656
+[2/20] cpu_big_gpu: start_temp = 60200, index = 60000, max_temp = 18360
+[3/20] cpu_big_gpu: start_temp = 57392, index = 55000, max_temp = 21168
+[4/20] cpu_big_gpu: start_temp = 56960, index = 55000, max_temp = 21816
+[5/20] cpu_big_gpu: start_temp = 57176, index = 55000, max_temp = 18792
+[6/20] cpu_big_gpu: start_temp = 57176, index = 55000, max_temp = 20088
+[7/20] cpu_big_gpu: start_temp = 58040, index = 60000, max_temp = 21168
+[8/20] cpu_big_gpu: start_temp = 59336, index = 60000, max_temp = 20736
+[9/20] cpu_big_gpu: start_temp = 59768, index = 60000, max_temp = 19656
+[10/20] cpu_big_gpu: start_temp = 60632, index = 60000, max_temp = 18576
+[11/20] cpu_big_gpu: start_temp = 62792, index = 65000, max_temp = 17496
+[12/20] cpu_big_gpu: start_temp = 57824, index = 60000, max_temp = 19008
+[13/20] cpu_big_gpu: start_temp = 60848, index = 60000, max_temp = 19440
+[14/20] cpu_big_gpu: start_temp = 59120, index = 60000, max_temp = 19872
+[15/20] cpu_big_gpu: start_temp = 57824, index = 60000, max_temp = 22032
+[16/20] cpu_big_gpu: start_temp = 58040, index = 60000, max_temp = 20304
+[17/20] cpu_big_gpu: start_temp = 58256, index = 60000, max_temp = 20520
+[18/20] cpu_big_gpu: start_temp = 59768, index = 60000, max_temp = 20088
+[19/20] cpu_big_gpu: start_temp = 58256, index = 60000, max_temp = 20304
+[20/20] cpu_big_gpu: start_temp = 57608, index = 60000, max_temp = 21168
+cpu_big_gpu Average 20375.8
+55000={21168,21816,18792,20088,}
+Average @ 55000 20466
+60000={19656,18360,21168,20736,19656,18576,19008,19440,19872,22032,20304,20520,20088,20304,21168,}
+Average @ 60000 20059.2
+65000={17496,}
+Average @ 65000 17496
+
+[7/7] Processing cpu_big_cpu_small_gpu
+[1/20] cpu_big_cpu_small_gpu: start_temp = 57824, index = 60000, max_temp = 25272
+[2/20] cpu_big_cpu_small_gpu: start_temp = 61280, index = 60000, max_temp = 23976
+[3/20] cpu_big_cpu_small_gpu: start_temp = 58472, index = 60000, max_temp = 26784
+[4/20] cpu_big_cpu_small_gpu: start_temp = 62144, index = 60000, max_temp = 23328
+[5/20] cpu_big_cpu_small_gpu: start_temp = 58904, index = 60000, max_temp = 27648
+[6/20] cpu_big_cpu_small_gpu: start_temp = 61928, index = 60000, max_temp = 24408
+[7/20] cpu_big_cpu_small_gpu: start_temp = 59120, index = 60000, max_temp = 27216
+[8/20] cpu_big_cpu_small_gpu: start_temp = 61280, index = 60000, max_temp = 25920
+[9/20] cpu_big_cpu_small_gpu: start_temp = 62360, index = 60000, max_temp = 23760
+[10/20] cpu_big_cpu_small_gpu: start_temp = 62792, index = 65000, max_temp = 23544
+[11/20] cpu_big_cpu_small_gpu: start_temp = 65600, index = 65000, max_temp = 22032
+[12/20] cpu_big_cpu_small_gpu: start_temp = 60200, index = 60000, max_temp = 25704
+[13/20] cpu_big_cpu_small_gpu: start_temp = 61496, index = 60000, max_temp = 25056
+[14/20] cpu_big_cpu_small_gpu: start_temp = 62576, index = 65000, max_temp = 24408
+[15/20] cpu_big_cpu_small_gpu: start_temp = 62792, index = 65000, max_temp = 23328
+[16/20] cpu_big_cpu_small_gpu: start_temp = 62360, index = 60000, max_temp = 23976
+[17/20] cpu_big_cpu_small_gpu: start_temp = 63008, index = 65000, max_temp = 23328
+[18/20] cpu_big_cpu_small_gpu: start_temp = 61496, index = 60000, max_temp = 25488
+[19/20] cpu_big_cpu_small_gpu: start_temp = 59768, index = 60000, max_temp = 26568
+[20/20] cpu_big_cpu_small_gpu: start_temp = 61928, index = 60000, max_temp = 24192
+cpu_big_cpu_small_gpu Average 25219.6
+60000={25272,23976,26784,23328,27648,24408,27216,25920,23760,25704,25056,23976,25488,26568,24192,}
+Average @ 60000 25286.4
+65000={23544,22032,24408,23328,23328,}
+Average @ 65000 23328
+

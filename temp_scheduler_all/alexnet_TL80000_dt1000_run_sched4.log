@@ -14,35 +14,28 @@ Inferences = 10
 Running Scheduler
 Logging temp logs to temp_schedulerv4/alexnet_TL80000_dt1000.csv
 Main thread running
-tdiff = 5.00073, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 1219.61, val = 3
-tdiff = 10.0009, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77048, min_delta_t = 1219.61, val = 7
-tdiff = 15.0009, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 86120, min_delta_t = 1219.61, val = 10
-tdiff = 20.0008, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81800, min_delta_t = 1219.61, val = 14
-tdiff = 25.0004, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78776, min_delta_t = 1219.61, val = 17
-tdiff = 30.0003, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78128, min_delta_t = 1219.61, val = 20
-tdiff = 35, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75752, min_delta_t = 1219.61, val = 23
-tdiff = 40.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85256, min_delta_t = 1219.61, val = 26
-tdiff = 45.0006, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 79424, min_delta_t = 1219.61, val = 30
-tdiff = 50.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 1219.61, val = 33
-tdiff = 55.0004, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82232, min_delta_t = 1219.61, val = 36
-tdiff = 60.0005, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75968, min_delta_t = 1219.61, val = 40
-tdiff = 65.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85904, min_delta_t = 1219.61, val = 42
-tdiff = 70.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81800, min_delta_t = 1219.61, val = 46
-tdiff = 75.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 1219.61, val = 49
-tdiff = 80.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81800, min_delta_t = 1219.61, val = 52
-tdiff = 85, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77264, min_delta_t = 1219.61, val = 55
-tdiff = 90.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 79424, min_delta_t = 1219.61, val = 58
-tdiff = 95.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76400, min_delta_t = 1219.61, val = 62
-tdiff = 100.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83528, min_delta_t = 1219.61, val = 64
-tdiff = 105.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82016, min_delta_t = 1219.61, val = 68
-tdiff = 110.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77480, min_delta_t = 1219.61, val = 71
-tdiff = 115.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 78992, min_delta_t = 1219.61, val = 74
-tdiff = 120.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76616, min_delta_t = 1219.61, val = 77
-tdiff = 125, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83960, min_delta_t = 1219.61, val = 80
-tdiff = 130, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76400, min_delta_t = 1219.61, val = 84
-tdiff = 135.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 1219.61, val = 86
-tdiff = 140.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75104, min_delta_t = 1219.61, val = 90
-tdiff = 145.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 1219.61, val = 92
-tdiff = 150.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81584, min_delta_t = 1219.61, val = 96
-1.54983 per image
-0.154983 per inference
+tdiff = 5.0004, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78128, min_delta_t = 1219.61, val = 3
+tdiff = 10, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75536, min_delta_t = 1219.61, val = 9
+tdiff = 15.0007, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 81152, min_delta_t = 1219.61, val = 12
+tdiff = 20.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 0, temp = 75320, min_delta_t = 1219.61, val = 17
+tdiff = 25.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78776, min_delta_t = 1219.61, val = 21
+tdiff = 30.0008, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80720, min_delta_t = 1219.61, val = 26
+tdiff = 35.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 84608, min_delta_t = 1219.61, val = 29
+tdiff = 40.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 79856, min_delta_t = 1219.61, val = 34
+tdiff = 45, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 77912, min_delta_t = 1219.61, val = 38
+tdiff = 50.0003, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 85472, min_delta_t = 1219.61, val = 42
+tdiff = 55.0003, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76400, min_delta_t = 1219.61, val = 47
+tdiff = 60.0006, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80288, min_delta_t = 1219.61, val = 52
+tdiff = 65, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78776, min_delta_t = 1219.61, val = 56
+tdiff = 70.0009, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83960, min_delta_t = 1219.61, val = 60
+tdiff = 75.0004, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 84392, min_delta_t = 1219.61, val = 65
+tdiff = 80.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 80288, min_delta_t = 1219.61, val = 70
+tdiff = 85.0011, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 76400, min_delta_t = 1219.61, val = 74
+tdiff = 90.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 78992, min_delta_t = 1219.61, val = 79
+tdiff = 95.0013, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83744, min_delta_t = 1219.61, val = 82
+tdiff = 100.001, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 78344, min_delta_t = 1219.61, val = 87
+tdiff = 105.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 83312, min_delta_t = 1219.61, val = 90
+tdiff = 110, run_cpu_small = 1, run_cpu_big = 0, run_gpu = 0, temp = 75752, min_delta_t = 1219.61, val = 95
+tdiff = 115.001, run_cpu_small = 0, run_cpu_big = 0, run_gpu = 0, temp = 82232, min_delta_t = 1219.61, val = 98
+1.1636 per image
+0.11636 per inference
