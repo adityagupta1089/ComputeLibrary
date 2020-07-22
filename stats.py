@@ -15,8 +15,8 @@ tab20 = matplotlib.cm.get_cmap("tab20")
 poss = np.linspace(0, 1, 20)[:6]
 colors = [tab20(x) for x in poss]
 
-temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt10000.csv")
-time_logs = glob.glob("temp_scheduler_all/*_TL*_dt10000_run_sched*.log")
+temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt1000.csv")
+time_logs = glob.glob("temp_scheduler_all/*_TL*_dt1000_run_sched*.log")
 
 graphs = ("alexnet", "googlenet", "mobilenet", "resnet50", "squeezenet")
 versions = ("3", "3.1", "4")
@@ -39,7 +39,7 @@ temp_df = pd.DataFrame()
 
 for temp_csv in temp_csvs:
     version, graph, TL = re.findall(
-        r"temp_schedulerv([\d_]+)/(\w+)_TL(\d+)_dt10000.csv", temp_csv
+        r"temp_schedulerv([\d_]+)/(\w+)_TL(\d+)_dt1000.csv", temp_csv
     )[0]
     version = version.replace("_", ".")
     if TL not in TLs or version not in versions:
@@ -70,7 +70,9 @@ for graph in sorted(stats):
         for TL in sorted(stats[graph][version]):
             xtick_lables.append(graph)
             fig = plt.figure()
-            sns.lineplot(data=stats[graph][version][TL]["temps"], x="time", y="temp")
+            sns.lineplot(
+                data=stats[graph][version][TL]["temps"], x="time", y="temp"
+            )
             if int(TL) == 80000:
                 plt.axhline(80, linestyle="--", color="r")
             plt.xlabel("Time (sec)")
@@ -79,6 +81,7 @@ for graph in sorted(stats):
                 f"Execution scheduler {graph}, v{version}, ${{\\rm TL}} = {map_tl(TL)}$"
             )
             # plt.show()
+            print(f"Saving {version} {graph} {TL}")
             fig.savefig(
                 f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
             )
@@ -102,7 +105,11 @@ for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
 ax.axhline(y=80, color="r", alpha=0.5)
 ax.legend(
     [Line2D([0], [0], color=col, lw=4) for x, col in zip(poss, colors)],
-    [f"v{version}, ${{\\rm TL}}={map_tl(TL)}$" for version in versions for TL in TLs],
+    [
+        f"v{version}, ${{\\rm TL}}={map_tl(TL)}$"
+        for version in versions
+        for TL in TLs
+    ],
     loc="center left",
     bbox_to_anchor=(1, 0.3),
 )
@@ -110,6 +117,7 @@ ax.set_ylabel(r"Temperature $(^\circ C)$")
 plt.title("Temperature vs. Graph")
 fig.subplots_adjust(right=0.82)
 # plt.show()
+print("Saving temperatures")
 fig.savefig("temp_scheduler_temperatures.png")
 
 indexes = []
@@ -146,7 +154,9 @@ for column in df.columns:
     )
     m, M = ax.get_xlim()
     xtick_lables = np.linspace(m, M, len(graphs) + 1)
-    ax.set_xticks([(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])])
+    ax.set_xticks(
+        [(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])]
+    )
     ax.set_xticklabels(graphs, rotation=0)
     for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
         ax.axvline(x=x)
@@ -158,4 +168,5 @@ for column in df.columns:
     plt.title(f"{column} vs. Graph")
     fig.subplots_adjust(right=0.82)
     # plt.show()
+    print(f"Saving {column}")
     fig.savefig(f"temp_scheduler_{column.lower().replace(' ', '_')}.png")
