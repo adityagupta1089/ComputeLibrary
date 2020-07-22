@@ -1,7 +1,0 @@
-TL = 80000
-graph = alexnet
-version = 3
-Images = 100
-Inferences = 10
-***
-Running Scheduler
