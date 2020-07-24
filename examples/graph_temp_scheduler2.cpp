@@ -1138,6 +1138,9 @@ int main(int argc, char **argv)
     string graph   = graphOption->value();
 
     cout << "graph = " << graph << "\n";
+    cout << "Images = " << images << "\n";
+    cout << "Inferences = " << inferences << "\n";
+
     cout << "Sleeping until temp < 65000\n";
     while(get_temp() > 65000)
     {
