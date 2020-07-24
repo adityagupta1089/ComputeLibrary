@@ -98,4 +98,3 @@ sns.catplot(
 )
 print("Generated fig")
 plt.savefig("motivation.png")
-

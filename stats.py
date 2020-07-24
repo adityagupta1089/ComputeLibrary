@@ -20,6 +20,7 @@ time_logs = glob.glob("temp_scheduler_all/*_TL*_dt1000_run_sched*.log")
 
 graphs = ("alexnet", "googlenet", "mobilenet", "resnet50", "squeezenet")
 versions = ("3", "3.1", "4")
+version_names = {"3": "AMTR", "3.1": "AMTRI", "4": "EE"}
 TLs = ("80000", "999999")
 
 
@@ -68,23 +69,21 @@ required_columns = []
 for graph in sorted(stats):
     for version in sorted(stats[graph]):
         for TL in sorted(stats[graph][version]):
-            xtick_lables.append(graph)
-            fig = plt.figure()
-            sns.lineplot(
-                data=stats[graph][version][TL]["temps"], x="time", y="temp"
-            )
-            if int(TL) == 80000:
-                plt.axhline(80, linestyle="--", color="r")
-            plt.xlabel("Time (sec)")
-            plt.ylabel("Temperature $(^\circ C)$")
-            plt.title(
-                f"Execution scheduler {graph}, v{version}, ${{\\rm TL}} = {map_tl(TL)}$"
-            )
+            # xtick_lables.append(graph)
+            # fig = plt.figure()
+            # sns.lineplot(data=stats[graph][version][TL]["temps"], x="time", y="temp")
+            # if int(TL) == 80000:
+            #     plt.axhline(80, linestyle="--", color="r")
+            # plt.xlabel("Time (sec)")
+            # plt.ylabel("Temperature $(^\circ C)$")
+            # plt.title(
+            #     f"Execution scheduler {graph}, v{version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
+            # )
             # plt.show()
-            print(f"Saving {version} {graph} {TL}")
-            fig.savefig(
-                f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
-            )
+            # print(f"Saving {version} {graph} {TL}")
+            # fig.savefig(
+            #     f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
+            # )
             required_columns.append(f"{graph}_v{version}_TL{TL}")
 temp_df = temp_df[required_columns]
 fig = plt.figure(figsize=(12, 8))
@@ -105,11 +104,7 @@ for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
 ax.axhline(y=80, color="r", alpha=0.5)
 ax.legend(
     [Line2D([0], [0], color=col, lw=4) for x, col in zip(poss, colors)],
-    [
-        f"v{version}, ${{\\rm TL}}={map_tl(TL)}$"
-        for version in versions
-        for TL in TLs
-    ],
+    [f"v{version}, ${{\\rm TL}}={map_tl(TL)}$" for version in versions for TL in TLs],
     loc="center left",
     bbox_to_anchor=(1, 0.3),
 )
@@ -145,7 +140,7 @@ for column in df.columns:
     ax.legend(
         [Line2D([0], [0], color=col, lw=4) for x, col in zip(poss, colors)],
         [
-            f"v{version}, ${{\\rm TL}}={map_tl(TL)}$"
+            f"{version_names[version]}, ${{\\rm TL}}={map_tl(TL)}$"
             for version in versions
             for TL in TLs
         ],
@@ -154,9 +149,7 @@ for column in df.columns:
     )
     m, M = ax.get_xlim()
     xtick_lables = np.linspace(m, M, len(graphs) + 1)
-    ax.set_xticks(
-        [(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])]
-    )
+    ax.set_xticks([(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])])
     ax.set_xticklabels(graphs, rotation=0)
     for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
         ax.axvline(x=x)
