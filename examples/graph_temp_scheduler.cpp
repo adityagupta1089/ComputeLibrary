@@ -1368,11 +1368,11 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
     *val           = 0;
 
     //3.1 -> 3_1 & 3.2 -> 3_2
-    auto   pos          = version.find(".");
     string version_name = version;
+    auto   pos          = version_name.find(".");
     if(pos != string::npos)
     {
-        version_name = version.replace(pos, 1, "_");
+        version_name.replace(pos, 1, "_");
     }
 
     // Create Child Processes
@@ -1389,7 +1389,7 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
     {
         auto tbegin = high_resolution_clock::now();
 
-        string   temp_log_file_name = "temp_schedulerv" + version_name + "/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv";
+        string   temp_log_file_name = "temp_schedulerv" + version_name + "/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + "_motivation.csv";
         ofstream file(temp_log_file_name);
         h << "Logging temp logs to " << temp_log_file_name << "\n";
         file << "time,temp\n";
@@ -1402,7 +1402,6 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
             double tdiff = duration_cast<duration<double>>(tnow - tbegin).count();
             double pred_delta_temps[ALL + 1];
             int    temp                = get_temp();
-            int    index               = (int)round((double)temp / 5000.0) * 5000;
             double min_pred_delta_temp = 99999999;
             for(int i = 1; i <= ALL; i++)
             {
@@ -1412,11 +1411,19 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                 }
                 else if(version == "3.1")
                 {
-                    pred_delta_temps[i] = delta_temps2[graph][i][index];
+                    double min_diff = 99999999;
+                    for(auto kv:  delta_temps2[graph][i]){
+                        if (abs (kv.first - temp) < min_diff ){
+                            min_diff = abs (kv.first - temp);
+                            pred_delta_temps[i] = kv.second;
+                        }
+                    }
                 }
                 else if(version == "4")
                 {
                     pred_delta_temps[i] = fit_temp(temp, params[graph][i], dt) - temp;
+                }else {
+                    cout << "no version matching " << version << "\n";
                 }
                 min_pred_delta_temp = min(min_pred_delta_temp, pred_delta_temps[i]);
             }
@@ -1607,7 +1614,7 @@ int main(int argc, char **argv)
         suffix += "_run_sched" + version;
 
     ofstream fl;
-    fl.open("temp_scheduler_all/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + suffix + ".log");
+    fl.open("temp_scheduler_all/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + suffix + "_motivation.log");
     MyStreamingHelper h(fl, cout);
 
     h << "TL = " << TL << "\n";

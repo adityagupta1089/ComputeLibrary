@@ -15,7 +15,7 @@ tab20 = matplotlib.cm.get_cmap("tab20")
 poss = np.linspace(0, 1, 20)[:6]
 colors = [tab20(x) for x in poss]
 
-temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt1000.csv")
+temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt1000*.csv")
 time_logs = glob.glob("temp_scheduler_all/*_TL*_dt1000_run_sched*.log")
 
 graphs = ("alexnet", "googlenet", "mobilenet", "resnet50", "squeezenet")
