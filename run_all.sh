@@ -1,7 +1,7 @@
 # Time profiling
 
 # for graph in alexnet googlenet mobilenet resnet50 squeezenet; do
-#     ./build/release/examples/graph_temp_scheduler --graph=$graph --profile-time
+#     ./build/release/examples/graph_temp_scheduler --graph=$graph --profile-time --n=100 --i=10
 # done
 
 # Temp profiling

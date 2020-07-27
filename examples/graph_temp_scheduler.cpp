@@ -1093,12 +1093,12 @@ static std::map<string, std::map<int, _param>> params{
 };
 
 static std::map<string, std::map<int, double>> time_takens = {
-    { "alexnet", { { CPU_SMALL, 2.2352 }, { CPU_BIG, 2.31566 }, { GPU, 1.69999 } } },
-    { "googlenet", { { CPU_SMALL, 2.19961 }, { CPU_BIG, 2.1979 }, { GPU, 2.09484 } } },
-    { "mobilenet", { { CPU_SMALL, 1.45083 }, { CPU_BIG, 1.44368 }, { GPU, 1.27125 } } },
-    { "resnet50", { { CPU_SMALL, 5.24087 }, { CPU_BIG, 5.3943 }, { GPU, 3.92675 } } },
-    { "squeezenet", { { CPU_SMALL, 1.58729 }, { CPU_BIG, 1.51819 }, { GPU, 1.65504 } } }
-};
+    { "alexnet", { { CPU_SMALL, 4 }, { CPU_BIG, 2.05719 }, { GPU,  2.20043} } },
+        { "googlenet", { { CPU_SMALL, 2.81574 }, { CPU_BIG,  1.50193 }, { GPU,  1.98438 } } },
+            { "mobilenet", { { CPU_SMALL,  1.40115 }, { CPU_BIG,  0.822491 }, { GPU,  1.37579 } } },
+                { "resnet50", { { CPU_SMALL,  5.3915 }, { CPU_BIG,  4.44067 }, { GPU,  4.53231 } } },
+                    { "squeezenet", { { CPU_SMALL,  1.49032 }, { CPU_BIG,  0.968867 }, { GPU, 1.24075 } } }
+                    };
 
 char **convert(vector<string> argv_list)
 {
@@ -1191,26 +1191,45 @@ void profile_time(MyStreamingHelper &h, string graph)
         { GPU, 0 }
     };
     int       j = 1;
-    const int T = 100;
     for(const auto &kv : samples)
     {
         int  config_id = kv.first;
         auto config    = configs[configs_idx[config_id]];
         h << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
-        for(int i = 0; i < T; i++)
-        {
-            usleep(1000000);
-            auto start = high_resolution_clock::now();
+        int pid = fork();
+        if (pid > 0) {
+            wait(NULL);
+        } else {
+            cpu_set_t mask;
+            CPU_ZERO(&mask);
+            if(config.id == CPU_SMALL)
+            {
+                for(int i = 0; i <= 3; i++)
+                    CPU_SET(i, &mask);
+                sched_setaffinity(0, sizeof(mask), &mask);
+            }
+            else if(config.id == CPU_BIG)
+            {
+                for(int i = 4; i <= 7; i++)
+                    CPU_SET(i, &mask);
+                sched_setaffinity(0, sizeof(mask), &mask);
+            }
+            for(unsigned int i = 0; i < images; i++)
+            {
+                usleep(1000000);
+                auto start = high_resolution_clock::now();
 
-            run_graph(graph, config.argc, config.argv);
+                run_graph(graph, config.argc, config.argv);
 
-            auto   end      = high_resolution_clock::now();
-            double duration = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-            h << config.name << " [" << i + 1 << "/" << T << "] " << duration << "\n";
-            samples[config_id] += duration;
+                auto   end      = high_resolution_clock::now();
+                double duration = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+                h << config.name << " [" << i + 1 << "/" << images << "] " << duration << "\n";
+                samples[config_id] += duration;
+            }
+            h << config.name << " Average " << samples[config_id] / images << "\n";
+            time_takens[graph][config_id] = samples[config_id] / images;
+            exit(0);
         }
-        h << config.name << " Average " << samples[config_id] / T << "\n";
-        time_takens[graph][config_id] = samples[config_id] / T;
     }
 }
 
@@ -1389,7 +1408,7 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
     {
         auto tbegin = high_resolution_clock::now();
 
-        string   temp_log_file_name = "temp_schedulerv" + version_name + "/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + "_motivation.csv";
+        string   temp_log_file_name = "temp_schedulerv" + version_name + "/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + ".csv";
         ofstream file(temp_log_file_name);
         h << "Logging temp logs to " << temp_log_file_name << "\n";
         file << "time,temp\n";
@@ -1614,7 +1633,7 @@ int main(int argc, char **argv)
         suffix += "_run_sched" + version;
 
     ofstream fl;
-    fl.open("temp_scheduler_all/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + suffix + "_motivation.log");
+    fl.open("temp_scheduler_all/" + graph + "_TL" + to_string(TL) + "_dt" + to_string(dt) + suffix + ".log");
     MyStreamingHelper h(fl, cout);
 
     h << "TL = " << TL << "\n";

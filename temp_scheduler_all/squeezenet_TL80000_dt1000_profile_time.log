@@ -1,0 +1,10 @@
+TL = 80000
+graph = squeezenet
+version = 
+Images = 100
+Inferences = 10
+***
+Profiling Time
+[1/3] Processing CPU Small
+[2/3] Processing CPU Big
+[3/3] Processing GPU
