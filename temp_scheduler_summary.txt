@@ -12,6 +12,36 @@
 53497                 83.528  ...                      NaN
 
 [53498 rows x 30 columns]
+Saving 3 alexnet 80000
+Saving 3 alexnet 999999
+Saving 3.1 alexnet 80000
+Saving 3.1 alexnet 999999
+Saving 4 alexnet 80000
+Saving 4 alexnet 999999
+Saving 3 googlenet 80000
+Saving 3 googlenet 999999
+Saving 3.1 googlenet 80000
+Saving 3.1 googlenet 999999
+Saving 4 googlenet 80000
+Saving 4 googlenet 999999
+Saving 3 mobilenet 80000
+Saving 3 mobilenet 999999
+Saving 3.1 mobilenet 80000
+Saving 3.1 mobilenet 999999
+Saving 4 mobilenet 80000
+Saving 4 mobilenet 999999
+Saving 3 resnet50 80000
+Saving 3 resnet50 999999
+Saving 3.1 resnet50 80000
+Saving 3.1 resnet50 999999
+Saving 4 resnet50 80000
+Saving 4 resnet50 999999
+Saving 3 squeezenet 80000
+Saving 3 squeezenet 999999
+Saving 3.1 squeezenet 80000
+Saving 3.1 squeezenet 999999
+Saving 4 squeezenet 80000
+Saving 4 squeezenet 999999
 Saving temperatures
 \begin{tabular}{lllrr}
 \toprule

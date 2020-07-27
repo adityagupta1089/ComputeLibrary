@@ -73,21 +73,24 @@ required_columns = []
 for graph in sorted(stats):
     for version in sorted(stats[graph]):
         for TL in sorted(stats[graph][version]):
-            # xtick_lables.append(graph)
-            # fig = plt.figure()
-            # sns.lineplot(data=stats[graph][version][TL]["temps"], x="time", y="temp")
-            # if int(TL) == 80000:
-            #     plt.axhline(80, linestyle="--", color="r")
-            # plt.xlabel("Time (sec)")
-            # plt.ylabel("Temperature $(^\circ C)$")
-            # plt.title(
-            #     f"Execution scheduler {graph}, v{version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
-            # )
+            xtick_lables.append(graph)
+            fig = plt.figure()
+            sns.lineplot(
+                data=stats[graph][version][TL]["temps"], x="time", y="temp"
+            )
+            if int(TL) == 80000:
+                plt.axhline(80, linestyle="--", color="r")
+            plt.xlabel("Time (sec)")
+            plt.ylabel("Temperature $(^\circ C)$")
+            plt.title(
+                f"Execution scheduler {graph}, {version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
+            )
             # plt.show()
-            # print(f"Saving {version} {graph} {TL}")
-            # fig.savefig(
-            #     f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
-            # )
+            print(f"Saving {version} {graph} {TL}")
+            fig.savefig(
+                f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
+            )
+            plt.close(fig)
             required_columns.append(f"{graph}_v{version}_TL{TL}")
 temp_df = temp_df[required_columns]
 fig = plt.figure(figsize=(12, 8))
