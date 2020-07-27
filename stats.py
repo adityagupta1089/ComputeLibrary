@@ -15,7 +15,7 @@ tab20 = matplotlib.cm.get_cmap("tab20")
 poss = np.linspace(0, 1, 20)[:6]
 colors = [tab20(x) for x in poss]
 
-temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt1000*.csv")
+temp_csvs = glob.glob("temp_schedulerv*/*_TL*_dt1000.csv")
 time_logs = glob.glob("temp_scheduler_all/*_TL*_dt1000_run_sched*.log")
 
 graphs = ("alexnet", "googlenet", "mobilenet", "resnet50", "squeezenet")
@@ -39,6 +39,8 @@ stats = defaultdict(dd)
 temp_df = pd.DataFrame()
 
 for temp_csv in temp_csvs:
+    if "motivation" in temp_csv:
+        continue
     version, graph, TL = re.findall(
         r"temp_schedulerv([\d_]+)/(\w+)_TL(\d+)_dt1000.csv", temp_csv
     )[0]
@@ -55,6 +57,8 @@ for temp_csv in temp_csvs:
 
 for time_log in time_logs:
     file_name = time_log.split("/")[1]
+    if "motivation" in time_log:
+        continue
     graph, TL, version = re.findall(
         r"(\w+)_TL(\d+)_dt\d+_run_sched([\d\.]+).log", file_name
     )[0]
@@ -104,7 +108,11 @@ for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
 ax.axhline(y=80, color="r", alpha=0.5)
 ax.legend(
     [Line2D([0], [0], color=col, lw=4) for x, col in zip(poss, colors)],
-    [f"v{version}, ${{\\rm TL}}={map_tl(TL)}$" for version in versions for TL in TLs],
+    [
+        f"{version_names[version]}, ${{\\rm TL}}={map_tl(TL)}$"
+        for version in versions
+        for TL in TLs
+    ],
     loc="center left",
     bbox_to_anchor=(1, 0.3),
 )
@@ -149,7 +157,9 @@ for column in df.columns:
     )
     m, M = ax.get_xlim()
     xtick_lables = np.linspace(m, M, len(graphs) + 1)
-    ax.set_xticks([(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])])
+    ax.set_xticks(
+        [(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])]
+    )
     ax.set_xticklabels(graphs, rotation=0)
     for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
         ax.axvline(x=x)
