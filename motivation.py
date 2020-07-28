@@ -91,11 +91,7 @@ for graph, val in data.items():
     print(graph)
     for (target, config), (idx, line) in zip(
         rowvs,
-        [
-            (a, b)
-            for a, b in enumerate([x for x in val.split("\n") if x])
-            if a in rows
-        ],
+        [(a, b) for a, b in enumerate([x for x in val.split("\n") if x]) if a in rows],
     ):
         data3[config].append([graph, target, line.split(",")[1]])
 
@@ -114,6 +110,5 @@ for config in data3:
         kind="bar",
         legend_out=False,
     )
-    plt.title(f"{config[0]} Batches, {config[1]} Batch Size")
     print(f"Generated fig {config}")
     plt.savefig(f"motivation_{config[0]}_{config[1]}.png")

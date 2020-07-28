@@ -49,7 +49,7 @@ for temp_csv in temp_csvs:
         continue
     df = pd.read_csv(temp_csv)
     average_temp = df["temp"].mean()
-    crosses_threshold = len(df[df["temp"] > int(TL)]) / len(df["temp"]) * 100
+    crosses_threshold = len(df[df["temp"] > 80000]) / len(df["temp"]) * 100
     stats[graph][version][TL]["crosses_threshold"] = crosses_threshold
     df["temp"] /= 1000
     stats[graph][version][TL]["temps"] = df
@@ -98,7 +98,7 @@ ax = sns.boxplot(
     data=temp_df,
     dodge=True,
     palette=sns.color_palette("tab20", n_colors=6),
-    showfliers=False,
+    whis=(0, 100),
     linewidth=1,
 )
 ax.set_xlabel("Graph")
