@@ -1035,45 +1035,45 @@ static std::map<string, std::map<int, double>> delta_temps{
 //v3.1
 static std::map<string, std::map<int, std::map<int, double>>> delta_temps2{
     { "resnet50",
-      { { CPU_SMALL, { { 50000 ,5400 }, { 55000 ,2098.29}, {60000 ,1555.2 } } },
-        { CPU_BIG, { { 55000 ,26784 }, { 60000 ,28728}, { 70000, 15336 }, { 75000, 11212.4 }, {80000 ,9201.6}, {85000 ,4968} } },
-        { CPU_BIG | CPU_SMALL, { { 60000 ,26568 }, { 65000 ,24192}, { 70000 ,18532.8 } ,{75000 ,14580}} },
-        { GPU, { { 55000 ,9504 }, { 60000 ,9192 }, {  65000 ,8559 } } },
-        { GPU | CPU_SMALL, { { 55000 ,18648}, { 60000 ,18511.2 }, { 65000 ,14004 }, { 75000 ,10368} } },
-        { GPU | CPU_BIG, { { 60000 ,26179.2 }, { 65000 ,23140.8 } } },
-        { GPU | CPU_BIG | CPU_SMALL, { { 60000 ,28944 }, {65000 ,23260.5 }, { 70000 ,19440} } } } },
+      { { CPU_SMALL, { { 50000, 5400 }, { 55000, 2098.29 }, { 60000, 1555.2 } } },
+        { CPU_BIG, { { 55000, 26784 }, { 60000, 28728 }, { 70000, 15336 }, { 75000, 11212.4 }, { 80000, 9201.6 }, { 85000, 4968 } } },
+        { CPU_BIG | CPU_SMALL, { { 60000, 26568 }, { 65000, 24192 }, { 70000, 18532.8 }, { 75000, 14580 } } },
+        { GPU, { { 55000, 9504 }, { 60000, 9192 }, { 65000, 8559 } } },
+        { GPU | CPU_SMALL, { { 55000, 18648 }, { 60000, 18511.2 }, { 65000, 14004 }, { 75000, 10368 } } },
+        { GPU | CPU_BIG, { { 60000, 26179.2 }, { 65000, 23140.8 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 28944 }, { 65000, 23260.5 }, { 70000, 19440 } } } } },
     { "alexnet",
-      { { CPU_SMALL, { { 45000, 4104 }, { 50000, 480 }, {55000, 216} } },
+      { { CPU_SMALL, { { 45000, 4104 }, { 50000, 480 }, { 55000, 216 } } },
         { CPU_BIG, { { 50000, 21708 }, { 70000, 5076 }, { 75000, 2268 } } },
         { CPU_BIG | CPU_SMALL, { { 55000, 22896 }, { 60000, 21828 } } },
-        { GPU, { { 50000, 14472 }, {55000, 8964}, {6000, 6768} } },
-        { GPU | CPU_SMALL, { { 55000, 11772 }, { 60000, 8244 }, {65000, 10476} } },
+        { GPU, { { 50000, 14472 }, { 55000, 8964 }, { 6000, 6768 } } },
+        { GPU | CPU_SMALL, { { 55000, 11772 }, { 60000, 8244 }, { 65000, 10476 } } },
         { GPU | CPU_BIG, { { 55000, 23652 }, { 60000, 21414.9 } } },
         { GPU | CPU_BIG | CPU_SMALL, { { 60000, 26003.1 }, { 65000, 24068.6 } } } } },
     { "mobilenet",
-      { { CPU_SMALL, { { 45000, 3024 }, {50000, 330.353}, {55000, 324} } },
+      { { CPU_SMALL, { { 45000, 3024 }, { 50000, 330.353 }, { 55000, 324 } } },
         { CPU_BIG, { { 5000, 17820 }, { 65000, 4698 }, { 70000, 3067.2 } } },
         { CPU_BIG | CPU_SMALL, { { 55000, 19008 }, { 60000, 14637.2 } } },
-        { GPU, { { 50000, 6566.4 }, { 55000, 5708.57 }, {60000, 1296} } },
-        { GPU | CPU_SMALL, { { 50000, 12312 }, {55000 ,10354.5}, {60000 ,11448} } },
-        { GPU | CPU_BIG, { { 50000 ,19224}, { 55000 ,19076.2} } },
-        { GPU | CPU_BIG | CPU_SMALL, { { 55000 ,23065.7}, { 60000 ,21240 } } } } },
+        { GPU, { { 50000, 6566.4 }, { 55000, 5708.57 }, { 60000, 1296 } } },
+        { GPU | CPU_SMALL, { { 50000, 12312 }, { 55000, 10354.5 }, { 60000, 11448 } } },
+        { GPU | CPU_BIG, { { 50000, 19224 }, { 55000, 19076.2 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 55000, 23065.7 }, { 60000, 21240 } } } } },
     { "squeezenet",
       { { CPU_SMALL, { { 65000, 518.4 } } },
-        { CPU_BIG, { { 60000 ,17280}, { 65000 ,15336 }, { 75000 ,5724 } , {80000, 2437.71}, {85000 ,1234.29}} },
-        { CPU_BIG | CPU_SMALL, { { 65000 ,19764 }, { 70000, 15181.7 }, {75000 ,14138.2} } },
-        { GPU, { { 60000 ,10354.5}, { 65000,6642 } } },
-        { GPU | CPU_SMALL, { { 55000, 14299.2 }, { 60000 ,13377.6 } } },
-        { GPU | CPU_BIG, { { 55000 ,20466 }, { 60000 ,20059.2 } ,{65000, 17496} } },
-        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 25286.4 }, { 65000, 23328} } } } },
+        { CPU_BIG, { { 60000, 17280 }, { 65000, 15336 }, { 75000, 5724 }, { 80000, 2437.71 }, { 85000, 1234.29 } } },
+        { CPU_BIG | CPU_SMALL, { { 65000, 19764 }, { 70000, 15181.7 }, { 75000, 14138.2 } } },
+        { GPU, { { 60000, 10354.5 }, { 65000, 6642 } } },
+        { GPU | CPU_SMALL, { { 55000, 14299.2 }, { 60000, 13377.6 } } },
+        { GPU | CPU_BIG, { { 55000, 20466 }, { 60000, 20059.2 }, { 65000, 17496 } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 60000, 25286.4 }, { 65000, 23328 } } } } },
     { "googlenet",
-      { { CPU_SMALL, { { 55000, 4968 }, {60000, 999}, {65000, 504} } },
-        { CPU_BIG, { { 60000, 19980 }, { 70000, 11880 }, { 75000, 10260 }, {80000, 5753.45} } },
+      { { CPU_SMALL, { { 55000, 4968 }, { 60000, 999 }, { 65000, 504 } } },
+        { CPU_BIG, { { 60000, 19980 }, { 70000, 11880 }, { 75000, 10260 }, { 80000, 5753.45 } } },
         { CPU_BIG | CPU_SMALL, { { 55000, 25056 }, { 60000, 22032 }, { 65000, 20926.6 } } },
-        { GPU, { {55000,13348.8},{ 60000, 7368 }, { 65000, 3024 } } },
+        { GPU, { { 55000, 13348.8 }, { 60000, 7368 }, { 65000, 3024 } } },
         { GPU | CPU_SMALL, { { 55000, 15261.4 }, { 60000, 12168 } } },
         { GPU | CPU_BIG, { { 55000, 24926.4 }, { 60000, 22334.4 } } },
-        { GPU | CPU_BIG | CPU_SMALL, { { 55000, 28404 }, {60000, 27694.3} } } } },
+        { GPU | CPU_BIG | CPU_SMALL, { { 55000, 28404 }, { 60000, 27694.3 } } } } },
 
 };
 
@@ -1093,12 +1093,12 @@ static std::map<string, std::map<int, _param>> params{
 };
 
 static std::map<string, std::map<int, double>> time_takens = {
-    { "alexnet", { { CPU_SMALL, 4 }, { CPU_BIG, 2.05719 }, { GPU,  2.20043} } },
-        { "googlenet", { { CPU_SMALL, 2.81574 }, { CPU_BIG,  1.50193 }, { GPU,  1.98438 } } },
-            { "mobilenet", { { CPU_SMALL,  1.40115 }, { CPU_BIG,  0.822491 }, { GPU,  1.37579 } } },
-                { "resnet50", { { CPU_SMALL,  5.3915 }, { CPU_BIG,  4.44067 }, { GPU,  4.53231 } } },
-                    { "squeezenet", { { CPU_SMALL,  1.49032 }, { CPU_BIG,  0.968867 }, { GPU, 1.24075 } } }
-                    };
+    { "alexnet", { { CPU_SMALL, 4 }, { CPU_BIG, 2.05719 }, { GPU, 2.20043 } } },
+    { "googlenet", { { CPU_SMALL, 2.81574 }, { CPU_BIG, 1.50193 }, { GPU, 1.98438 } } },
+    { "mobilenet", { { CPU_SMALL, 1.40115 }, { CPU_BIG, 0.822491 }, { GPU, 1.37579 } } },
+    { "resnet50", { { CPU_SMALL, 5.3915 }, { CPU_BIG, 4.44067 }, { GPU, 4.53231 } } },
+    { "squeezenet", { { CPU_SMALL, 1.49032 }, { CPU_BIG, 0.968867 }, { GPU, 1.24075 } } }
+};
 
 char **convert(vector<string> argv_list)
 {
@@ -1190,16 +1190,19 @@ void profile_time(MyStreamingHelper &h, string graph)
         { CPU_SMALL, 0 },
         { GPU, 0 }
     };
-    int       j = 1;
+    int j = 1;
     for(const auto &kv : samples)
     {
         int  config_id = kv.first;
         auto config    = configs[configs_idx[config_id]];
         h << "[" << j++ << "/" << samples.size() << "] Processing " << config.name << "\n";
         int pid = fork();
-        if (pid > 0) {
+        if(pid > 0)
+        {
             wait(NULL);
-        } else {
+        }
+        else
+        {
             cpu_set_t mask;
             CPU_ZERO(&mask);
             if(config.id == CPU_SMALL)
@@ -1431,9 +1434,11 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                 else if(version == "3.1")
                 {
                     double min_diff = 99999999;
-                    for(auto kv:  delta_temps2[graph][i]){
-                        if (abs (kv.first - temp) < min_diff ){
-                            min_diff = abs (kv.first - temp);
+                    for(auto kv : delta_temps2[graph][i])
+                    {
+                        if(abs(kv.first - temp) < min_diff)
+                        {
+                            min_diff            = abs(kv.first - temp);
                             pred_delta_temps[i] = kv.second;
                         }
                     }
@@ -1441,7 +1446,9 @@ void run_sched(MyStreamingHelper &h, unsigned int TL, unsigned int dt, string gr
                 else if(version == "4")
                 {
                     pred_delta_temps[i] = fit_temp(temp, params[graph][i], dt) - temp;
-                }else {
+                }
+                else
+                {
                     cout << "no version matching " << version << "\n";
                 }
                 min_pred_delta_temp = min(min_pred_delta_temp, pred_delta_temps[i]);
