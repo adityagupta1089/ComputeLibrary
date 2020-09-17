@@ -67,30 +67,30 @@ for time_log in time_logs:
     time = re.findall(r"([\d\.]+) per inference", content)[0]
     stats[graph][version][TL]["time_taken"] = time
 
-print(temp_df)
+# print(temp_df)
 xtick_lables = []
 required_columns = []
 for graph in sorted(stats):
     for version in sorted(stats[graph]):
         for TL in sorted(stats[graph][version]):
             xtick_lables.append(graph)
-            fig = plt.figure()
-            sns.lineplot(
-                data=stats[graph][version][TL]["temps"], x="time", y="temp"
-            )
-            if int(TL) == 80000:
-                plt.axhline(80, linestyle="--", color="r")
-            plt.xlabel("Time (sec)")
-            plt.ylabel("Temperature $(^\circ C)$")
-            plt.title(
-                f"Execution scheduler {graph}, {version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
-            )
-            # plt.show()
-            print(f"Saving {version} {graph} {TL}")
-            fig.savefig(
-                f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
-            )
-            plt.close(fig)
+            # fig = plt.figure()
+            # sns.lineplot(
+            #     data=stats[graph][version][TL]["temps"], x="time", y="temp"
+            # )
+            # if int(TL) == 80000:
+            #     plt.axhline(80, linestyle="--", color="r")
+            # plt.xlabel("Time (sec)")
+            # plt.ylabel("Temperature $(^\circ C)$")
+            # plt.title(
+            #     f"Execution scheduler {graph}, {version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
+            # )
+            # # plt.show()
+            # print(f"Saving {version} {graph} {TL}")
+            # fig.savefig(
+            #     f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
+            # )
+            # plt.close(fig)
             required_columns.append(f"{graph}_v{version}_TL{TL}")
 temp_df = temp_df[required_columns]
 fig = plt.figure(figsize=(12, 8))
@@ -134,7 +134,10 @@ for graph in sorted(stats):
             data = stats[graph][version][TL]
             indexes.append((graph, version, float(TL) / 1000))
             rows.append(
-                [float(data["crosses_threshold"]), float(data["time_taken"]),]
+                [
+                    float(data["crosses_threshold"]),
+                    float(data["time_taken"]),
+                ]
             )
 
 
@@ -143,7 +146,47 @@ df = pd.DataFrame(
     columns=["Crosses Threshold", "Time Taken"],
     index=pd.MultiIndex.from_tuples(indexes, names=["Graph", "Version", "TL"]),
 )
-print(df.to_latex())
+# print(df.to_latex())
+dct = defaultdict(list)
+dtm = defaultdict(list)
+dtt = defaultdict(list)
+
+
+def avg(xs):
+    return sum(xs) / len(xs)
+
+
+for graph in graphs:
+    for version in versions:
+        _data = stats[graph][version]
+        _dct = _data["80000"]["crosses_threshold"] - _data["999999"]["crosses_threshold"]
+        _dtm = (
+            avg(_data["80000"]["temps"]["temp"]) - avg(_data["999999"]["temps"]["temp"])
+        ) / avg(_data["999999"]["temps"]["temp"])
+        _dtt = (
+            float(_data["80000"]["time_taken"]) - float(_data["999999"]["time_taken"])
+        ) / float(_data["999999"]["time_taken"])
+        dct[version].append(_dct)
+        dtm[version].append(_dtm)
+        dtt[version].append(_dtt)
+        dct[graph].append(_dct)
+        dtm[graph].append(_dtm)
+        dtt[graph].append(_dtt)
+
+for graph in graphs:
+    print(">>>", graph)
+    print("Crosses Threshold", avg(dct[graph]))
+    print("Time taken", avg(dtt[graph]))
+    print("Average Temperature", avg(dtm[graph]))
+for version in versions:
+    print(">>>", version)
+    print("Crosses Threshold", avg(dct[version]))
+    print("Time taken", avg(dtt[version]))
+    print("Average Temperature", avg(dtm[version]))
+
+print("Crosses Threshold", dct)
+print("Time taken", dtt)
+print("Average Temperature", dtm)
 
 for column in df.columns:
     fig = plt.figure(figsize=(12, 8))
@@ -160,9 +203,7 @@ for column in df.columns:
     )
     m, M = ax.get_xlim()
     xtick_lables = np.linspace(m, M, len(graphs) + 1)
-    ax.set_xticks(
-        [(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])]
-    )
+    ax.set_xticks([(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])])
     ax.set_xticklabels(graphs, rotation=0)
     for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
         ax.axvline(x=x)

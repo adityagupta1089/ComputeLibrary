@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -99,16 +101,19 @@ df = pd.DataFrame(
     data3, columns=["Graph", "Target", "Config", "Time (sec/inference)",],
 )
 print(df)
-
-sns.catplot(
+g = sns.catplot(
     data=df,
     x="Graph",
     y="Time (sec/inference)",
-    hue="Config",
+    hue="Target",
     legend=True,
     kind="bar",
-    col="Target",
+    col="(Batches, Batch Size)",
     legend_out=False,
 )
+g.set_titles(size=18)
 print(f"Generated fig")
-plt.savefig(f"motivation_2.png")
+fig: plt.Figure = plt.gcf()
+w, h = fig.get_size_inches()
+fig.set_size_inches((w * 1.2, h * 1.2))
+plt.savefig(f"motivation_2.svg")
