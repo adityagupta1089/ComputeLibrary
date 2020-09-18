@@ -21,7 +21,7 @@ time_logs = glob.glob("temp_scheduler_all/*_TL*_dt1000_run_sched*.log")
 graphs = ("alexnet", "googlenet", "mobilenet", "resnet50", "squeezenet")
 versions = ("3", "3.1", "4")
 version_names = {"3": "AMTR", "3.1": "AMTRI", "4": "EE"}
-TLs = ("80000", "999999")
+TLs = ("85000", "999999")
 
 
 def dd():
@@ -29,8 +29,8 @@ def dd():
 
 
 def map_tl(tl):
-    if int(tl) == 80000:
-        return "80^\circ"
+    if int(tl) == 85000:
+        return "85^\circ"
     elif int(tl) == 999999:
         return "\infty"
 
@@ -49,7 +49,7 @@ for temp_csv in temp_csvs:
         continue
     df = pd.read_csv(temp_csv)
     average_temp = df["temp"].mean()
-    crosses_threshold = len(df[df["temp"] > 80000]) / len(df["temp"]) * 100
+    crosses_threshold = len(df[df["temp"] > 85000]) / len(df["temp"]) * 100
     stats[graph][version][TL]["crosses_threshold"] = crosses_threshold
     df["temp"] /= 1000
     stats[graph][version][TL]["temps"] = df
@@ -74,23 +74,19 @@ for graph in sorted(stats):
     for version in sorted(stats[graph]):
         for TL in sorted(stats[graph][version]):
             xtick_lables.append(graph)
-            # fig = plt.figure()
-            # sns.lineplot(
-            #     data=stats[graph][version][TL]["temps"], x="time", y="temp"
-            # )
-            # if int(TL) == 80000:
-            #     plt.axhline(80, linestyle="--", color="r")
-            # plt.xlabel("Time (sec)")
-            # plt.ylabel("Temperature $(^\circ C)$")
-            # plt.title(
-            #     f"Execution scheduler {graph}, {version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
-            # )
-            # # plt.show()
-            # print(f"Saving {version} {graph} {TL}")
-            # fig.savefig(
-            #     f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.png"
-            # )
-            # plt.close(fig)
+            fig = plt.figure()
+            sns.lineplot(data=stats[graph][version][TL]["temps"], x="time", y="temp")
+            if int(TL) == 85000:
+                plt.axhline(85, linestyle="--", color="r")
+            plt.xlabel("Time (sec)")
+            plt.ylabel("Temperature $(^\circ C)$")
+            plt.title(
+                f"Execution scheduler {graph}, {version_names[version]}, ${{\\rm TL}} = {map_tl(TL)}$"
+            )
+            # plt.show()
+            print(f"Saving {version} {graph} {TL}")
+            fig.savefig(f"temp_schedulerv{version.replace('.', '_')}/{graph}_TL{TL}.pdf")
+            plt.close(fig)
             required_columns.append(f"{graph}_v{version}_TL{TL}")
 temp_df = temp_df[required_columns]
 fig = plt.figure(figsize=(12, 8))
@@ -108,7 +104,7 @@ ax.set_xticks([(x + x1) / 2 for x, x1 in zip(xtick_lables, xtick_lables[1:])])
 ax.set_xticklabels(graphs, rotation=0)
 for x in np.linspace(m, M, len(graphs) + 1)[1:-1]:
     ax.axvline(x=x, linewidth=1)
-ax.axhline(y=80, color="r", alpha=0.5)
+ax.axhline(y=85, color="r", alpha=0.5)
 ax.legend(
     [Line2D([0], [0], color=col, lw=4) for x, col in zip(poss, colors)],
     [
@@ -124,7 +120,7 @@ plt.title("Temperature vs. Graph")
 fig.subplots_adjust(right=0.82)
 # plt.show()
 print("Saving temperatures")
-fig.savefig("temp_scheduler_temperatures.png")
+fig.savefig("temp_scheduler_temperatures.pdf")
 
 indexes = []
 rows = []
@@ -159,12 +155,12 @@ def avg(xs):
 for graph in graphs:
     for version in versions:
         _data = stats[graph][version]
-        _dct = _data["80000"]["crosses_threshold"] - _data["999999"]["crosses_threshold"]
+        _dct = _data["85000"]["crosses_threshold"] - _data["999999"]["crosses_threshold"]
         _dtm = (
-            avg(_data["80000"]["temps"]["temp"]) - avg(_data["999999"]["temps"]["temp"])
+            avg(_data["85000"]["temps"]["temp"]) - avg(_data["999999"]["temps"]["temp"])
         ) / avg(_data["999999"]["temps"]["temp"])
         _dtt = (
-            float(_data["80000"]["time_taken"]) - float(_data["999999"]["time_taken"])
+            float(_data["85000"]["time_taken"]) - float(_data["999999"]["time_taken"])
         ) / float(_data["999999"]["time_taken"])
         dct[version].append(_dct)
         dtm[version].append(_dtm)
@@ -216,4 +212,4 @@ for column in df.columns:
     fig.subplots_adjust(right=0.82)
     # plt.show()
     print(f"Saving {column}")
-    fig.savefig(f"temp_scheduler_{column.lower().replace(' ', '_')}.png")
+    fig.savefig(f"temp_scheduler_{column.lower().replace(' ', '_')}.pdf")
