@@ -12,13 +12,13 @@ Images = 100
 Inferences = 10
 ***
 Running Scheduler
-Logging temp logs to temp_schedulerv4/mobilenet_TL999999_dt1000_motivation.csv
+Logging temp logs to temp_schedulerv4/mobilenet_TL999999_dt1000.csv
 Main thread running
-tdiff = 5.0004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78128, min_delta_t = 2429.99, val = 11
-tdiff = 10.0007, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 84392, min_delta_t = 2429.99, val = 28
-tdiff = 15.0013, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82664, min_delta_t = 2429.99, val = 45
-tdiff = 20.0004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80936, min_delta_t = 2429.99, val = 61
-tdiff = 25.0004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 79640, min_delta_t = 2429.99, val = 78
-tdiff = 30.0006, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85256, min_delta_t = 2429.99, val = 95
-0.316861 per image
-0.0316861 per inference
+tdiff = 5.00009, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78344, min_delta_t = 2429.99, val = 10
+tdiff = 10.0008, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78344, min_delta_t = 2429.99, val = 28
+tdiff = 15.0002, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81368, min_delta_t = 2429.99, val = 45
+tdiff = 20.0008, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80936, min_delta_t = 2429.99, val = 62
+tdiff = 25.0009, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80720, min_delta_t = 2429.99, val = 78
+tdiff = 30.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81368, min_delta_t = 2429.99, val = 95
+0.312053 per image
+0.0312053 per inference

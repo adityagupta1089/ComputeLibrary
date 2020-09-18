@@ -14,11 +14,12 @@ Inferences = 10
 Running Scheduler
 Logging temp logs to temp_schedulerv3_1/squeezenet_TL999999_dt1000.csv
 Main thread running
-tdiff = 5.00065, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85688, min_delta_t = 518.4, val = 8
-tdiff = 10.0004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78344, min_delta_t = 518.4, val = 25
-tdiff = 15.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80720, min_delta_t = 518.4, val = 42
-tdiff = 20.0007, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 80504, min_delta_t = 518.4, val = 59
-tdiff = 25.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78992, min_delta_t = 518.4, val = 76
-tdiff = 30.0007, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 78992, min_delta_t = 518.4, val = 95
-0.315754 per image
-0.0315754 per inference
+tdiff = 5.00106, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 83960, min_delta_t = 518.4, val = 7
+tdiff = 10.001, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 85256, min_delta_t = 518.4, val = 19
+tdiff = 15.0004, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82016, min_delta_t = 518.4, val = 35
+tdiff = 20.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82448, min_delta_t = 518.4, val = 50
+tdiff = 25.0005, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 81368, min_delta_t = 518.4, val = 67
+tdiff = 30.0014, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82448, min_delta_t = 518.4, val = 82
+tdiff = 35.0003, run_cpu_small = 1, run_cpu_big = 1, run_gpu = 1, temp = 82232, min_delta_t = 518.4, val = 96
+0.357955 per image
+0.0357955 per inference
